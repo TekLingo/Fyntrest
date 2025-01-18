@@ -1,12 +1,30 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        tittle: ["Dela Gothic One", "sans-serif"], // Add your custom font
+        body: ["Outfit", "sans-serif"],
+      },
+      colors: {
+        "bg-color": "#0c0a31",
+        "primary_p": "#28114c", // purple
+        "primary-fp": "#362856", // faded purple
+        "primary-b": "#1d194f", // blueish purple
+        "secondary-lt": "#ACA6FF", // lightest
+        "secondary-l": "#A990FA", // light
+        "secondary-d": "#B181FC", // dark
+        "secondary-dt": "#8A72E9", // darkest
+        "text-d": "#02020a", // dark
+        "text-g": "#d4cfdb", // gray
+        "tertiary-o": "#FA7B4D", // orange
+        "tertiary-g": "#34B77A", // green
+        "tertiary-p": "#FF17AB", // pink
+        "tertiary-y": "#F7FF82", // yellow
+        "tertiary-b": "#1d194f", // sky-blue
+      },
+    },
   },
   plugins: [],
-}
-
+};
