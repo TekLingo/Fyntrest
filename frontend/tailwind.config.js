@@ -24,6 +24,10 @@ export default {
         "tertiary-y": "#F7FF82", // yellow
         "tertiary-b": "#1C77B5", // sky-blue
       },
+      backgroundImage: {
+        "Menu-open": "url(./src/assets/Images/landing page/Exclude4x.png)",
+        "Hero": "url(./src/assets/Images/Landing Page/hero img.png)",
+      },
     },
   },
   plugins: [],
