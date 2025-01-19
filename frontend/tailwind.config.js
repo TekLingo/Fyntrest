@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        tittle: ["Dela Gothic One", "sans-serif"], // Add your custom font
+        title: ["Dela Gothic One", "sans-serif"], // Add your custom font
         body: ["Outfit", "sans-serif"],
       },
       colors: {
