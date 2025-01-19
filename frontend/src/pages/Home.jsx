@@ -141,7 +141,7 @@ const Home = () => {
 					{/* Left Column */}
 					<div className="flex flex-col justify-between gap-6">
 						{/* Knowledge Button */}
-						<button className="flex items-center justify-between bg-secondary-lt rounded-2xl p-6 shadow-lg h-[200px]">
+						<button className="flex items-center justify-between bg-secondary-lt rounded-2xl p-6 shadow-lg h-48">
 							<p className="text-text-d font-medium text-xl">
 								Test your knowledge
 							</p>
@@ -153,7 +153,7 @@ const Home = () => {
 						</button>
 
 						{/* Quiz Button */}
-						<button className="flex items-center justify-between bg-secondary-dt rounded-2xl p-6 shadow-lg h-[200px]">
+						<button className="flex items-center justify-between bg-secondary-dt rounded-2xl p-6 shadow-lg h-48">
 							<img src={Quiz} className="w-20 h-auto" alt="Quiz Icon" />
 							<p className="text-text-d font-medium text-xl">Quick Quizzes</p>
 						</button>
@@ -161,7 +161,7 @@ const Home = () => {
 
 					{/* Right Column */}
 					<div>
-						<button className="flex flex-col items-center justify-center bg-secondary-dt w-full h-[419px] rounded-2xl p-6 shadow-lg">
+						<button className="flex flex-col items-center justify-center bg-secondary-dt w-full h-full rounded-2xl p-6 shadow-lg">
 							<img src={Game} className="w-32 h-auto" alt="Game Icon" />
 							<p className="text-text-d font-medium text-xl mt-4">
 								Learn through Games
