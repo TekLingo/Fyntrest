@@ -8,9 +8,11 @@ import Hero from "../assets/Images/landing page/hero img.png";
 import Game from "../assets/Images/landing page/try out/game.png";
 import Knowledge from "../assets/Images/landing page/try out/knowledge.png";
 import Quiz from "../assets/Images/landing page/try out/quiz.png";
+import Right from "../assets/Images/landing page/right.png";
 import CourseCard from "../components/Cards/CourseCard";
 import FeatureCard from "../components/Cards/FeatureCard";
 import Navbar from "../components/Navbar";
+import { FaAngleRight } from "react-icons/fa6";
 
 const Home = () => {
   return (
@@ -94,31 +96,44 @@ const Home = () => {
           {/* Left Column */}
           <div className="flex flex-col justify-between gap-6">
             {/* Knowledge Button */}
-            <button className="flex items-center justify-between bg-secondary-lt rounded-2xl p-6 shadow-lg h-48">
-              <p className="text-text-d font-medium text-xl">
+            <button className="flex items-center justify-between bg-secondary-dt rounded-2xl p-6 shadow-lg h-48 overflow-hidden">
+              <p className="text-text-d font-normal text-2xl font-body max-w-1/4">
                 Test your knowledge
               </p>
               <img
                 src={Knowledge}
-                className="w-20 h-auto"
+                className="w-60 h-auto"
                 alt="Knowledge Icon"
               />
+              <img src={Right} className="w-8 h-auto" alt="right arrow" />
             </button>
 
             {/* Quiz Button */}
             <button className="flex items-center justify-between bg-secondary-dt rounded-2xl p-6 shadow-lg h-48">
               <img src={Quiz} className="w-20 h-auto" alt="Quiz Icon" />
-              <p className="text-text-d font-medium text-xl">Quick Quizzes</p>
+              <p className="text-text-d font-normal text-2xl font-body">
+                Quick Quizzes
+              </p>
+              <img src={Right} className="w-8 h-auto" alt="right arrow" />
             </button>
           </div>
 
           {/* Right Column */}
           <div>
-            <button className="flex flex-col items-center justify-center bg-secondary-dt w-full h-full rounded-2xl p-6 shadow-lg">
-              <img src={Game} className="w-32 h-auto" alt="Game Icon" />
-              <p className="text-text-d font-medium text-xl mt-4">
-                Learn through Games
-              </p>
+            <button className="flex flex-col items-center justify-center bg-secondary-dt w-full h-full rounded-2xl p-6 shadow-lg relative">
+              <div>
+                <img
+                  src={Game}
+                  className="w-80 h-auto flex flex-col items-center justify-center mb-8 relative top-5 left-12"
+                  alt="Game Icon"
+                />
+              </div>
+              <div className="w-4/5 flex justify-between items-center absolute bottom-10">
+                <p className="text-text-d font-normal text-2xl font-body">
+                  Learn through Games
+                </p>
+                <img src={Right} className="w-8 h-auto" alt="right arrow" />
+              </div>
             </button>
           </div>
         </div>
