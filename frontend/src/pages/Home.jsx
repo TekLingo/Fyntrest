@@ -12,7 +12,6 @@ import Right from "../assets/Images/landing page/right.png";
 import FeatureCard from '../components/Cards/FeatureCard';
 import Navbar from '../components/Navbar';
 import CourseCarousel from './CourseCarousel';
-import { FaAngleRight } from "react-icons/fa6";
 
 const Home = () => {
   return (
