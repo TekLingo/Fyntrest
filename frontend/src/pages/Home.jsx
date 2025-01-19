@@ -80,40 +80,6 @@ const Home = () => {
           img={Curriculam}
           inverted={true}
         />
-        {/* 
-				<div className="flex col-span-2 justify-around items-center mx-auto mt-20">
-					<div className="max-w-[625px]">
-						<div className="text-4xl font-bold font-tittle">
-							<h2>Progress Tracking</h2>
-						</div>
-						<div className="text-lg mt-10">
-							<p>
-								Real-time updates, reports, and parental controls to monitor
-								achievements, set goals, and ensure a safe learning experience.
-							</p>
-						</div>
-					</div>
-					<div className="">
-						<img src={Tracking} className="w-96 h-auto" alt="" />
-					</div>
-				</div>
-				<div className="flex col-span-2 justify-around items-center mx-auto mt-20">
-					<div className="">
-						<img src={Curriculam} className="w-96 h-auto" alt="" />
-					</div>
-					<div className="max-w-[625px]">
-						<div className="text-4xl font-bold font-tittle">
-							<h2>Curriculam Integration</h2>
-						</div>
-						<div className="text-lg mt-10">
-							<p>
-								Aligned with the CBSE curriculum for 8th grade and above,
-								offering practical lessons on saving, budgeting, and money
-								management.
-							</p>
-						</div>
-					</div>
-				</div> */}
       </div>
 
       {/* Tryout Section */}
