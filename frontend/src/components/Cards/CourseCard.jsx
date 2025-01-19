@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const CourseCard = ({ title, img, index }) => {
 	// Define styles for variants
@@ -21,8 +21,8 @@ const CourseCard = ({ title, img, index }) => {
 		},
 	];
 
-	// Automatically assign the variant based on the index (cyclically)
-	const selectedStyle = variantStyles[index % variantStyles.length];
+  // Automatically assign the variant based on the index (cyclically)
+  const selectedStyle = variantStyles[index % variantStyles.length];
 
 	return (
 		<div className="w-60 h-60 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-primary-b">
