@@ -1,17 +1,17 @@
-import React from "react";
-import { FaChevronRight } from "react-icons/fa6";
-import Course from "../assets/Images/landing page/features/courses.png";
-import Curriculam from "../assets/Images/landing page/features/curriculam.png";
-import Learn from "../assets/Images/landing page/features/personalised.png";
-import Tracking from "../assets/Images/landing page/features/tracking.png";
-import Hero from "../assets/Images/landing page/hero img.png";
-import Game from "../assets/Images/landing page/try out/game.png";
-import Knowledge from "../assets/Images/landing page/try out/knowledge.png";
-import Quiz from "../assets/Images/landing page/try out/quiz.png";
+import React from 'react';
+import { FaChevronRight } from 'react-icons/fa6';
+import Course from '../assets/Images/landing page/features/courses.png';
+import Curriculam from '../assets/Images/landing page/features/curriculam.png';
+import Learn from '../assets/Images/landing page/features/personalised.png';
+import Tracking from '../assets/Images/landing page/features/tracking.png';
+import Hero from '../assets/Images/landing page/hero img.png';
+import Game from '../assets/Images/landing page/try out/game.png';
+import Knowledge from '../assets/Images/landing page/try out/knowledge.png';
+import Quiz from '../assets/Images/landing page/try out/quiz.png';
 import Right from "../assets/Images/landing page/right.png";
-import CourseCard from "../components/Cards/CourseCard";
-import FeatureCard from "../components/Cards/FeatureCard";
-import Navbar from "../components/Navbar";
+import FeatureCard from '../components/Cards/FeatureCard';
+import Navbar from '../components/Navbar';
+import CourseCarousel from './CourseCarousel';
 import { FaAngleRight } from "react-icons/fa6";
 
 const Home = () => {
@@ -33,18 +33,13 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Courses */}
-      <div className="w-full flex flex-col items-center">
-        <h1 className="font-body text-6xl text-center font-bold text-text-g mt-10">
-          Courses
-        </h1>
-        <div className="flex gap-10 justify-center mt-12">
-          <CourseCard title="Understanding Money" />
-          <CourseCard title="Basics of Financial Literacy" />
-          <CourseCard title="Earning Money" />
-          <CourseCard title="Saving Money" />
-        </div>
-      </div>
+			{/* Courses */}
+			<div className="w-full flex flex-col gap-10 text-text-g">
+				<h1 className="font-body text-6xl text-center font-bold mt-24">
+					Courses
+				</h1>
+				<CourseCarousel />
+			</div>
 
       {/* Features */}
       <div className="w-full flex flex-col gap-10 text-text-g">
