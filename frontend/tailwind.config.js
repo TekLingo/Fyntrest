@@ -22,7 +22,6 @@ export default {
         "tertiary-g": "#34B77A", // green
         "tertiary-p": "#FF17AB", // pink
         "tertiary-y": "#F7FF82", // yellow
-        "tertiary-b": "#1d194f", // sky-blue
       },
     },
   },

@@ -8,16 +8,16 @@ const CourseCard = ({ title, img, index }) => {
 			position: '-top-4 -right-6',
 		},
 		{
-			bg: 'bg-gradient-to-br from-blue-400 to-blue-700',
+			bg: 'bg-gradient-to-br from-green-400 to-blue-700',
 			position: '-left-6',
 		},
 		{
-			bg: 'bg-gradient-to-br from-violet-200 to-violet-600',
-			position: '-bottom-4 -left-4',
+			bg: 'bg-gradient-to-br from-blue-200 to-violet-500',
+			position: '-bottom-5 -left-5',
 		},
 		{
-			bg: 'bg-gradient-to-br from-purple-600 to-purple-700',
-			position: '-top-4 -left-4',
+			bg: 'bg-gradient-to-br from-purple-600 to-purple-950',
+			position: '-top-2 -left-2',
 		},
 	];
 
@@ -25,10 +25,10 @@ const CourseCard = ({ title, img, index }) => {
 	const selectedStyle = variantStyles[index % variantStyles.length];
 
 	return (
-		<div className="CourseCard w-60 h-60 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-slate-900">
+		<div className="w-60 h-60 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-primary-b">
 			{/* Decorative Span for Blur Effect */}
 			<span
-				className={`absolute w-32 h-32 rounded-full blur-2xl opacity-70 ${selectedStyle.bg} ${selectedStyle.position}`}
+				className={`absolute w-36 h-36 rounded-full blur-2xl opacity-80 ${selectedStyle.bg} ${selectedStyle.position}`}
 			></span>
 			<div className="flex flex-col items-center gap-4">
 				{/* Icon Placeholder */}
