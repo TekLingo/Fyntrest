@@ -25,7 +25,7 @@ const CourseCard = ({ title, img, index }) => {
 	const selectedStyle = variantStyles[index % variantStyles.length];
 
 	return (
-		<div className="CourseCard w-52 h-52 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-slate-900">
+		<div className="CourseCard w-60 h-60 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-slate-900">
 			{/* Decorative Span for Blur Effect */}
 			<span
 				className={`absolute w-32 h-32 rounded-full blur-2xl opacity-70 ${selectedStyle.bg} ${selectedStyle.position}`}
