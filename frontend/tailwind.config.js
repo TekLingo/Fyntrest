@@ -27,6 +27,7 @@ export default {
       backgroundImage: {
         "Menu-open": "url(./src/assets/Images/landing page/Exclude4x.png)",
         "Hero": "url(./src/assets/Images/Landing Page/hero img.png)",
+        "Menu":"url(./src/assets/Images/Navbar.svg)"
       },
     },
   },
