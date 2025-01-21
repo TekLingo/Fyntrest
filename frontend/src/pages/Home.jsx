@@ -5,7 +5,6 @@ import Course from "../assets/Images/landing page/features/courses.png";
 import Curriculam from "../assets/Images/landing page/features/curriculam.png";
 import Learn from "../assets/Images/landing page/features/personalised.png";
 import Tracking from "../assets/Images/landing page/features/tracking.png";
-import Hero from "../assets/Images/landing page/hero img.png";
 import Right from "../assets/Images/landing page/right.png";
 import Game from "../assets/Images/landing page/try out/game.png";
 import Knowledge from "../assets/Images/landing page/try out/knowledge.png";
