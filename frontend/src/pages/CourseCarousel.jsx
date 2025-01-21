@@ -17,7 +17,7 @@ const courseData = [
   { title: "Basics of Financial Literacy", img: BasicImg },
   { title: "Earning Money", img: EarnImg },
   { title: "Saving Money", img: SaveImg },
-].map(course => ({
+].map((course) => ({
   ...course,
   link: `/course/${createSlug(course.title)}`,
 }));
@@ -36,12 +36,10 @@ const CourseCarousel = () => {
     >
       {courseData.map((course, index) => (
         <SwiperSlide key={index}>
-          <CourseCard
-            title={course.title}
-            img={course.img}
-            index={index}
-            link={course.link}
-          />
+          <Link to={`/course/${course.slug}`}>
+            {/* Link to dynamic course page */}
+            <CourseCard title={course.title} img={course.img} index={index} />
+          </Link>
         </SwiperSlide>
       ))}
     </Swiper>
