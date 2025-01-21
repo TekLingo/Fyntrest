@@ -35,9 +35,7 @@ const Home = () => {
         <h1 className="font-body text-6xl text-center font-bold mt-24">
           Courses
         </h1>
-        <button>
-          <CourseCarousel />
-        </button>
+        <CourseCarousel />
       </div>
 
       {/* Features */}
