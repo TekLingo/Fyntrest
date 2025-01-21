@@ -1,5 +1,4 @@
 import React from "react";
-// Import Swiper React components
 import "swiper/css"; // Import Swiper styles
 import "swiper/css/effect-fade"; // Import fade effect style
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -9,13 +8,15 @@ import CourseCard from "../components/Cards/CourseCard";
 
 // Import images
 import MoneyImg from "../assets/Images/landing page/course/money.png";
+import BasicImg from "../assets/Images/landing page/course/basicsOfFinLiteracy.png";
+import EarnImg from "../assets/Images/landing page/course/Earn.png";
+import SaveImg from "../assets/Images/landing page/course/Save.png";
 
 const courseData = [
   { title: "Understanding Money", img: MoneyImg },
-  { title: "Understanding Money", img: MoneyImg },
-  { title: "Understanding Money", img: MoneyImg },
-  { title: "Understanding Money", img: MoneyImg },
-  { title: "Understanding Money", img: MoneyImg },
+  { title: "Basics of Financial Litracy", img: BasicImg },
+  { title: "Earning Money", img: EarnImg },
+  { title: "Saving Money", img: SaveImg },
 ];
 
 const CourseCarousel = () => {
