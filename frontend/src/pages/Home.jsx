@@ -1,3 +1,4 @@
+// export default Home;
 import React from "react";
 import { FaChevronRight } from "react-icons/fa6";
 import Course from "../assets/Images/landing page/features/courses.png";
