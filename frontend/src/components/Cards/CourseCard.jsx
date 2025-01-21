@@ -35,7 +35,7 @@ const CourseCard = ({ title, img, index, link }) => {
 	return (
 		<div
 			onClick={handleClick}
-			className="w-60 h-60 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-primary-b"
+			className="w-60 h-60 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-primary-b cursor-pointer"
 		>
 			{/* Decorative Span for Blur Effect */}
 			<span

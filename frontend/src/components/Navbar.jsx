@@ -43,40 +43,40 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="bg-transparent flex justify-between p-6 px-16 items-center">
-        {/* Hamburger Menu */}
-        <div onClick={handleNav} ref={navRef} className="flex items-center">
-          {nav ? (
-            <div className="menu-container open-effect">
-              <Hamburger className="z-0" />
-              <IoIosClose
-                size={40}
-                color="#d4cfdb"
-                className="hover:cursor-pointer absolute top-12 z-10"
-              />
-            </div>
-          ) : (
-            <IoIosMenu
-              size={40}
-              color="#d4cfdb"
-              className="hover:cursor-pointer absolute"
-            />
-          )}
-        </div>
+		<div className="bg-transparent flex justify-between p-6 px-16 items-center">
+			{/* Hamburger Menu */}
+			<div onClick={handleNav} ref={navRef} className="flex items-center">
+			{nav ? (
+				<div className="menu-container open-effect">
+				<Hamburger className="z-0" />
+				<IoIosClose
+					size={40}
+					color="#d4cfdb"
+					className="hover:cursor-pointer absolute top-12 z-10"
+				/>
+				</div>
+			) : (
+				<IoIosMenu
+				size={40}
+				color="#d4cfdb"
+				className="hover:cursor-pointer absolute"
+				/>
+			)}
+			</div>
 
-        {/* Logo */}
-        <div className="select-none">
-          <img src={logo} className="w-28 h-auto" alt="/" />
-        </div>
+			{/* Logo */}
+			<div className="select-none">
+			<img src={logo} className="w-28 h-auto " alt="/" />
+			</div>
 
-        {/* Button */}
-        <button
-          type="button"
-          className="bg-text-g w-28 rounded-full h-8 select-none"
-        >
-          Get Started
-        </button>
-      </div>
+			{/* Button */}
+			<button
+			type="button"
+			className="bg-text-g w-28 rounded-full h-8 select-none"
+			>
+			Get Started
+			</button>
+		</div>
     </>
   );
 };
