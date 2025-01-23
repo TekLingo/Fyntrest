@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+svg {
+	shape-rendering: geometricPrecision;
+	text-rendering: geometricPrecision;
+}
+
 body {
 	background-color: #0c0a31;
 }
