@@ -11,7 +11,7 @@ export default {
         "bg-color": "#0c0a31",
         "primary_p": "#28114c", // purple
         "primary-fp": "#362856", // faded purple
-        "primary-b": "#1d194f", // blueish purple
+        "primary-b": "#1d194f", // blueish purple 1
         "secondary-lt": "#ACA6FF", // lightest
         "secondary-l": "#A990FA", // light
         "secondary-d": "#B181FC", // dark
