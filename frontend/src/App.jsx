@@ -4,7 +4,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom"; // Im
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import CoursePage from "./pages/courses/coursePage";
-import Money from "./pages/courses/understandingMoney"
+import Money from "./pages/courses/understandingMoney";
 
 export default function App() {
   return (
