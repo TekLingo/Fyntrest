@@ -22,7 +22,7 @@ export default function App() {
     //   </Routes>
     // </Router>
     <>
-      <LandingPage />
+      <Money />
     </>
   );
 }

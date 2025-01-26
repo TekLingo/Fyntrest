@@ -84,16 +84,15 @@ const Money = () => {
   return (
     <div>
       <Navbar />
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb
+        items={[
+          <GoHome className="h-auto w-6" />,
+          "Course",
+          "Basics of Financial Literacy",
+        ]}
+      />
       <div className="mx-28 text-text-g">
-        {/* Breadcrumb Navigation */}
-        <Breadcrumb
-          items={[
-            <GoHome className="h-auto w-6" />,
-            "Course",
-            "Basics of Financial Literacy",
-          ]}
-        />
-
         {/* Heading Section */}
         <div className="w-full my-10">
           <div className="flex col-span-2 gap-32 items-center justify-around">
