@@ -7,6 +7,7 @@ import CoursePage from "./pages/courses/coursePage";
 import Money from "./pages/courses/Basics";
 import Needs from "./pages/courses/Needs";
 import VideoPage from "./pages/courses/VideoPage";
+import LandingPage from "./pages/after-login/LandingPage";
 
 export default function App() {
   return (
@@ -20,7 +21,7 @@ export default function App() {
     //   </Routes>
     // </Router>
     <>
-      <VideoPage />
+      <LandingPage />
     </>
   );
 }

@@ -45,11 +45,7 @@ const Navbar = () => {
     <>
       <div className="bg-transparent flex justify-between p-6 px-16 items-center">
         {/* Hamburger Menu */}
-        <div
-          onClick={handleNav}
-          ref={navRef}
-          className="flex items-center min-w-36"
-        >
+        <div className="flex items-center min-w-36">
           {nav ? (
             <div className="menu-container open-effect">
               <Hamburger className="z-0" />
@@ -57,6 +53,7 @@ const Navbar = () => {
                 size={40}
                 color="#d4cfdb"
                 className="hover:cursor-pointer absolute top-12 z-10"
+                onClick={handleNav} // Close the menu when clicked
               />
             </div>
           ) : (
@@ -64,6 +61,7 @@ const Navbar = () => {
               size={40}
               color="#d4cfdb"
               className="hover:cursor-pointer"
+              onClick={handleNav} // Toggle the nav state
             />
           )}
         </div>
