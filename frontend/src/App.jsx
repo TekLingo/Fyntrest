@@ -8,6 +8,7 @@ import Money from "./pages/courses/Basics";
 import Needs from "./pages/courses/Needs";
 import VideoPage from "./pages/courses/VideoPage";
 import LandingPage from "./pages/after-login/LandingPage";
+import Journey from "./pages/after-login/Journey";
 
 export default function App() {
   return (

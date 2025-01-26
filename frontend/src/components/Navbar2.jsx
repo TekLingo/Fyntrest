@@ -48,7 +48,7 @@ const Navbar2 = () => {
   }, [nav]);
   return (
     <div>
-      <div className="relative text-text-g">
+      <div className="relative text-text-g h-72">
         {/* Background Image */}
         {!nav && (
           <img
