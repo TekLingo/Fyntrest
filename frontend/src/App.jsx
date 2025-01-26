@@ -6,6 +6,7 @@ import Signup from "./pages/Signup";
 import CoursePage from "./pages/courses/coursePage";
 import Money from "./pages/courses/Basics";
 import Needs from "./pages/courses/Needs";
+import VideoPage from "./pages/courses/VideoPage";
 
 export default function App() {
   return (
@@ -18,8 +19,8 @@ export default function App() {
     //     <Route path="/course/:slug" element={<CoursePage />} />
     //   </Routes>
     // </Router>
-      <>
-      <Needs/>
-      </>
+    <>
+      <VideoPage />
+    </>
   );
 }

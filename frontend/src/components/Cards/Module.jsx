@@ -18,7 +18,7 @@ const Module = ({ thumbnail, title, description }) => {
       </div>
 
       {/* Title and Description */}
-      <div className="w-3/5">
+      <div className="w-3/5 flex flex-col gap-6">
         <h2 className="text-3xl font-bold mb-2 font-body text-text-g">
           {title}
         </h2>

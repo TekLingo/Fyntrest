@@ -15,7 +15,7 @@
 import React from "react";
 
 const Breadcrumb = ({ items }) => (
-  <div className="flex flex-row items-center justify-start gap-2">
+  <div className="flex flex-row items-center justify-start gap-2 mx-28 text-text-g">
     {items.map((item, index) => (
       <React.Fragment key={index}>
         {index > 0 && <p>{">"}</p>}
