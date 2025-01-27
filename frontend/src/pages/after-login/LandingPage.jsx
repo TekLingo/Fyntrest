@@ -3,58 +3,24 @@ import Footer from "../../components/Footer";
 import Navbar2 from "../../components/Navbar2";
 import Game from "../../assets/Images/landing page/try out/game.png";
 import Knowledge from "../../assets/Images/landing page/try out/knowledge.png";
-import GirlImg from "../../assets/Images/landing page/after-login/Girl.png";
 import FactImg from "../../assets/Images/landing page/after-login/Fact15.png";
 import WordImg from "../../assets/Images/landing page/after-login/word15.png";
-import Journey from "./Journey";
-import Card from "../../components/Cards/Card";
+import Journey from "../../components/Cards/Journey";
 import Right from "../../assets/Images/landing page/right.png";
-import SpendImg from "../../assets/Images/landing page/after-login/spend.png";
-import WorthImg from "../../assets/Images/landing page/after-login/worth.png";
-import SavingImg from "../../assets/Images/landing page/after-login/Saving.png";
 import Quiz from "../../assets/Images/landing page/try out/quiz.png";
+import ContinueCard from "../../components/Cards/ContinueCard";
+import PracticeTest from "../../components/Cards/PracticeTest";
 
 const LandingPage = () => {
-  const vidStatus = ["Let's Start", "Let's Resume"];
-
-  const Video = [
-    "https://www.youtube.com/embed/86cpfsP0aPs?si=YDyEMqkXEWo2OS8M",
-  ];
-
   // Card content for related topics
-  const cardContent = [
-    { title: "QUIZ: Saving vs Investing", img: SpendImg },
-    { title: "QUIZ: Is it worth it?", img: WorthImg },
-    { title: "GAME: Spending Check!", img: SavingImg },
-  ];
+  
 
   return (
     <div>
       <Navbar2 />
       <div className="mx-[4%]">
         {/* Welcome Section */}
-        <div className=" text-primary-fp text-6xl font-bold font-title h-40">
-          <h1>Welcome Sarthak</h1>
-        </div>
-        {/* Video Section */}
-        <div className="h-96 flex justify-around items-center">
-          <div className="bg-bg-color w-auto text-text-g flex font-body">
-            <div>
-              <img src={GirlImg} alt="" className="w-auto h-64" />
-            </div>
-            <div className="flex text-3xl pt-8">
-              <p>{vidStatus[1]}</p>
-            </div>
-          </div>
-          <div className="w-1/3 h-60">
-            <iframe
-              className="w-full h-full"
-              src={Video[0]}
-              title="Course Video Thumbnail"
-              allowFullScreen
-            />
-          </div>
-        </div>
+        <ContinueCard />
         {/* Daily Section */}
         <div className="flex flex-col text-text-g h-auto mb-80 justify-center gap-16">
           <div className="bg-primary-fp h-64 w-3/5 shadow-custom2 rounded-2xl flex col-span-2 items-center justify-around p-4">
@@ -104,22 +70,11 @@ const LandingPage = () => {
         {/* Journey Section */}
         <Journey />
         {/* Practice Test Section */}
-        <div className="text-text-g mb-60">
-          <div>
-            <h2 className="text-4xl font-body font-bold mb-16">
-              Practice Test
-            </h2>
-          </div>
-          <div className="flex justify-center gap-8">
-            {cardContent.map((item, index) => (
-              <Card key={index} title={item.title} img={item.img} />
-            ))}
-          </div>
-        </div>
+        <PracticeTest />
         {/* Try Out Section */}
         <div className="w-full text-text-g py-20">
           {/* Section Title */}
-          <h1 className="font-body text-6xl text-center font-bold mb-20">
+          <h1 className="font-body text-4xl text-start font-bold mb-20">
             TryOut
           </h1>
 

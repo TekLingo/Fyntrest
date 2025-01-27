@@ -8,7 +8,8 @@ import Money from "./pages/courses/Basics";
 import Needs from "./pages/courses/Needs";
 import VideoPage from "./pages/courses/VideoPage";
 import LandingPage from "./pages/after-login/LandingPage";
-import Journey from "./pages/after-login/Journey";
+import Journey from "../src/components/Cards/Journey";
+import CoursesPage from "./pages/after-login/CoursesPage";
 
 export default function App() {
   return (
@@ -22,7 +23,7 @@ export default function App() {
     //   </Routes>
     // </Router>
     <>
-      <LandingPage />
+      <CoursesPage />
     </>
   );
 }
