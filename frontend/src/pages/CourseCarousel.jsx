@@ -39,7 +39,7 @@ const CourseCarousel = () => {
 				<SwiperSlide key={course.slug}>
 					<Link
 						to={`/course/${course.slug}`}
-						className="block w-full h-full flex justify-center"
+						className="w-full h-full flex justify-center"
 					>
 						<CourseCard title={course.title} img={course.img} index={index} />
 					</Link>

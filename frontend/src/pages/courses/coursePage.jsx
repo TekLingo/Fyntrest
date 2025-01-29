@@ -93,7 +93,6 @@ const CoursePage = () => {
 						'Basics of Financial Literacy',
 					]}
 				/>
-
 				{/* Heading Section */}
 				<div className="w-full my-10">
 					<div className="flex col-span-2 gap-32 items-center justify-around">

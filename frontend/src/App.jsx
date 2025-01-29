@@ -1,13 +1,13 @@
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'; // Import Router components
 
-import Home from './pages/Home';
-import Signup from './pages/Signup';
-import Journey from './pages/after-login/Journey';
+import Journey from './components/Cards/Journey';
 import LandingPage from './pages/after-login/LandingPage';
 import CoursePage from './pages/courses/CoursePage';
 import Needs from './pages/courses/Needs';
 import VideoPage from './pages/courses/VideoPage';
+import Home from './pages/Home';
+import Signup from './pages/Signup';
 
 export default function App() {
 	return (
