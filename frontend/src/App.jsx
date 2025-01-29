@@ -11,17 +11,15 @@ import Signup from "./pages/Signup";
 
 export default function App() {
   return (
-    // <Router>
-    // 	<Routes>
-    // 		{/* Define routes for different pages */}
-    // 		<Route path="/" element={<Home />} />
-    // 		<Route path="/signup" element={<Signup />} />
-    // 		{/* Dynamic route for course page */}
-    // 		<Route path="/course/:slug" element={<CoursePage />} />
-    // 	</Routes>
-    // </Router>
-    <>
-      <LandingPage />
-    </>
+    <Router>
+    	<Routes>
+    		{/* Define routes for different pages */}
+    		<Route path="/" element={<Home />} />
+    		<Route path="/signup" element={<Signup />} />
+    		{/* Dynamic route for course page */}
+    		<Route path="/course/:slug" element={<CoursePage />} />
+    		<Route path="/landing-page" element={<LandingPage />} />
+    	</Routes>
+    </Router>
   );
 }
