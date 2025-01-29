@@ -13,16 +13,15 @@ import PracticeTest from "../../components/Cards/PracticeTest";
 
 const LandingPage = () => {
   // Card content for related topics
-  
 
   return (
     <div>
       <Navbar2 />
-      <div className="mx-[4%]">
+      <div className="mx-[4%] gap-16 flex flex-col">
         {/* Welcome Section */}
         <ContinueCard />
         {/* Daily Section */}
-        <div className="flex flex-col text-text-g h-auto mb-80 justify-center gap-16">
+        <div className="flex flex-col text-text-g h-auto justify-center gap-16">
           <div className="bg-primary-fp h-64 w-3/5 shadow-custom2 rounded-2xl flex col-span-2 items-center justify-around p-4">
             <div className="">
               <img src={FactImg} alt="" className="w-auto h-52" />
