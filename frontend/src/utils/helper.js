@@ -1,8 +1,8 @@
-export const createSlug = (title) => {
-	// Ensure this returns a valid slug
-	if (!title) {
-		console.error('Title is undefined or empty');
-		return '';
-	}
-	return title.toLowerCase().replace(/\s+/g, '-');
+// utils/helper.js
+export const createSlug = (str) => {
+	return str
+		.toLowerCase()
+		.replace(/[^\w\s-]/g, '') // Remove non-word characters
+		.replace(/[\s_-]+/g, '-') // Replace spaces and underscores with dashes
+		.replace(/^-+|-+$/g, ''); // Trim leading/trailing dashes
 };

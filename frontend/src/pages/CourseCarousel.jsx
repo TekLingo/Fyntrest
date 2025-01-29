@@ -28,17 +28,19 @@ const CourseCarousel = () => {
 		<Swiper
 			className="mySwiper"
 			slidesPerView={4}
+			spaceBetween={20}
 			autoplay={{ delay: 3000 }}
 			navigation
 			pagination={{ clickable: true }}
-			effect="fade" // Add fade effect
-			fadeEffect={{ crossFade: true }} // Crossfade between slides
-			spaceBetween={20} // Optional: space between slides
+			effect="fade"
+			fadeEffect={{ crossFade: true }}
 		>
 			{courseData.map((course, index) => (
-				<SwiperSlide key={index}>
-					<Link to={`/course/${course.slug}`}>
-						{/* Link to dynamic course page */}
+				<SwiperSlide key={course.slug}>
+					<Link
+						to={`/course/${course.slug}`}
+						className="block w-full h-full flex justify-center"
+					>
 						<CourseCard title={course.title} img={course.img} index={index} />
 					</Link>
 				</SwiperSlide>
