@@ -1,18 +1,39 @@
-import React from "react";
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const Breadcrumb = ({ items }) => (
-  <div className="flex flex-row items-center justify-start gap-2 mx-28 text-text-g">
-    {items.map((item, index) => (
-      <React.Fragment key={index}>
-        {index > 0 && <p>{">"}</p>}
-        <p className={index === items.length - 1 ? "font-bold" : ""}>
-          {typeof item === "string" && index !== items.length - 1
-            ? `${item.slice(0, 6)}${item.length > 6 ? "..." : ""}`
-            : item}
-        </p>
-      </React.Fragment>
-    ))}
-  </div>
-);
+const Breadcrumb = () => {
+	const location = useLocation();
+	const navigate = useNavigate();
+
+	// Generate breadcrumb items from the current URL path
+	const pathnames = location.pathname.split('/').filter((x) => x);
+
+	const handleClick = (index) => {
+		const path = '/' + pathnames.slice(0, index + 1).join('/');
+		navigate(path);
+	};
+
+	return (
+		<div className="flex flex-row items-center justify-start gap-2 mx-28 text-text-g">
+			{/* Home breadcrumb */}
+			<p className="cursor-pointer font-semibold" onClick={() => navigate('/')}>
+				Home
+			</p>
+			{pathnames.map((item, index) => (
+				<React.Fragment key={index}>
+					<p>{'>'}</p>
+					<p
+						className={`cursor-pointer ${
+							index === pathnames.length - 1 ? 'font-bold' : ''
+						}`}
+						onClick={() => handleClick(index)}
+					>
+						{item}
+					</p>
+				</React.Fragment>
+			))}
+		</div>
+	);
+};
 
 export default Breadcrumb;
