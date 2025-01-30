@@ -1,47 +1,34 @@
 import React from 'react';
-import 'swiper/css'; // Import Swiper styles
-import 'swiper/css/effect-fade'; // Import fade effect style
-import { Swiper, SwiperSlide } from 'swiper/react';
-
-// Import components
-import CourseCard from '../components/Cards/CourseCard';
-import { createSlug } from '../utils/helper';
-// Import images
 import { Link } from 'react-router-dom';
-import BasicImg from '../assets/Images/landing page/course/basicsOfFinLiteracy.png';
-import EarnImg from '../assets/Images/landing page/course/Earn.png';
-import MoneyImg from '../assets/Images/landing page/course/money.png';
-import SaveImg from '../assets/Images/landing page/course/Save.png';
-
-const courseData = [
-	{ title: 'Understanding Money', img: MoneyImg },
-	{ title: 'Basics of Financial Literacy', img: BasicImg },
-	{ title: 'Earning Money', img: EarnImg },
-	{ title: 'Saving Money', img: SaveImg },
-].map((course) => ({
-	...course,
-	slug: createSlug(course.title), // Ensure slug is being created
-}));
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Autoplay, EffectFade, Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import CourseCard from '../components/Cards/CourseCard';
+import { courses } from '../utils/courseContent';
 
 const CourseCarousel = () => {
+	if (!courses || courses.length === 0) {
+		return <div>No courses available.</div>;
+	}
+
 	return (
 		<Swiper
-			className="mySwiper"
+			modules={[Navigation, Pagination, Autoplay, EffectFade]}
 			slidesPerView={4}
 			spaceBetween={20}
-			autoplay={{ delay: 3000 }}
-			navigation
-			pagination={{ clickable: true }}
-			effect="fade"
-			fadeEffect={{ crossFade: true }}
 		>
-			{courseData.map((course, index) => (
+			{courses.map((course, index) => (
 				<SwiperSlide key={course.slug}>
-					<Link
-						to={`/course/${course.slug}`}
-						className="w-full h-full flex justify-center"
-					>
-						<CourseCard title={course.title} img={course.img} index={index} />
+					<Link to={`/course/${course.slug}`}>
+						<CourseCard
+							title={course.title}
+							img={course.img}
+							description={course.description[0]}
+							index={index}
+						/>
 					</Link>
 				</SwiperSlide>
 			))}

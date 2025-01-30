@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CourseCard = ({ title, img, index }) => {
+const CourseCard = ({ title, img, index = 0 }) => {
 	const variantStyles = [
 		{
 			bg: 'bg-gradient-to-br from-yellow-700 to-orange-700',
@@ -17,15 +17,27 @@ const CourseCard = ({ title, img, index }) => {
 		},
 	];
 
+	// Automatically cycle through styles based on index
 	const selectedStyle = variantStyles[index % variantStyles.length];
 
 	return (
-		<div className="w-60 h-60 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-primary-b cursor-pointer">
+		<div className="w-60 h-60 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-primary-b cursor-pointer transition-transform duration-300 transform hover:scale-105">
+			{/* Gradient Blur Background */}
 			<span
 				className={`absolute w-36 h-36 rounded-full blur-2xl opacity-80 ${selectedStyle.bg} ${selectedStyle.position}`}
 			></span>
-			<div className="flex flex-col items-center gap-4">
-				<img src={img} alt={title} className="w-16 h-16 object-cover" />
+
+			{/* Content */}
+			<div className="flex flex-col items-center gap-4 z-10">
+				{/* Image */}
+				<img
+					src={img}
+					alt={title}
+					className="w-16 h-16 object-contain"
+					aria-hidden="true"
+				/>
+
+				{/* Title */}
 				<h3 className="text-white text-lg font-semibold text-center">
 					{title}
 				</h3>
