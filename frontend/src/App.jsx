@@ -8,18 +8,22 @@ import Needs from "./pages/courses/Needs";
 import VideoPage from "./pages/courses/VideoPage";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
+import Login from "./pages/logIn/Login";
 
 export default function App() {
   return (
-    <Router>
-    	<Routes>
-    		{/* Define routes for different pages */}
-    		<Route path="/" element={<Home />} />
-    		<Route path="/signup" element={<Signup />} />
-    		{/* Dynamic route for course page */}
-    		<Route path="/course/:slug" element={<CoursePage />} />
-    		<Route path="/landing-page" element={<LandingPage />} />
-    	</Routes>
-    </Router>
+    // <Router>
+    // 	<Routes>
+    // 		{/* Define routes for different pages */}
+    // 		<Route path="/" element={<Home />} />
+    // 		<Route path="/signup" element={<Signup />} />
+    // 		{/* Dynamic route for course page */}
+    // 		<Route path="/course/:slug" element={<CoursePage />} />
+    // 		<Route path="/landing-page" element={<LandingPage />} />
+    // 	</Routes>
+    // </Router>
+    <>
+      <Login />
+    </>
   );
 }
