@@ -76,7 +76,6 @@ const LandingPage = () => {
 					<h1 className="font-body text-4xl text-start font-bold mb-20">
 						TryOut
 					</h1>
-
 					{/* Grid Layout */}
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-8 w-4/5 mx-auto items-stretch">
 						{/* Left Column */}

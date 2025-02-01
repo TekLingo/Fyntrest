@@ -6,9 +6,6 @@ const Module = ({ thumbnail, title, description }) => {
     <div className="flex items-center justify-between rounded-2xl p-4 bg-bg-color max-w-3xl min-w-full h-80">
       {/* Thumbnail */}
       <div className="w-1/3 h-full mr-4 relative rounded-lg overflow-hidden">
-        <div className="absolute inset-0 bg-black bg-opacity-10 backdrop-blur-sm flex justify-center items-center text-text-g">
-          <MdOutlinePlayCircle className="text-3xl" size={60} />
-        </div>
         <iframe
           className="w-full h-full"
           src={thumbnail}

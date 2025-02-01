@@ -9,7 +9,7 @@ import Footer from '../../components/Footer';
 import Navbar from '../../components/Navbar';
 import courseData from '../../utils/userCourseData'; // Import the dummy data
 
-const LoginCoursePage = () => {
+const ModulePage = () => {
 	const { title, description, image, topicsCovered, modules, relatedCourses } =
 		courseData;
 
@@ -97,4 +97,4 @@ const LoginCoursePage = () => {
 	);
 };
 
-export default LoginCoursePage;
+export default ModulePage;

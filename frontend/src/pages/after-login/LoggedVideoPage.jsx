@@ -1,12 +1,11 @@
 import React from 'react';
 import { GoHome } from 'react-icons/go';
-import { IoCheckmarkOutline } from 'react-icons/io5';
 import { MdOutlinePlayCircle } from 'react-icons/md';
 import understanding from '../../assets/Images/landing page/course/basics-of-banking.png';
 import understandingImg from '../../assets/Images/landing page/course/Basics-of-budget-2.png';
 import Breadcrumb from '../../components/Breadcrumb';
 import Card from '../../components/Cards/Card';
-import Module from '../../components/Cards/Module';
+import PracticeTest from '../../components/Cards/PracticeTest';
 import UnlockCard from '../../components/Cards/UnlockCard';
 import Footer from '../../components/Footer';
 import Navbar from '../../components/Navbar';
@@ -92,18 +91,7 @@ const VideoPage = () => {
 						</div>
 					</div>
 				</div>
-				<UnlockCard />
-				{/* Check Out Section */}
-				<div className="mb-16">
-					<h2 className="text-4xl font-body font-bold mb-16">
-						People also Check Out!!
-					</h2>
-					<div className="flex justify-center gap-8">
-						{cardContent.map((item, index) => (
-							<Card key={index} title={item.title} img={item.img} />
-						))}
-					</div>
-				</div>
+				<PracticeTest />
 			</div>
 			<Footer />
 		</div>
