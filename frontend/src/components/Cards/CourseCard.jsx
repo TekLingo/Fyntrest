@@ -21,7 +21,7 @@ const CourseCard = ({ title, img, index = 0 }) => {
 	const selectedStyle = variantStyles[index % variantStyles.length];
 
 	return (
-		<div className="w-60 h-60 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-primary-b cursor-pointer transition-transform duration-300 transform hover:scale-105">
+		<div className="w-60 h-60 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-primary-b cursor-pointer">
 			{/* Gradient Blur Background */}
 			<span
 				className={`absolute w-36 h-36 rounded-full blur-2xl opacity-80 ${selectedStyle.bg} ${selectedStyle.position}`}
