@@ -43,7 +43,7 @@ const Login = () => {
           </button>
         </div>
         <div className="flex flex-col justify-center items-center gap-2 ">
-          <p className="">Forgot Password?</p>
+          <p>Forgot Password?</p>
           <p>
             Don't have an account?
             <a href="" className="text-secondary-lt hover:underline ml-2">
