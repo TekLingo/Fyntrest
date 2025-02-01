@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { MdKeyboardArrowRight, MdLock } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 const Glimpse = ({ content, description, topics }) => {
 	const [nav, setNav] = useState(false);
 
 	const handleNav = () => setNav((prev) => !prev);
 
+	const navigate = useNavigate();
+
+	const handelClick = () => {
+		navigate('/module');
+	};
+
 	return (
 		<div
 			className={`transition-all duration-300 ease-in-out ${
 				nav ? 'h-auto items-start' : 'h-20 items-center overflow-hidden'
 			} flex flex-col w-full bg-primary_p rounded-2xl font-body text-xl cursor-pointer`}
-			onClick={handleNav}
+			onClick={(handleNav, handelClick)}
 		>
 			<div className="p-6 w-full flex justify-between items-center">
 				<h1>{content}</h1>

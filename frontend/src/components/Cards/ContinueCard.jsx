@@ -11,7 +11,7 @@ const ContinueCard = () => {
 	const navigate = useNavigate();
 
 	const handleNavigate = () => {
-		navigate('/loginCoursePage');
+		navigate('/logged/course');
 	};
 
 	return (
