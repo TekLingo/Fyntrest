@@ -13,6 +13,7 @@ import Verify from './pages/auth/Verify';
 import CoursePage from './pages/courses/coursePage';
 import ModulePage from './pages/courses/ModulePage';
 import Home from './pages/Home';
+import LoggedProfilePage from './pages/after-login/LoggedProfilePage';
 
 export default function App() {
 	const isAuthenticated = localStorage.getItem('isLoggedIn'); // Simple auth check
