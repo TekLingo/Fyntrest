@@ -197,7 +197,7 @@ const LoggedProfilePage = () => {
                               </div>
                               <div>
                                 <p className="text-lg font-semibold">
-                                Name of the Module
+                                  Name of the Module
                                 </p>
                                 <p>Name of the course</p>
                               </div>
@@ -238,7 +238,31 @@ const LoggedProfilePage = () => {
                               </div>
                               <div>
                                 <p className="text-lg font-semibold">
-                                  Name of the ongoing Video
+                                  Quiz title
+                                </p>
+                                <p>Name of the Module</p>
+                                <p>Name of the course</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-4 hover:bg-primary_p w-auto rounded-xl flex flex-col gap-2">
+                          <h2 className="font-semibold text-xl">Games</h2>
+                          {/* Video redirect Section */}
+                          <div className="flex gap-4">
+                            <div className="flex-col flex gap-4 p-2 hover:bg-secondary-dt rounded-xl">
+                              {/* Video card */}
+                              <div className="bg-secondary-d w-96 h-60 rounded-xl">
+                                <iframe
+                                  className="w-full h-full rounded-xl"
+                                  src={Video[0]}
+                                  title="Course Video Thumbnail"
+                                  allowFullScreen
+                                />
+                              </div>
+                              <div>
+                                <p className="text-lg font-semibold">
+                                  Game Topic
                                 </p>
                                 <p>Name of the Module</p>
                                 <p>Name of the course</p>
