@@ -1,13 +1,12 @@
 import React from 'react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/Images/color-logo.png';
 
-const Register = () => {
+const Verify = () => {
 	const navigate = useNavigate();
 
 	const handleClick = () => {
-		navigate('/verify');
+		navigate('/personal-info');
 	};
 
 	const handleLoginClick = () => {
@@ -25,9 +24,9 @@ const Register = () => {
 				</div>
 				<div className="flex flex-col items-center gap-6 p-4 w-96">
 					<div className="flex flex-col w-full">
-						<label className="text-md font-medium mb-2">Email Address</label>
+						<label className="text-md font-medium mb-2">Enter Otp</label>
 						<input
-							type="email"
+							type="text"
 							className="w-full h-12 rounded-md p-2 text-lg text-text-d text-body bg-secondary-lt"
 						/>
 					</div>
@@ -36,7 +35,7 @@ const Register = () => {
 							className="w-full h-12 rounded-md text-md bg-secondary-l"
 							onClick={handleClick}
 						>
-							Verify
+							Reigster
 						</button>
 					</div>
 					<div className="flex flex-col justify-center items-center">
@@ -56,4 +55,4 @@ const Register = () => {
 	);
 };
 
-export default Register;
+export default Verify;

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoIosClose, IoIosMenu } from 'react-icons/io';
-import logo from '../assets/Images/Color Logo.png';
+import logo from '../assets/Images/color-logo.png';
 import GetStarted from './Buttons/GetStarted';
 import Hamburger from './Hamburger';
 

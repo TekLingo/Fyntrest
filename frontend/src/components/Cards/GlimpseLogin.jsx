@@ -10,7 +10,7 @@ const Glimpse = ({ content, description, topics }) => {
 	const handleNav = () => setNav((prev) => !prev);
 
 	const handelClick = () => {
-		navigate('/module/understanding-needs-and-wants');
+		navigate('/logged/module');
 	};
 
 	return (

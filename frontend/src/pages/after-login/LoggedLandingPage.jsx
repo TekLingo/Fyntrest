@@ -11,7 +11,7 @@ import PracticeTest from '../../components/Cards/PracticeTest';
 import Footer from '../../components/Footer';
 import Navbar2 from '../../components/Navbar2';
 
-const LandingPage = () => {
+const LoggedLandingPage = () => {
 	// Card content for related topics
 
 	return (
@@ -129,4 +129,4 @@ const LandingPage = () => {
 	);
 };
 
-export default LandingPage;
+export default LoggedLandingPage;
