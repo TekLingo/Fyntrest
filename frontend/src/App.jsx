@@ -11,6 +11,7 @@ import Verify from './pages/auth/Verify';
 import CoursePage from './pages/courses/coursePage';
 import ModulePage from './pages/courses/ModulePage';
 import Home from './pages/Home';
+import LoggedProfilePage from './pages/after-login/LoggedProfilePage';
 
 export default function App() {
 	return (
@@ -27,6 +28,7 @@ export default function App() {
 				<Route path="/logged/course" element={<LoginCoursePage />} />
 				<Route path="/logged/module" element={<LoggedModulePage />} />
 				<Route path="/logged/video" element={<LoggedVideoPage />} />
+				<Route path="/logged/profile" element={<LoggedProfilePage />} />
 			</Routes>
 		</Router>
 	);
