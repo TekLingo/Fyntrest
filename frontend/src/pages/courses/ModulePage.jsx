@@ -1,6 +1,8 @@
 import React from 'react';
 import { GoHome } from 'react-icons/go';
 import { IoCheckmarkOutline } from 'react-icons/io5';
+import basicsOfBanking from '../../assets/Images/landing page/course/basics-of-banking.png';
+import needs from '../../assets/Images/landing page/course/Needs.png';
 import Breadcrumb from '../../components/Breadcrumb';
 import Card from '../../components/Cards/Card';
 import Module from '../../components/Cards/Module';
@@ -10,7 +12,7 @@ import Navbar from '../../components/Navbar';
 import courseData from '../../utils/userCourseData'; // Import the dummy data
 
 const ModulePage = () => {
-	const { title, description, image, topicsCovered, modules, relatedCourses } =
+	const { title, description, topicsCovered, modules, relatedCourses } =
 		courseData;
 
 	return (
@@ -41,7 +43,7 @@ const ModulePage = () => {
 							</div>
 						</div>
 						<div>
-							<img src={image} alt={title} />
+							<img src={needs} alt={title} />
 						</div>
 					</div>
 				</div>
@@ -67,27 +69,32 @@ const ModulePage = () => {
 					</div>
 				</div>
 				{/* Glimpse of module */}
-				<div className="flex flex-col gap-6 py-6">
-					<h2 className="text-4xl font-body font-bold mb-12">
-						Glimpse of Module
-					</h2>
-					{modules.slice(0, 3).map((module, index) => (
-						<Module
-							key={index}
-							thumbnail={module.thumbnail}
-							title={module.title}
-							description={module.description}
-						/>
-					))}
+				<div className="py-4">
+					<h2 className="text-4xl font-body font-bold">Glimpse of Module</h2>
+					<div className="flex flex-col gap-6 py-6">
+						{modules.slice(0, 3).map((module, index) => (
+							<Module
+								key={index}
+								thumbnail={module.thumbnail}
+								title={module.title}
+								description={module.description}
+							/>
+						))}
+					</div>
+					<UnlockCard marginTop={240} />
 				</div>
-				<UnlockCard />
-				<div className="">
-					<h2 className="text-4xl font-body font-bold">
+				{/* Check Out Section */}
+				<div className="mb-16">
+					<h2 className="text-4xl font-body font-bold mb-16">
 						People also Check Out!!
 					</h2>
 					<div className="flex justify-center gap-8">
-						{relatedCourses.map((course, index) => (
-							<Card key={index} title={course.title} img={course.img} />
+						{relatedCourses.map((relatedCourse, index) => (
+							<Card
+								key={index}
+								title={relatedCourse.title}
+								img={basicsOfBanking}
+							/>
 						))}
 					</div>
 				</div>

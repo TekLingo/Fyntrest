@@ -31,6 +31,11 @@ const Navbar2 = () => {
 		}
 	};
 
+	// const handleLogout = () => {
+	// 	localStorage.removeItem('isLoggedIn');
+	// 	navigate('/login');
+	//  };
+
 	useEffect(() => {
 		if (nav) {
 			document.addEventListener('mousedown', handleClickOutside);

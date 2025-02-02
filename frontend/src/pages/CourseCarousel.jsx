@@ -10,9 +10,8 @@ import CourseCard from '../components/Cards/CourseCard';
 import { courses } from '../utils/courseContent';
 
 const CourseCarousel = () => {
-	if (!courses || courses.length === 0) {
-		return <div>No courses available.</div>;
-	}
+	// Get authentication state from localStorage
+	const isLoggedIn = localStorage.getItem('isLoggedIn');
 
 	return (
 		<Swiper
@@ -22,7 +21,13 @@ const CourseCarousel = () => {
 		>
 			{courses.map((course, index) => (
 				<SwiperSlide key={course.slug}>
-					<Link to={`/course/${course.slug}`}>
+					<Link
+						to={
+							isLoggedIn
+								? `/logged/course/${course.slug}`
+								: `/course/${course.slug}`
+						}
+					>
 						<CourseCard
 							title={course.title}
 							img={course.img}

@@ -12,7 +12,9 @@ const Login = () => {
 		navigate('/register');
 	};
 
+	// pages/auth/Login.jsx
 	const handleLoginNavigate = () => {
+		localStorage.setItem('isLoggedIn', 'true');
 		navigate('/logged/home');
 	};
 

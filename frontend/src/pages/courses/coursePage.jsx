@@ -66,7 +66,7 @@ const CoursePage = () => {
 							/>
 						))}
 					</div>
-					<UnlockCard />
+					<UnlockCard marginTop={'96'} />
 				</div>
 
 				{/* Check Out Section */}

@@ -1,15 +1,24 @@
 import React from 'react';
 import { GoHome } from 'react-icons/go';
 import { IoCheckmarkOutline } from 'react-icons/io5';
+import { useParams } from 'react-router-dom';
 import Breadcrumb from '../../components/Breadcrumb';
 import ModuleLogin from '../../components/Cards/ModuleLogin';
 import PracticeTest from '../../components/Cards/PracticeTest';
 import Footer from '../../components/Footer';
 import Navbar from '../../components/Navbar';
+import { courses } from '../../utils/courseContent';
 import courseData from '../../utils/userCourseData';
 
 const LoggedModulePage = () => {
 	const { title, description, image, topicsCovered, modules } = courseData;
+
+	const { moduleId } = useParams();
+
+	// Find module data dynamically
+	const moduleData = courses
+		.flatMap((course) => course.modules)
+		.find((module) => module.id === moduleId);
 
 	return (
 		<div>
