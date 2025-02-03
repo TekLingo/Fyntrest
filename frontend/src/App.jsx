@@ -39,7 +39,6 @@ export default function App() {
           path="/logged/profile-details"
           element={<LoggedProfileDetailPage />}
         />
-        <Route path="/logged/contact-us" element={<ContactUsPage />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
@@ -49,6 +48,7 @@ export default function App() {
             path="/logged/module/:moduleId"
             element={<LoggedModulePage />}
           />
+          <Route path="/logged/contact-us" element={<ContactUsPage />} />
           <Route path="/logged/video/:videoId" element={<LoggedVideoPage />} />
         </Route>
       </Routes>
