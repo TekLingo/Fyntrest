@@ -35,9 +35,12 @@ export default function App() {
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/logged/about-us" element={<AboutUsPage />} />
         <Route path="/logged/profile" element={<LoggedProfilePage />} />
-        <Route path="/logged/profile-details" element={<LoggedProfileDetailPage />} />
+        <Route
+          path="/logged/profile-details"
+          element={<LoggedProfileDetailPage />}
+        />
         <Route path="/logged/contact-us" element={<ContactUsPage />} />
-		
+
         {/* Protected Routes */}
         <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
           <Route path="/logged/home" element={<LoggedLandingPage />} />
