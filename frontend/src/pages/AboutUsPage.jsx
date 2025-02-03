@@ -49,7 +49,7 @@ const AboutUsPage = () => {
               education engaging, interactive, and accessible for all students.
             </p>
             <p>We aim to:</p>
-            <div>
+            <div className="flex gap-8">
               <AboutUsCard />
             </div>
             <p>
@@ -68,7 +68,7 @@ const AboutUsPage = () => {
               personal success and contribute to society.
             </p>
             <p>Our goal is to:</p>
-            <div>
+            <div className="flex gap-8">
               <AboutUsCard />
             </div>
             <p>

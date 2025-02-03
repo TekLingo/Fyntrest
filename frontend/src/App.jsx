@@ -16,6 +16,7 @@ import Home from "./pages/Home";
 import LoggedProfilePage from "./pages/after-login/LoggedProfilePage";
 import LoggedProfileDetailPage from "./pages/after-login/LoggedProfileDetailPage";
 import AboutUsPage from "./pages/AboutUsPage";
+import ContactUsPage from "./pages/ContactUsPage";
 
 export default function App() {
   const isAuthenticated = localStorage.getItem("isLoggedIn"); // Simple auth check
@@ -32,9 +33,10 @@ export default function App() {
         <Route path="/course/:slug" element={<CoursePage />} />
         <Route path="/module" element={<ModulePage />} />
         <Route path="/quiz" element={<Quiz />} />
-        <Route path="/about-us" element={<AboutUsPage />} />
+        <Route path="/logged/about-us" element={<AboutUsPage />} />
         <Route path="/logged/profile" element={<LoggedProfilePage />} />
         <Route path="/logged/profile-details" element={<LoggedProfileDetailPage />} />
+        <Route path="/logged/contact-us" element={<ContactUsPage />} />
 		
         {/* Protected Routes */}
         <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
