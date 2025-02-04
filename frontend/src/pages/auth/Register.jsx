@@ -1,13 +1,31 @@
-import React from 'react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/Images/color-logo.png';
+import axiosInstance from '../../utils/axiosInstance';
 
 const Register = () => {
+	const [email, setEmail] = useState('');
+	const [error, setError] = useState('');
 	const navigate = useNavigate();
 
-	const handleClick = () => {
-		navigate('/verify');
+	const handleClick = async () => {
+		try {
+			setError('');
+			const response = await axiosInstance.post('/api/auth/register', {
+				email,
+			});
+
+			navigate('/verify', { state: { email } });
+			console.log('Register response:', response.data);
+		} catch (error) {
+			console.error('Full error details:', {
+				message: error.message,
+				response: error.response?.data,
+				status: error.response?.status,
+				headers: error.response?.headers,
+			});
+			setError(error.response?.data?.message || error.message);
+		}
 	};
 
 	const handleLoginClick = () => {
@@ -28,6 +46,8 @@ const Register = () => {
 						<label className="text-md font-medium mb-2">Email Address</label>
 						<input
 							type="email"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
 							className="w-full h-12 rounded-md p-2 text-lg text-text-d text-body bg-secondary-lt"
 						/>
 					</div>

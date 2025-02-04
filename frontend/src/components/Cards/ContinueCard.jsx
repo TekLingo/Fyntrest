@@ -1,14 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GirlImg from '../../assets/Images/landing page/after-login/Girl.png';
 
 const ContinueCard = () => {
+	const [userName, setUserName] = useState('');
 	const vidStatus = ["Let's Start", "Let's Resume"];
-	const User = 'Sarthak';
 	const Video = [
 		'https://www.youtube.com/embed/86cpfsP0aPs?si=YDyEMqkXEWo2OS8M',
 	];
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const fetchUserName = async () => {
+			try {
+				const response = await fetch('/api/user', {
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
+					},
+				});
+
+				if (!response.ok) {
+					throw new Error('Failed to fetch user data');
+				}
+
+				const data = await response.json();
+				setUserName(data.firstName);
+			} catch (error) {
+				console.error('Error fetching user data:', error);
+				// Optional: Set default value or handle error
+				setUserName('User');
+			}
+		};
+
+		fetchUserName();
+	}, []);
 
 	const handleNavigate = () => {
 		navigate('/logged/course');
@@ -17,7 +42,7 @@ const ContinueCard = () => {
 	return (
 		<div>
 			<div className="text-primary-fp text-6xl font-bold font-title h-40">
-				<h1>Welcome {User}</h1>
+				<h1>Welcome {userName}</h1>
 			</div>
 			{/* Video Section */}
 			<div className="h-96 flex justify-around items-center">

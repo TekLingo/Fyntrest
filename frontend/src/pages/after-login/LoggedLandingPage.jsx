@@ -12,7 +12,6 @@ import Footer from '../../components/Footer';
 import Navbar2 from '../../components/Navbar2';
 
 const LoggedLandingPage = () => {
-	// Card content for related topics
 
 	return (
 		<div>

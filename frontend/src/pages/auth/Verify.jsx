@@ -1,12 +1,42 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../assets/Images/color-logo.png';
+import axiosInstance from '../../utils/axiosInstance';
 
 const Verify = () => {
+	const [otp, setOtp] = useState('');
 	const navigate = useNavigate();
+	const location = useLocation();
+	const { email } = location.state || {}; // Get email from previous step
 
-	const handleClick = () => {
-		navigate('/personal-info');
+	// Update handleClick in Verify component
+	const handleClick = async () => {
+		try {
+			console.log('Sending OTP verification request with email:', email);
+			const response = await axiosInstance.post(
+				'/api/auth/verify-otp',
+				{ email, otp },
+				{ headers: { 'Content-Type': 'application/json' } }
+			);
+
+			console.log('Verification successful:', response.data);
+			localStorage.setItem('registrationToken', response.data.token);
+			navigate('/personal-info');
+		} catch (error) {
+			console.error('Verification error:', error);
+			if (error.response) {
+				// The request was made and the server responded with a status code
+				// that falls out of the range of 2xx
+				console.error('Server responded with:', error.response.data);
+				console.error('Status code:', error.response.status);
+			} else if (error.request) {
+				// The request was made but no response was received
+				console.error('No response received:', error.request);
+			} else {
+				// Something happened in setting up the request that triggered an Error
+				console.error('Request setup error:', error.message);
+			}
+		}
 	};
 
 	const handleLoginClick = () => {
@@ -26,7 +56,9 @@ const Verify = () => {
 					<div className="flex flex-col w-full">
 						<label className="text-md font-medium mb-2">Enter Otp</label>
 						<input
-							type="text"
+							type="otp"
+							value={otp}
+							onChange={(e) => setOtp(e.target.value)}
 							className="w-full h-12 rounded-md p-2 text-lg text-text-d text-body bg-secondary-lt"
 						/>
 					</div>

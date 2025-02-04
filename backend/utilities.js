@@ -1,18 +1,34 @@
+// utilities.js
 const jwt = require('jsonwebtoken');
 
-function authenticateToken(req, res, next) {
+// Authentication middleware
+const authenticateToken = (req, res, next) => {
 	const authHeader = req.headers['authorization'];
 	const token = authHeader && authHeader.split(' ')[1];
 
-	// No Token, unauthorized
-	if (!token) return res.sendStatus(401);
+	if (!token)
+		return res.status(401).json({ message: 'Authentication required' });
 
 	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-		// Token invalid, forbidden
-		if (err) return res.sendStatus(401);
+		if (err)
+			return res.status(403).json({ message: 'Invalid or expired token' });
 		req.user = user;
 		next();
 	});
-}
+};
 
-module.exports = { authenticateToken };
+// Role checking middleware
+const checkRole = (roles) => {
+	return (req, res, next) => {
+		if (typeof roles === 'string') roles = [roles];
+		if (!roles.includes(req.user.role)) {
+			return res.status(403).json({ message: 'Unauthorized access' });
+		}
+		next();
+	};
+};
+
+module.exports = {
+	authenticateToken,
+	checkRole,
+};

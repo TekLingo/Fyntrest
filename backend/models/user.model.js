@@ -1,24 +1,35 @@
+// models/user.model.js
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
-	role: { type: String, enum: ['Student', 'Teacher', 'Admin'], required: true },
+const userSchema = new mongoose.Schema({
+	role: {
+		type: String,
+		enum: ['Student', 'Teacher', 'Admin'],
+		required: true,
+	},
 	firstName: { type: String, required: true },
-	lastName: { type: String },
+	lastName: String,
 	email: { type: String, unique: true, required: true },
-	gender: { type: String, enum: ['Male', 'Female'] },
+	gender: { type: String, enum: ['Male', 'Female', 'Other'] },
 	password: { type: String, required: true },
-	schoolId: { type: Schema.Types.ObjectId, ref: 'School' },
-	classId: { type: Schema.Types.ObjectId, ref: 'Class' },
+	school: { type: mongoose.Schema.Types.ObjectId, ref: 'School' },
+	class: { type: mongoose.Schema.Types.ObjectId, ref: 'Class' },
 	profilePicture: {
 		type: String,
-		default: '/assets/default-rofile.jpg',
+		default: '/assets/default-profile.jpg',
 	},
-	bio: { type: String },
+	bio: String,
 	coins: { type: Number, default: 0 },
 	streaks: { type: Number, default: 0 },
+	enrolledCourses: [
+		{
+			course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+			progress: { type: Number, default: 0 },
+			completed: { type: Boolean, default: false },
+		},
+	],
 	joinDate: { type: Date, default: Date.now },
-	lastLogin: { type: Date },
+	lastLogin: Date,
 });
 
 module.exports = mongoose.model('User', userSchema);
