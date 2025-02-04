@@ -166,6 +166,27 @@ app.post('/api/auth/login', async (req, res) => {
 	}
 });
 
+// Get User API
+app.get('/api/get-user', authenticateToken, async (req, res) => {
+	try {
+		const { userId } = req.user;
+		const user = await User.findById(userId);
+
+		if (!user) {
+			return res.status(404).json({ message: 'User not found' });
+		}
+
+		return res.json({
+			user,
+			message: 'User fetched successfully',
+		});
+	} catch (error) {
+		console.error('Error fetching user:', error);
+		res.status(500).json({ message: 'Server error' });
+	}
+});
+
+
 // --------------------------
 // School Routes
 // --------------------------
