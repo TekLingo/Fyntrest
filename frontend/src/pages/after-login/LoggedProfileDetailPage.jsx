@@ -7,30 +7,30 @@ const LoggedProfileDetailPage = () => {
   return (
     <div className="text-text-g flex-col gap-2 flex font-body">
       {/* makeshift navbar */}
-      <div className=" h-16 px-10 flex justify-between items-end">
+      <div className=" h-14 px-10 flex justify-between items-end">
         <LuArrowLeft className="w-auto h-8 cursor-pointer" />
         <div>
           <p className="text-secondary-dt text-xl cursor-pointer">Save</p>
         </div>
       </div>
       {/* Info section */}
-      <div className="flex items-center justify-center ">
+      <div className="flex items-center justify-center">
         {/* Image section */}
         <div className=" flex items-center justify-center">
           <img
             src={ProfileImg}
             alt=""
-            className="rounded-full flex self-end w-40 h-auto"
+            className="rounded-full flex self-end w-36 h-auto"
           />
-          <div className="h-12 w-12 flex justify-center items-center cursor-pointer text-secondary-d self-end hover:bg-secondary-d hover:text-text-g rounded-full">
-            <HiOutlinePencil className="w-auto h-8 " />
+          <div className="h-10 w-10 flex justify-center items-center cursor-pointer text-secondary-d self-end hover:bg-secondary-d hover:text-text-g rounded-full">
+            <HiOutlinePencil className="w-auto h-6 " />
           </div>
         </div>
       </div>
       {/* Edit section */}
-      <div className="">
+      <div className="flex w-full justify-center items-center">
         <div className="flex justify-center">
-          <div className="w-full grid grid-cols-2 gap-6 p-8 ">
+          <div className="w-full grid grid-cols-2 gap-6 p-8">
             <div className="col-span-1">
               <label className="text-text-g text-sm">First Name</label>
               <input
@@ -84,6 +84,11 @@ const LoggedProfileDetailPage = () => {
             </div>
           </div>
         </div>
+      </div>
+      {/* Acc Section */}
+      <div className="flex gap-20 justify-center items-center font-body">
+        <div className="cursor-pointer text-lg">Delete Account</div>
+        <div className="cursor-pointer text-[#FF474A] text-lg">Log Out</div>
       </div>
     </div>
   );
