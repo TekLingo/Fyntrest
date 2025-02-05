@@ -19,6 +19,7 @@ import Verify from './pages/auth/Verify';
 import CoursePage from './pages/courses/coursePage';
 import ModulePage from './pages/courses/ModulePage';
 import Home from './pages/Home';
+import LoggedLeaderboard from './pages/after-login/LoggedLeaderboard';
 
 export default function App() {
 	// Check for JWT token in localStorage
@@ -43,6 +44,7 @@ export default function App() {
 				<Route path="/course/:slug" element={<CoursePage />} />
 				<Route path="/module" element={<ModulePage />} />
 				<Route path="/quiz" element={<Quiz />} />
+				<Route path="/leaderboard" element={<LoggedLeaderboard />} />
 
 				{/* Protected Routes */}
 				<Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
