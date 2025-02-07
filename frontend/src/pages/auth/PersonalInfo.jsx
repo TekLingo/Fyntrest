@@ -5,7 +5,6 @@ import axiosInstance from '../../utils/axiosInstance';
 
 const PersonalInfo = () => {
 	const [activeSection, setActiveSection] = useState('personal');
-	const navigate = useNavigate();
 	const [error, setError] = useState('');
 	const [formData, setFormData] = useState({
 		firstName: '',
@@ -13,22 +12,36 @@ const PersonalInfo = () => {
 		gender: '',
 		password: '',
 		school: '',
-		class: '',
+		class: '', // using "class" as the field name as expected by the backend
 	});
+	const navigate = useNavigate();
 
+	// Handle input changes
 	const handleInputChange = useCallback((e) => {
+		const { name, value } = e.target;
 		setFormData((prev) => ({
 			...prev,
-			[e.target.name]: e.target.value,
+			[name]: value,
 		}));
 	}, []);
 
+	// Validate all required fields are present
 	const validateForm = () => {
+		const {
+			firstName,
+			lastName,
+			gender,
+			password,
+			school,
+			class: classVal,
+		} = formData;
 		if (
-			!formData.firstName ||
-			!formData.lastName ||
-			!formData.gender ||
-			!formData.password
+			!firstName ||
+			!lastName ||
+			!gender ||
+			!password ||
+			!school ||
+			!classVal
 		) {
 			setError('Please fill in all required fields.');
 			return false;
@@ -37,29 +50,55 @@ const PersonalInfo = () => {
 		return true;
 	};
 
+	// Handle form submission for completing registration
 	const handleSubmit = useCallback(async () => {
 		if (!validateForm()) return;
+
+		// Retrieve the registration token saved after OTP verification
+		const registrationToken = localStorage.getItem('registrationToken');
+		if (!registrationToken) {
+			setError(
+				'Registration token missing. Please restart the registration process.'
+			);
+			return;
+		}
+
+		// Build the payload. Ensure formData does not include any "token" field.
+		const payload = {
+			token: registrationToken,
+			...formData,
+		};
+
+		console.log('Payload:', JSON.stringify(payload));
+
 		try {
-			const registrationToken = localStorage.getItem('registrationToken');
+			// Override any Authorization header added by the axios interceptor
 			const response = await axiosInstance.post(
 				'/api/auth/complete-registration',
-				{
-					token: registrationToken,
-					...formData,
-				}
+				payload,
+				{ headers: { Authorization: '' } }
 			);
-
+			console.log('Registration success:', response.data);
 			localStorage.removeItem('registrationToken');
 			localStorage.setItem('token', response.data.token);
 			navigate('/logged/home');
 		} catch (error) {
-			setError('Registration failed. Please try again.');
 			console.error('Registration error:', error);
+			if (error.response?.data?.message) {
+				setError(`Registration failed: ${error.response.data.message}`);
+				console.error('Request failed with status code 400');
+				console.error('Headers sent:', error.config.headers);
+				console.error('Data sent:', error.config.data);
+				console.error('Status text:', error.response.statusText);
+			} else {
+				setError('Registration failed. Please try again.');
+			}
 		}
 	}, [formData, navigate]);
 
 	return (
 		<div className="flex flex-col items-center w-full h-screen absolute top-20">
+			{/* Step Navigation */}
 			<div className="flex justify-center items-center">
 				{['personal', 'details', 'payment'].map((section, index) => (
 					<div key={section} className="flex flex-col items-center">
@@ -86,10 +125,12 @@ const PersonalInfo = () => {
 				))}
 			</div>
 
+			{/* Error Message */}
 			{error && <p className="text-red-500 mt-4">{error}</p>}
 
 			<div className="w-full flex justify-center">
 				<div className="p-6 w-3/4 rounded-lg">
+					{/* Personal Information Section */}
 					{activeSection === 'personal' && (
 						<div className="flex flex-col gap-8 pt-6">
 							<h2 className="text-text-g font-bold font-title text-3xl">
@@ -154,6 +195,8 @@ const PersonalInfo = () => {
 							</FormButton>
 						</div>
 					)}
+
+					{/* Additional Details Section */}
 					{activeSection === 'details' && (
 						<div className="flex flex-col gap-4 pt-6 justify-center items-center">
 							<h2 className="text-text-g font-bold font-title text-3xl">
@@ -169,7 +212,7 @@ const PersonalInfo = () => {
 										name="school"
 										value={formData.school}
 										onChange={handleInputChange}
-										className="w-full h-12 rounded-md p-2 text-lg text-text-d text-body bg-secondary-lt"
+										className="w-full h-12 rounded-md p-2 text-lg text-text-d bg-secondary-lt"
 									/>
 								</div>
 							</div>
@@ -178,12 +221,12 @@ const PersonalInfo = () => {
 									Class
 								</label>
 								<select
-									className="w-full h-12 rounded-md p-2 text-lg text-text-d bg-secondary-lt border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
-									type="text"
 									name="class"
 									value={formData.class}
 									onChange={handleInputChange}
+									className="w-full h-12 rounded-md p-2 text-lg text-text-d bg-secondary-lt border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
 								>
+									<option value="">Select Class</option>
 									<option value="8th">8th</option>
 									<option value="9th">9th</option>
 									<option value="10th">10th</option>
@@ -194,6 +237,8 @@ const PersonalInfo = () => {
 							</FormButton>
 						</div>
 					)}
+
+					{/* Payment Section */}
 					{activeSection === 'payment' && (
 						<div className="flex flex-col gap-8 pt-6">
 							<h2 className="text-text-g font-bold font-title text-3xl">

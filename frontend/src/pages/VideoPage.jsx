@@ -1,15 +1,13 @@
 import React from 'react';
 import { GoHome } from 'react-icons/go';
-import { IoCheckmarkOutline } from 'react-icons/io5';
 import { MdOutlinePlayCircle } from 'react-icons/md';
 import understanding from '../../assets/Images/landing page/course/basics-of-banking.png';
 import understandingImg from '../../assets/Images/landing page/course/Basics-of-budget-2.png';
-import Breadcrumb from '../../components/Breadcrumb';
-import Card from '../../components/Cards/Card';
-import Module from '../../components/Cards/Module';
-import UnlockCard from '../../components/Cards/UnlockCard';
-import Footer from '../../components/Footer';
-import Navbar from '../../components/Navbar';
+import Breadcrumb from '../components/Breadcrumb';
+import Card from '../components/Cards/Card';
+import UnlockCard from '../components/Cards/UnlockCard';
+import Footer from '../components/Footer';
+import Navbar from '../components/Navbar';
 
 const VideoPage = () => {
 	const pageData = [

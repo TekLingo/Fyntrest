@@ -1,17 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoIosClose, IoIosMenu } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 import NavbarImg from '../assets/Images/after-signIn-navbar.png';
 import logo from '../assets/Images/color-logo.png';
 import CoinImg from '../assets/Images/landing page/after-login/coin.png';
 import ProfileImg from '../assets/Images/landing page/after-login/profile.png';
 import StreakImg from '../assets/Images/landing page/after-login/streak.png';
+import axiosInstance from '../utils/axiosInstance';
 import Hamburger from './Hamburger';
 
 const Navbar2 = () => {
-	const userData = [200, 5, ProfileImg];
-
 	const [nav, setNav] = useState(false);
 	const navRef = useRef(null);
+	const [userData, setUserData] = useState(null);
+
+	const navigate = useNavigate();
 
 	const handleNav = () => {
 		setNav(!nav);
@@ -31,10 +34,9 @@ const Navbar2 = () => {
 		}
 	};
 
-	// const handleLogout = () => {
-	// 	localStorage.removeItem('isLoggedIn');
-	// 	navigate('/login');
-	//  };
+	const handleClick = () => {
+		navigate('/logged/profile-detail');
+	};
 
 	useEffect(() => {
 		if (nav) {
@@ -45,12 +47,31 @@ const Navbar2 = () => {
 			window.removeEventListener('scroll', handleScroll);
 		}
 
-		// Cleanup
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 			window.removeEventListener('scroll', handleScroll);
 		};
 	}, [nav]);
+
+	// Fetch user data from backend
+	useEffect(() => {
+		const fetchUserData = async () => {
+			try {
+				const token = localStorage.getItem('authToken'); // Get token from local storage
+				const response = await axiosInstance.get('/api/get-user', {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				});
+				setUserData(response.data.user); // Set user data
+			} catch (error) {
+				console.error('Error fetching user data:', error);
+			}
+		};
+
+		fetchUserData();
+	}, []);
+
 	return (
 		<div>
 			<div className="relative text-text-g h-72">
@@ -74,7 +95,7 @@ const Navbar2 = () => {
 									size={40}
 									color="#d4cfdb"
 									className="hover:cursor-pointer absolute top-12 z-10"
-									onClick={handleNav} // Close the menu when clicked
+									onClick={handleNav}
 								/>
 							</div>
 						) : (
@@ -82,7 +103,7 @@ const Navbar2 = () => {
 								size={40}
 								color="#d4cfdb"
 								className="hover:cursor-pointer"
-								onClick={handleNav} // Toggle the nav state
+								onClick={handleNav}
 							/>
 						)}
 					</div>
@@ -92,19 +113,30 @@ const Navbar2 = () => {
 						<img src={logo} className="w-28 h-auto" alt="/" />
 					</div>
 
-					{/* personal section */}
+					{/* Personal Section */}
 					<div className="flex justify-between min-w-32 flex-row gap-8">
-						<div className="flex items-center justify-center gap-2">
-							<img src={CoinImg} alt="" />
-							<p>{userData[0]}</p>
-						</div>
-						<div className="flex items-center justify-center gap-2">
-							<img src={StreakImg} alt="" />
-							<p>{userData[1]}</p>
-						</div>
-						<div>
-							<img src={userData[2]} alt="" />
-						</div>
+						{userData ? (
+							<>
+								<div className="flex items-center justify-center gap-2">
+									<img src={CoinImg} alt="Coins" />
+									<p>{userData.coins || 0}</p>
+								</div>
+								<div className="flex items-center justify-center gap-2">
+									<img src={StreakImg} alt="Streak" />
+									<p>{userData.streak || 0}</p>
+								</div>
+								<div>
+									<img
+										src={userData.profileImage || ProfileImg}
+										alt="Profile"
+										className="w-10 h-10 rounded-full object-cover cursor-pointer"
+										onClick={handleClick}
+									/>
+								</div>
+							</>
+						) : (
+							<p>Loading...</p>
+						)}
 					</div>
 				</div>
 			</div>

@@ -20,9 +20,16 @@ const authenticateToken = (req, res, next) => {
 // Role checking middleware
 const checkRole = (roles) => {
 	return (req, res, next) => {
+		if (!req.user || !req.user.role) {
+			return res
+				.status(403)
+				.json({ message: 'Unauthorized access - No role assigned' });
+		}
 		if (typeof roles === 'string') roles = [roles];
 		if (!roles.includes(req.user.role)) {
-			return res.status(403).json({ message: 'Unauthorized access' });
+			return res
+				.status(403)
+				.json({ message: 'Unauthorized access - Role mismatch' });
 		}
 		next();
 	};

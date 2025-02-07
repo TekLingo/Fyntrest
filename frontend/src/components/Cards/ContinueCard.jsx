@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReactPlayer from 'react-player';
 import { useNavigate } from 'react-router-dom';
 import GirlImg from '../../assets/Images/landing page/after-login/Girl.png';
 import axiosInstance from '../../utils/axiosInstance';
@@ -6,13 +7,14 @@ import axiosInstance from '../../utils/axiosInstance';
 const ContinueCard = () => {
 	const [userName, setUserName] = useState('');
 	const [loading, setLoading] = useState(true);
-	const vidStatus = ["Let's Start", "Let's Resume"];
-	const videoUrl =
-		'https://www.youtube.com/embed/86cpfsP0aPs?si=YDyEMqkXEWo2OS8M';
+	const [videoStatus, setVideoStatus] = useState("Let's Start");
+	const [videoUrl, setVideoUrl] = useState('');
 	const navigate = useNavigate();
 
+	const videoBaseUrl = 'http://localhost:8000/uploads/course-videos'; // Video folder path
+
 	useEffect(() => {
-		const fetchUserName = async () => {
+		const fetchUserData = async () => {
 			try {
 				const token = localStorage.getItem('token');
 				if (!token) {
@@ -20,18 +22,42 @@ const ContinueCard = () => {
 					return;
 				}
 
-				const response = await axiosInstance.get('/api/get-user', {
+				// Fetch user data
+				const userResponse = await axiosInstance.get('/api/get-user', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 
-				const userData = response.data;
+				const userData = userResponse.data.user || {};
 				console.log('User Data:', userData);
-				setUserName(
-					userData?.user?.firstName || userData?.firstName || 'Guest'
-				);
+				setUserName(userData.firstName || 'Guest');
+
+				if (userData.enrolledCourses && userData.enrolledCourses.length > 0) {
+					const latestCourse =
+						userData.enrolledCourses[userData.enrolledCourses.length - 1];
+
+					if (latestCourse.progress === 0) {
+						setVideoStatus("Let's Start");
+
+						// Fetch video list from backend
+						const videoResponse = await axiosInstance.get(
+							'/api/get-course-videos'
+						);
+						const videoFiles = videoResponse.data.videos || [];
+
+						if (videoFiles.length > 0) {
+							const randomVideo =
+								videoFiles[Math.floor(Math.random() * videoFiles.length)];
+							setVideoUrl(`${videoBaseUrl}/${randomVideo}`);
+						} else {
+							setVideoUrl('');
+						}
+					} else {
+						setVideoStatus("Let's Resume");
+						setVideoUrl(latestCourse.course.videoUrl);
+					}
+				}
 			} catch (error) {
 				console.error('Error fetching user:', error);
-
 				if (error.response?.status === 401) {
 					localStorage.removeItem('token');
 					navigate('/login');
@@ -43,7 +69,7 @@ const ContinueCard = () => {
 			}
 		};
 
-		fetchUserName();
+		fetchUserData();
 	}, [navigate]);
 
 	const handleNavigate = () => {
@@ -51,7 +77,7 @@ const ContinueCard = () => {
 	};
 
 	if (loading) {
-		return <div>Loading...</div>; // Add proper loader component if available
+		return <div>Loading...</div>;
 	}
 
 	return (
@@ -73,24 +99,17 @@ const ContinueCard = () => {
 						/>
 					</div>
 					{/* Navigation Button */}
-					<div
-						className="flex text-3xl pt-8 cursor-pointer"
-						onClick={handleNavigate}
-					>
-						<p>{vidStatus[1]}</p>
+					<div className="flex text-3xl pt-8">
+						<p>{videoStatus}</p>
 					</div>
 				</div>
 
 				{/* Video Section */}
-				<div className="w-1/3 h-60 cursor-pointer">
-					<iframe
-						className="w-full h-full rounded-2xl"
-						src={videoUrl}
-						title="Course Video Thumbnail"
-						allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
-						allowFullScreen
-						sandbox="allow-scripts allow-same-origin"
-					/>
+				<div
+					className="w-1/3 h-60 cursor-pointer rounded-2xl bg-purple-300"
+					onClick={handleNavigate}
+				>
+					<ReactPlayer url={videoUrl} />
 				</div>
 			</div>
 		</div>

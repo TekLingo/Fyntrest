@@ -1,7 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import white_logo from '../../assets/Images/landing page/white_logo.png';
 
 const UnlockCard = ({ marginTop }) => {
+	const navigate = useNavigate();
+
+	const handleLoginClick = () => {
+		navigate('/login');
+	};
+
 	return (
 		<div
 			className="relative flex flex-col gap-24 items-center justify-center z-50 py-64 bg-money-gradient"
@@ -38,7 +45,11 @@ const UnlockCard = ({ marginTop }) => {
 				</li>
 			</div>
 			<div className="px-10 py-3 w-fit rounded-lg flex text-black bg-secondary-l shadow-lg ">
-				<button type="button" className="text-lg font-semibold">
+				<button
+					type="button"
+					className="text-lg font-semibold"
+					onClick={handleLoginClick}
+				>
 					Login to Upgrade
 				</button>
 			</div>
