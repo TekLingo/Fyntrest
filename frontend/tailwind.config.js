@@ -35,6 +35,21 @@ export default {
         "money-gradient":
           "linear-gradient(180deg, rgba(12,10,49,0) 0%, rgba(12,10,49,0.4) 3%, rgba(12,10,49,0.6) 5%, rgba(12,10,49,0.8) 10%, rgba(12,10,49,1) 20%)",
       },
+      animation: {
+        'bounce-slow': 'bounce-slow 3s infinite',
+        'float': 'float 6s infinite',
+        'float-delayed': 'float 6s infinite 1.5s',
+      },
+      keyframes: {
+        'bounce-slow': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+      },
     },
   },
   plugins: [],

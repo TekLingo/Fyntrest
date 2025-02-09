@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
 	Navigate,
 	Route,
@@ -74,11 +74,11 @@ const App = () => {
 
 // Additional guard for registration steps
 const RegistrationGuard = ({ children }) => {
-  const registrationToken = localStorage.getItem("registrationToken");
-  return registrationToken ? children : <Navigate to="/register" replace />;
+	const registrationToken = localStorage.getItem('registrationToken');
+	return registrationToken ? children : <Navigate to="/register" replace />;
 };
 
-// Define the Root component to handle the initial redirect
+// // Define the Root component to handle the initial redirect
 const Root = () => {
 	// Check if token exists is localstorage
 	const isAuthenticated = !!localStorage.getItem('token');

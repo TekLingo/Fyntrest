@@ -11,7 +11,6 @@ import Navbar from '../../components/Navbar';
 import { courses } from '../../utils/courseContent';
 
 const LoginCoursePage = () => {
-	const { slug } = useParams();
 	const course = courses[1];
 
 	if (!course) {

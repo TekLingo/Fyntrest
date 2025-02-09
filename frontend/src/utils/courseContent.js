@@ -32,7 +32,6 @@ export const pageContent = {
 
 export const courses = [
 	{
-		slug: 'basics-of-banking',
 		title: 'Basics of Banking',
 		img: basicsOfBanking,
 		description: [
@@ -114,7 +113,6 @@ export const courses = [
 		],
 	},
 	{
-		slug: 'basics-of-financial-literacy',
 		title: 'Basics of Financial Literacy',
 		img: basicsOfFinLiteracy,
 		description: [
@@ -196,7 +194,6 @@ export const courses = [
 		],
 	},
 	{
-		slug: 'understanding-money',
 		title: 'Understanding Money',
 		img: understandingMoney,
 		description: [
@@ -278,7 +275,6 @@ export const courses = [
 		],
 	},
 	{
-		slug: 'basics-of-budget',
 		title: 'Basics of Budget',
 		img: understandingMoney,
 		description: [

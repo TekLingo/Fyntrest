@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('./config.json');
 const upload = require('./multer');
+const path = require('path');
 
 // Middleware
 const { authenticateToken, checkRole } = require('./utilities');
@@ -32,6 +33,9 @@ app.use(
 		allowedHeaders: ['Content-Type', 'Authorization'],
 	})
 );
+
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --------------------------
 // Authentication Routes
@@ -260,6 +264,9 @@ app.post('/api/upload-course-video', upload.single('video'), (req, res) => {
 		const videoUrl = `${req.protocol}://${req.get(
 			'host'
 		)}/uploads/course-videos/${req.file.filename}`;
+		console.log('Uploaded file path:', req.file.path);
+		console.log('Generated URL:', videoUrl);
+
 		res.status(200).json({ message: 'Video uploaded successfully', videoUrl });
 	} catch (error) {
 		console.error('Error uploading video:', error);

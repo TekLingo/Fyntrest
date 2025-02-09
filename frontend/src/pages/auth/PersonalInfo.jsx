@@ -12,7 +12,7 @@ const PersonalInfo = () => {
 		gender: '',
 		password: '',
 		school: '',
-		class: '', // using "class" as the field name as expected by the backend
+		class: '',
 	});
 	const navigate = useNavigate();
 

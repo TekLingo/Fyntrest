@@ -45,15 +45,20 @@ const ContinueCard = () => {
 						const videoFiles = videoResponse.data.videos || [];
 
 						if (videoFiles.length > 0) {
+							console.log('videoFiles:', videoFiles);
 							const randomVideo =
 								videoFiles[Math.floor(Math.random() * videoFiles.length)];
-							setVideoUrl(`${videoBaseUrl}/${randomVideo}`);
+							console.log('randomVideo:', randomVideo);
+							setVideoUrl(`"${videoBaseUrl}/${randomVideo}"`);
+							console.log('Final video URL:', videoUrl);
 						} else {
+							console.log('videoFiles is empty or null.');
 							setVideoUrl('');
 						}
 					} else {
 						setVideoStatus("Let's Resume");
 						setVideoUrl(latestCourse.course.videoUrl);
+						console.log(latestCourse.course.videoUrl);
 					}
 				}
 			} catch (error) {
@@ -73,7 +78,7 @@ const ContinueCard = () => {
 	}, [navigate]);
 
 	const handleNavigate = () => {
-		navigate('/logged/course');
+		navigate('/logged/course/');
 	};
 
 	if (loading) {
@@ -106,10 +111,32 @@ const ContinueCard = () => {
 
 				{/* Video Section */}
 				<div
-					className="w-1/3 h-60 cursor-pointer rounded-2xl bg-purple-300"
+					className="w-1/3 h-60 cursor-pointer rounded-2xl overflow-hidden bg-purple-300"
 					onClick={handleNavigate}
 				>
-					<ReactPlayer url={videoUrl} />
+					{videoUrl ? (
+						<ReactPlayer
+							// url={videoUrl}
+							url="http://localhost:8000/uploads/course-videos/video-1739030282862-574686968.mp4"
+							playing={false}
+							controls={true}
+							width="100%"
+							height="100%"
+							className="object-cover w-full h-full" // Added width/height classes
+							config={{
+								file: {
+									attributes: {
+										controlsList: 'nodownload', // Add if needed
+									},
+								},
+							}}
+							onError={(error) => console.error('Video Error:', error)}
+						/>
+					) : (
+						<div className="w-full h-full flex items-center justify-center">
+							<p>No video available</p>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>
