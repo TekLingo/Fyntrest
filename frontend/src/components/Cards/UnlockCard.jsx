@@ -11,7 +11,7 @@ const UnlockCard = ({ marginTop }) => {
 
 	return (
 		<div
-			className="relative flex flex-col gap-24 items-center justify-center z-50 py-64 bg-money-gradient"
+			className="relative flex flex-col gap-24 items-center justify-center z-50 py-64 bg-money-gradient pointer-events-none"
 			style={{ marginTop: `-${marginTop}px` }}
 		>
 			<div className="flex flex-col gap-4 text-center">

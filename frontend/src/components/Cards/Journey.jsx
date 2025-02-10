@@ -2,6 +2,7 @@ import React from 'react';
 
 // Import images
 import completed from '../../assets/Images/landing page/after-login/completed.png';
+import end from '../../assets/Images/landing page/after-login/end-journey.png';
 import locked from '../../assets/Images/landing page/after-login/locked.png';
 import journeyPath from '../../assets/Images/landing page/after-login/path.png';
 import unlocked from '../../assets/Images/landing page/after-login/unlocked.png';
@@ -95,33 +96,33 @@ const courses = [
 const Journey = () => {
 	return (
 		<div className="my-40">
-			<div className="mx-[5%] border-4 rounded-3xl flex flex-col justify-center items-center gap-20 p-[5%] text-text-g border-secondary-lt">
+			<div className="mx-[5%] border-4 rounded-3xl flex flex-col justify-center items-center gap-20 p-[5%] text-text-g border-secondary-lt shadow-lg">
 				<h1 className="font-title text-3xl">Your Journey</h1>
 				<div className="relative w-full h-[1024px] overflow-scroll">
 					{/* Scrollable background image */}
 					<img
 						src={journeyPath}
 						alt="Journey Path"
-						className="absolute top-32 left-16 w-full h-full"
+						className="absolute top-20 left-12 object-cover m-8"
 					/>
-					<div className="relative z-10 flex flex-col gap-16">
+					<div className="relative z-10 flex flex-col gap-20">
 						{courses.map((course) => (
-							<div key={course.id} className="flex flex-col gap-16">
+							<div key={course.id} className="flex flex-col gap-28">
 								{/* Course Header */}
-								<div className="flex items-center gap-4">
-									<div className="w-[152px]">
+								<div className="flex items-center gap-12">
+									<div className="w-[124px]">
 										<img src={course.image} alt={course.title} />
 									</div>
-									<div className="text-3xl">
+									<div className="text-2xl">
 										<h3>Course {course.id}:</h3>
 										<h1>{course.title}</h1>
 									</div>
 								</div>
 
 								{/* Modules Grid */}
-								<div className="mx-24 px-8 gap-24 flex flex-wrap text-center">
+								<div className="mx-28 gap-x-16 gap-y-28 flex flex-wrap text-center">
 									{course.modules.map((module, index) => (
-										<div key={index} className="flex flex-col max-w-36 gap-2">
+										<div key={index} className="flex flex-col max-w-44 gap-2">
 											<img
 												src={statusImages[module.status]}
 												alt={module.status}
@@ -132,6 +133,19 @@ const Journey = () => {
 								</div>
 							</div>
 						))}
+						{/* End Journey */}
+						<div className="flex items-center justify-end gap-4">
+							<div className="w-[324px]">
+								<img
+									src={end}
+									alt="Completed"
+									className="w-[324px] h-[324px] object-contain"
+								/>
+							</div>
+							<div className="text-3xl w-48">
+								<h1>Continue next Semester</h1>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
