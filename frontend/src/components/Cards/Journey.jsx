@@ -96,20 +96,20 @@ const courses = [
 const Journey = () => {
 	return (
 		<div className="my-40">
-			<div className="mx-[5%] border-4 rounded-3xl flex flex-col justify-center items-center gap-20 p-[5%] text-text-g border-secondary-lt shadow-lg">
+			<div className="mx-[5%] border-4 rounded-3xl flex flex-col justify-center items-center gap-12 px-[5%] pt-[5%] text-text-g border-secondary-lt shadow-lg">
 				<h1 className="font-title text-3xl">Your Journey</h1>
-				<div className="relative w-full h-[1024px] overflow-scroll">
+				<div className="relative w-full h-[760px] overflow-scroll">
 					{/* Scrollable background image */}
 					<img
 						src={journeyPath}
 						alt="Journey Path"
-						className="absolute top-20 left-12 object-cover m-8"
+						className="absolute top-28 object-cover"
 					/>
-					<div className="relative z-10 flex flex-col gap-20">
+					<div className="relative z-10 flex flex-col gap-28">
 						{courses.map((course) => (
-							<div key={course.id} className="flex flex-col gap-28">
+							<div key={course.id} className="flex flex-col gap-36">
 								{/* Course Header */}
-								<div className="flex items-center gap-12">
+								<div className="flex items-center gap-4">
 									<div className="w-[124px]">
 										<img src={course.image} alt={course.title} />
 									</div>
@@ -120,7 +120,7 @@ const Journey = () => {
 								</div>
 
 								{/* Modules Grid */}
-								<div className="mx-28 gap-x-16 gap-y-28 flex flex-wrap text-center">
+								<div className="mx-28 gap-x-16 gap-y-32 flex flex-wrap text-center">
 									{course.modules.map((module, index) => (
 										<div key={index} className="flex flex-col max-w-44 gap-2">
 											<img
@@ -134,12 +134,12 @@ const Journey = () => {
 							</div>
 						))}
 						{/* End Journey */}
-						<div className="flex items-center justify-end gap-4">
-							<div className="w-[324px]">
+						<div className="relative flex items-center justify-end -top-28">
+							<div className="w-[300px]">
 								<img
 									src={end}
 									alt="Completed"
-									className="w-[324px] h-[324px] object-contain"
+									className="w-[300px] h-[300px] object-contain"
 								/>
 							</div>
 							<div className="text-3xl w-48">
