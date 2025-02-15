@@ -3,8 +3,11 @@ import Navbar2 from "../components/Navbar2";
 import Footer from "../components/Footer";
 import Breadcrumb from "../components/Breadcrumb";
 import BlogImg from "../assets/Images/Blog.png";
+import BlogReadCard from "../components/Cards/BlogReadCard";
 
 const BlogOpenPage = () => {
+  const MoreBlogs = ["lol", "hi", "lol"];
+
   return (
     <div className="flex flex-col gap-12">
       <Navbar2 />
@@ -103,6 +106,14 @@ const BlogOpenPage = () => {
               natus nisi illo rerum tempora commodi?
             </p>
           </div>
+        </div>
+      </div>
+      <div className="text-text-g flex flex-col gap-8 md:mx-28 mx-5">
+        <h4 className="place-self-center font-body text-3xl">Also Read</h4>
+        <div className="flex gap-10">
+          {MoreBlogs.map((blog, index) => (
+            <BlogReadCard key={index} title={blog} />
+          ))}
         </div>
       </div>
       <Footer />
