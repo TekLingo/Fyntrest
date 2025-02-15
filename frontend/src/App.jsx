@@ -21,6 +21,7 @@ import CoursePage from "./pages/courses/coursePage";
 import ModulePage from "./pages/courses/ModulePage";
 import Home from "./pages/Home";
 import BlogPage from "./pages/BlogPage";
+import BlogOpenPage from "./pages/BlogOpenPage";
 
 const App = () => {
   // Check for JWT token in localStorage
@@ -44,6 +45,7 @@ const App = () => {
           }
         />
         <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog-open" element={<BlogOpenPage />} />
         <Route path="/course/:slug" element={<CoursePage />} />
         <Route path="/module" element={<ModulePage />} />
         <Route path="/quiz" element={<Quiz />} />
