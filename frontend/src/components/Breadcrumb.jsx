@@ -42,7 +42,12 @@ const Breadcrumb = ({ items }) => {
 	};
 
 	return (
+<<<<<<< HEAD
 		<div className="flex flex-row items-center justify-start gap-2 mx-28 text-text-g">
+=======
+		<div className="flex flex-row items-center justify-start gap-2 md:mx-28 mx-5 text-text-g">
+			{/* Home breadcrumb */}
+>>>>>>> 224da3e96effd613734761e7bab4c96896b788a8
 			<p className="cursor-pointer font-semibold" onClick={() => navigate('/')}>
 				Home
 			</p>
