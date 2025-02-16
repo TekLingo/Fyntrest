@@ -58,7 +58,7 @@ const Navbar2 = () => {
 		const fetchUserData = async () => {
 			try {
 				const token = localStorage.getItem('authToken'); // Get token from local storage
-				const response = await axiosInstance.get('/api/get-user', {
+				const response = await axiosInstance.get('/get-user', {
 					headers: {
 						Authorization: `Bearer ${token}`,
 					},
@@ -123,7 +123,7 @@ const Navbar2 = () => {
 								</div>
 								<div className="flex items-center justify-center gap-2">
 									<img src={StreakImg} alt="Streak" />
-									<p>{userData.streak || 0}</p>
+									<p>{userData.streaks || 0}</p>
 								</div>
 								<div>
 									<img

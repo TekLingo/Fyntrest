@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('./config.json');
 const upload = require('./multer');
+const fs = require('fs');
 const path = require('path');
 
 // Middleware
@@ -15,8 +16,11 @@ const { authenticateToken, checkRole } = require('./utilities');
 const TempUser = require('./models/temp-user.model');
 const User = require('./models/user.model');
 const School = require('./models/school.model');
-const Class = require('./models/class.model');
 const Course = require('./models/course.model');
+const Semester = require('./models/semester.model');
+const Module = require('./models/module.model');
+const Video = require('./models/video.model');
+const Enrollment = require('./models/enrollment.model');
 
 // Database Connection
 mongoose.connect(config.connectionString);
@@ -24,10 +28,9 @@ mongoose.connect(config.connectionString);
 // Express Setup
 const app = express();
 app.use(express.json());
-// In index.js replace cors middleware with:
 app.use(
 	cors({
-		origin: 'http://localhost:5173',
+		origin: '*',
 		methods: ['GET', 'POST', 'PUT', 'DELETE'],
 		credentials: true,
 		allowedHeaders: ['Content-Type', 'Authorization'],
@@ -36,11 +39,46 @@ app.use(
 
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+// Function to check if the selected image exists in the assets folder
+const isValidImage = (imageName) => {
+	const assetsPath = path.join(__dirname, 'assets'); // Adjust as needed
+	const imageFiles = fs.readdirSync(assetsPath);
+	return imageFiles.includes(imageName);
+};
+
+// Get Available Images for Selection
+app.get(
+	'/available-images',
+	authenticateToken,
+	checkRole('admin'),
+	(req, res) => {
+		try {
+			const assetsPath = path.join(__dirname, 'assets'); // Adjust as needed
+			const imageFiles = fs.readdirSync(assetsPath);
+
+			// Get base URL dynamically (replace with actual domain in production)
+			const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+			res.status(200).json({
+				images: imageFiles.map((img) => ({
+					name: img,
+					url: `${baseUrl}/assets/${img}`,
+				})),
+			});
+		} catch (error) {
+			res
+				.status(500)
+				.json({ message: 'Error fetching images', error: error.message });
+		}
+	}
+);
 
 // --------------------------
 // Authentication Routes
 // --------------------------
-app.post('/api/auth/register', async (req, res) => {
+app.post('/register', async (req, res) => {
 	try {
 		const { email } = req.body;
 
@@ -59,7 +97,7 @@ app.post('/api/auth/register', async (req, res) => {
 	}
 });
 
-app.post('/api/auth/verify-otp', async (req, res) => {
+app.post('/verify-otp', async (req, res) => {
 	try {
 		const { email, otp } = req.body;
 		const tempUser = await TempUser.findOne({ email });
@@ -80,7 +118,7 @@ app.post('/api/auth/verify-otp', async (req, res) => {
 	}
 });
 
-app.post('/api/auth/complete-registration', async (req, res) => {
+app.post('/complete-registration', async (req, res) => {
 	try {
 		// Rename "class" to "userClass" during destructuring:
 		const {
@@ -126,7 +164,7 @@ app.post('/api/auth/complete-registration', async (req, res) => {
 	}
 });
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/login', async (req, res) => {
 	try {
 		const { email, password } = req.body;
 
@@ -188,8 +226,8 @@ app.post('/api/auth/login', async (req, res) => {
 	}
 });
 
-// Get User API
-app.get('/api/get-user', authenticateToken, async (req, res) => {
+// Get User
+app.get('/get-user', authenticateToken, async (req, res) => {
 	try {
 		const { userId } = req.user;
 		const user = await User.findById(userId);
@@ -208,8 +246,8 @@ app.get('/api/get-user', authenticateToken, async (req, res) => {
 	}
 });
 
-// Update User API
-app.put('/api/update-user', authenticateToken, async (req, res) => {
+// Update User
+app.put('/update-user', authenticateToken, async (req, res) => {
 	try {
 		// Assuming `authenticateToken` middleware sets req.user.userId
 		const { userId } = req.user;
@@ -234,7 +272,7 @@ app.put('/api/update-user', authenticateToken, async (req, res) => {
 });
 
 // Delete User
-app.delete('/api/delete-user', authenticateToken, async (req, res) => {
+app.delete('/delete-user', authenticateToken, async (req, res) => {
 	try {
 		const { userId } = req.user;
 		const deletedUser = await User.findByIdAndDelete(userId);
@@ -251,160 +289,172 @@ app.delete('/api/delete-user', authenticateToken, async (req, res) => {
 });
 
 // --------------------------
-// Courses Routes
+// Video Upload
 // --------------------------
-
-// Upload course video
-app.post('/api/upload-course-video', upload.single('video'), (req, res) => {
+app.post('/upload-video', upload.single('video'), (req, res) => {
 	try {
 		if (!req.file) {
 			return res.status(400).json({ message: 'No video file uploaded' });
 		}
 
-		const videoUrl = `${req.protocol}://${req.get(
-			'host'
-		)}/uploads/course-videos/${req.file.filename}`;
-		console.log('Uploaded file path:', req.file.path);
-		console.log('Generated URL:', videoUrl);
-
+		const videoUrl = `${req.protocol}://${req.get('host')}/uploads/videos/${
+			req.file.filename
+		}`;
 		res.status(200).json({ message: 'Video uploaded successfully', videoUrl });
 	} catch (error) {
-		console.error('Error uploading video:', error);
 		res
 			.status(500)
 			.json({ message: 'Error uploading video', error: error.message });
 	}
 });
 
-// Add a course
-app.post(
-	'/api/add-course',
-	authenticateToken,
-	checkRole('Admin'), // Restrict to Admins
-	async (req, res) => {
-		try {
-			const { title, description, module, semester, videoUrl } = req.body;
-			const user = req.user;
+// --------------------------
+// Semester Routes
+// --------------------------
 
-			// Validate required fields
-			if (!title || !description || !module || !semester || !videoUrl) {
-				return res.status(400).json({ message: 'All fields are required' });
-			}
-
-			// Ensure userId exists
-			if (!user || !user.userId) {
-				return res
-					.status(401)
-					.json({ message: 'Unauthorized: No user ID found' });
-			}
-
-			// Convert userId string to ObjectId
-			const newCourse = new Course({
-				title,
-				description,
-				videoUrl,
-				module,
-				semester,
-				createdBy: new mongoose.Types.ObjectId(user.userId),
-			});
-
-			const savedCourse = await newCourse.save();
-			res
-				.status(201)
-				.json({ message: 'Course created successfully', course: savedCourse });
-		} catch (error) {
-			console.error('Error creating course:', error);
-			res
-				.status(500)
-				.json({ message: 'Error creating course', error: error.message });
-		}
-	}
-);
-
-// Update a course
-app.put('/api/update-course/:courseId', authenticateToken, async (req, res) => {
+// Get all semesters
+app.get('/get-semesters', async (req, res) => {
 	try {
-		const { title, description, videoUrl, module, semester } = req.body;
-		const courseId = req.params.courseId;
+		const semesters = await Semester.find().populate('courses', 'title');
 
-		if (!title || !description || !videoUrl || !module || !semester) {
-			return res.status(400).json({ message: 'All fields are required' });
+		if (!semesters || semesters.length === 0) {
+			return res.status(404).json({ message: 'No semesters found' });
 		}
-
-		const course = await Course.findById(courseId);
-		if (!course) {
-			return res.status(404).json({ message: 'Course not found' });
-		}
-
-		// Check if user is Admin or creator
-		if (req.user.role !== 'Admin' && !course.createdBy.equals(req.user._id)) {
-			return res
-				.status(403)
-				.json({ message: 'Unauthorized to update this course' });
-		}
-
-		const updatedCourse = await Course.findByIdAndUpdate(
-			courseId,
-			{ title, description, videoUrl, module, semester, updatedAt: Date.now() },
-			{ new: true }
-		);
-
-		res
-			.status(200)
-			.json({ message: 'Course updated successfully', course: updatedCourse });
+		res.status(200).json(semesters);
 	} catch (error) {
-		console.error('Error updating course:', error);
 		res
 			.status(500)
-			.json({ message: 'Error updating course', error: error.message });
+			.json({ message: 'Error fetching semesters', error: error.message });
 	}
 });
 
-// Delete a course
-app.delete(
-	'/api/delete-course/:courseId',
+// Add a semester
+app.post(
+	'/add-semester',
 	authenticateToken,
+	checkRole('admin'),
 	async (req, res) => {
-		// Removed checkRole('Admin') middleware
 		try {
-			const courseId = req.params.courseId;
-			const course = await Course.findById(courseId);
-
-			if (!course) {
-				return res.status(404).json({ message: 'Course not found' });
+			const { name } = req.body;
+			if (!name) {
+				return res.status(400).json({ message: 'Semester name is required' });
 			}
 
-			// Allow Admins or creators to delete
-			if (req.user.role !== 'Admin' && !course.createdBy.equals(req.user._id)) {
-				return res
-					.status(403)
-					.json({ message: 'Unauthorized to delete this course' });
-			}
-
-			await Course.findByIdAndDelete(courseId);
-			res.status(200).json({ message: 'Course deleted successfully' });
+			const newSemester = new Semester({ name });
+			const savedSemester = await newSemester.save();
+			res.status(201).json({
+				message: 'Semester added successfully',
+				semester: savedSemester,
+			});
 		} catch (error) {
-			console.error('Error deleting course:', error);
 			res
 				.status(500)
-				.json({ message: 'Error deleting course', error: error.message });
+				.json({ message: 'Error adding semester', error: error.message });
 		}
 	}
 );
 
-// Get course details
-app.get('/api/get-course/:courseId', async (req, res) => {
+// Delete a Semester
+app.delete(
+	'/delete-semester/:semesterId',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const semesterId = req.params.semesterId;
+			const semester = await Semester.findById(semesterId);
+			if (!semester)
+				return res.status(404).json({ message: 'Semester not found' });
+
+			// Find all courses associated with the semester
+			const courses = await Course.find({ semester: semesterId });
+
+			for (const course of courses) {
+				// For each course, find its modules
+				const modules = await Module.find({ _id: { $in: course.modules } });
+				for (const module of modules) {
+					// Delete all videos in the module
+					await Video.deleteMany({ _id: { $in: module.videos } });
+					// Delete the module itself
+					await Module.findByIdAndDelete(module._id);
+				}
+				// Delete the course
+				await Course.findByIdAndDelete(course._id);
+			}
+
+			// Finally, delete the semester
+			await Semester.findByIdAndDelete(semesterId);
+
+			res.status(200).json({
+				message:
+					'Semester and all its courses, modules, and videos deleted successfully',
+			});
+		} catch (error) {
+			res
+				.status(500)
+				.json({ message: 'Error deleting semester', error: error.message });
+		}
+	}
+);
+
+// --------------------------
+// Course Routes
+// --------------------------
+
+// Add a course
+app.post(
+	'/add-course',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const { title, description, semesterId, image } = req.body;
+			const userId = req.user.userId;
+
+			if (!title || !description || !semesterId || !image) {
+				return res.status(400).json({ message: 'All fields are required' });
+			}
+
+			if (!isValidImage(image)) {
+				return res.status(400).json({ message: 'Invalid image selection' });
+			}
+
+			const baseUrl = `${req.protocol}://${req.get('host')}`; // Get dynamic base URL
+			const imageUrl = `${baseUrl}/assets/${image}`; // Generate full image URL
+
+			const newCourse = new Course({
+				title,
+				description,
+				image: imageUrl,
+				semester: semesterId,
+				createdBy: new mongoose.Types.ObjectId(userId),
+			});
+
+			const savedCourse = await newCourse.save();
+
+			// Add course to semester
+			await Semester.findByIdAndUpdate(semesterId, {
+				$push: { courses: savedCourse._id },
+			});
+
+			res
+				.status(201)
+				.json({ message: 'Course added successfully', course: savedCourse });
+		} catch (error) {
+			res
+				.status(500)
+				.json({ message: 'Error adding course', error: error.message });
+		}
+	}
+);
+
+// Get course by ID
+app.get('/courses/:courseId', async (req, res) => {
 	try {
 		const { courseId } = req.params;
-
-		// Validate if courseId is a valid ObjectId
-		if (!mongoose.Types.ObjectId.isValid(courseId)) {
-			return res.status(400).json({ message: 'Invalid Course ID' });
-		}
-
-		const course = await Course.findById(courseId)
-			.populate('enrolledStudents.userId', 'firstName lastName')
-			.select('-__v'); // Exclude version key
+		const course = await Course.findById(req.params.courseId).populate(
+			'modules'
+		); // Adjust the fields as needed
 
 		if (!course) {
 			return res.status(404).json({ message: 'Course not found' });
@@ -415,184 +465,303 @@ app.get('/api/get-course/:courseId', async (req, res) => {
 		console.error('Error fetching course:', error);
 		res
 			.status(500)
-			.json({ message: 'Internal server error', error: error.message });
+			.json({ message: 'Error fetching course', error: error.message });
+	}
+});
+
+// Get courses for a semester
+app.get('/courses/:semesterId', async (req, res) => {
+	try {
+		const courses = await Course.find({
+			semester: req.params.semesterId,
+		}).populate('modules', 'title');
+		res.status(200).json(courses);
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: 'Error fetching courses', error: error.message });
+	}
+});
+
+// Update a course
+app.put('/update-course/:courseId', authenticateToken, async (req, res) => {
+	try {
+		const { title, description } = req.body;
+		const courseId = req.params.courseId;
+
+		const course = await Course.findById(courseId);
+		if (!course) return res.status(404).json({ message: 'Course not found' });
+
+		// Only admins or the creator can update
+		if (
+			req.user.role !== 'admin' &&
+			!course.createdBy.equals(req.user.userId)
+		) {
+			return res.status(403).json({ message: 'Unauthorized' });
+		}
+
+		course.title = title || course.title;
+		course.description = description || course.description;
+		await course.save();
+
+		res.status(200).json({ message: 'Course updated successfully', course });
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: 'Error updating course', error: error.message });
+	}
+});
+
+// Delete a course
+app.delete('/delete-course/:courseId', authenticateToken, async (req, res) => {
+	try {
+		const courseId = req.params.courseId;
+		const course = await Course.findById(courseId);
+		if (!course) return res.status(404).json({ message: 'Course not found' });
+
+		// Only admin or creator can delete the course
+		if (
+			req.user.role !== 'admin' &&
+			!course.createdBy.equals(req.user.userId)
+		) {
+			return res.status(403).json({ message: 'Unauthorized' });
+		}
+
+		// Find and delete modules and their videos for this course
+		const modules = await Module.find({ _id: { $in: course.modules } });
+		for (const module of modules) {
+			await Video.deleteMany({ _id: { $in: module.videos } });
+			await Module.findByIdAndDelete(module._id);
+		}
+
+		// Delete the course
+		await Course.findByIdAndDelete(courseId);
+		res.status(200).json({
+			message: 'Course and its modules and videos deleted successfully',
+		});
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: 'Error deleting course', error: error.message });
 	}
 });
 
 // --------------------------
-// School Routes
+// Module Routes
 // --------------------------
-app.post(
-	'/api/schools',
-	authenticateToken,
-	checkRole('Admin'),
 
-	async (req, res) => {
-		try {
-			const school = new School({
-				...req.body,
-				admin: req.user.userId,
-			});
-			await school.save();
-			res.status(201).json(school);
-		} catch (error) {
-			res.status(400).json({ message: error.message });
-		}
-	}
-);
-
-app.get('/api/schools', async (req, res) => {
+// GET Module by ID
+app.get('/modules/:moduleId', async (req, res) => {
 	try {
-		const schools = await School.find().populate(
-			'admin',
-			'firstName lastName email'
+		const { moduleId } = req.params;
+		let moduleData = await Module.findById(moduleId).populate(
+			'videos',
+			'title url duration'
 		);
-		res.json(schools);
+		if (!moduleData) {
+			return res.status(404).json({ message: 'Module not found' });
+		}
+		// Convert to plain object and add videoSrc to each video (so UI can use topic.videoSrc)
+		moduleData = moduleData.toObject();
+		if (Array.isArray(moduleData.videos)) {
+			moduleData.videos = moduleData.videos.map((video) => ({
+				...video,
+				videoSrc: video.url,
+			}));
+		}
+		res.status(200).json(moduleData);
 	} catch (error) {
-		res.status(500).json({ message: 'Server error' });
+		console.error('Error fetching module:', error);
+		res
+			.status(500)
+			.json({ message: 'Error fetching module', error: error.message });
 	}
 });
 
-app.get('/api/schools/:id', async (req, res) => {
-	try {
-		const school = await School.findById(req.params.id)
-			.populate('admin', 'firstName lastName email')
-			.populate('classes');
-		school
-			? res.json(school)
-			: res.status(404).json({ message: 'School not found' });
-	} catch (error) {
-		res.status(500).json({ message: 'Server error' });
-	}
-});
-
-app.put(
-	'/api/schools/:id',
-	authenticateToken,
-	checkRole('Admin'),
-	async (req, res) => {
-		try {
-			const school = await School.findByIdAndUpdate(
-				req.params.id,
-				{ ...req.body, updatedAt: Date.now() },
-				{ new: true }
-			);
-			res.json(school);
-		} catch (error) {
-			res.status(400).json({ message: error.message });
-		}
-	}
-);
-
-app.delete(
-	'/api/schools/:id',
-	authenticateToken,
-	checkRole('Admin'),
-	async (req, res) => {
-		try {
-			await School.findByIdAndDelete(req.params.id);
-			res.json({ message: 'School deleted successfully' });
-		} catch (error) {
-			res.status(500).json({ message: 'Server error' });
-		}
-	}
-);
-
-// --------------------------
-// Class Routes
-// --------------------------
+// Add a module to a course
 app.post(
-	'/api/classes',
+	'/add-module',
 	authenticateToken,
-	checkRole(['Admin', 'Teacher']),
+	checkRole('admin'),
 	async (req, res) => {
 		try {
-			const newClass = new Class({
-				...req.body,
-				teacher:
-					req.user.role === 'Teacher' ? req.user.userId : req.body.teacher,
+			const { title, description, courseId, image } = req.body;
+			if (!title || !courseId || !image)
+				return res
+					.status(400)
+					.json({ message: 'Title, courseId, and image are required' });
+
+			if (!isValidImage(image)) {
+				return res.status(400).json({ message: 'Invalid image selection' });
+			}
+
+			const baseUrl = `${req.protocol}://${req.get('host')}`; // Get dynamic base URL
+			const imageUrl = `${baseUrl}/assets/${image}`; // Generate full image URL
+
+			const newModule = new Module({
+				title,
+				description,
+				image: imageUrl,
 			});
-			await newClass.save();
-			res.status(201).json(newClass);
+			const savedModule = await newModule.save();
+
+			await Course.findByIdAndUpdate(courseId, {
+				$push: { modules: savedModule._id },
+			});
+
+			res
+				.status(201)
+				.json({ message: 'Module added successfully', module: savedModule });
 		} catch (error) {
-			res.status(400).json({ message: error.message });
+			res
+				.status(500)
+				.json({ message: 'Error adding module', error: error.message });
 		}
 	}
 );
 
-app.get('/api/schools/:schoolId/api/classes', async (req, res) => {
-	try {
-		const classes = await Class.find({ school: req.params.schoolId })
-			.populate('teacher', 'firstName lastName')
-			.populate('students', 'firstName lastName email');
-		res.json(classes);
-	} catch (error) {
-		res.status(500).json({ message: 'Server error' });
-	}
-});
-
-app.get('/api/classes/:id', async (req, res) => {
-	try {
-		const classObj = await Class.findById(req.params.id)
-			.populate('teacher', 'firstName lastName email')
-			.populate('students', 'firstName lastName email')
-			.populate('school', 'name');
-		res.json(classObj);
-	} catch (error) {
-		res.status(500).json({ message: 'Server error' });
-	}
-});
-
-app.put(
-	'/api/classes/:classId/students',
-	authenticateToken,
-	checkRole(['Admin', 'Teacher']),
-	async (req, res) => {
-		try {
-			const classObj = await Class.findByIdAndUpdate(
-				req.params.classId,
-				{ $addToSet: { students: req.body.studentId } },
-				{ new: true }
-			);
-			res.json(classObj);
-		} catch (error) {
-			res.status(400).json({ message: error.message });
-		}
-	}
-);
-
+// Delete a Module
 app.delete(
-	'/api/classes/:classId/students/:studentId',
+	'/delete-module/:moduleId',
 	authenticateToken,
-	checkRole(['Admin', 'Teacher']),
+	checkRole('admin'),
 	async (req, res) => {
 		try {
-			const classObj = await Class.findByIdAndUpdate(
-				req.params.classId,
-				{ $pull: { students: req.params.studentId } },
-				{ new: true }
+			const moduleId = req.params.moduleId;
+			const module = await Module.findById(moduleId);
+			if (!module) return res.status(404).json({ message: 'Module not found' });
+
+			// Delete videos associated with the module
+			await Video.deleteMany({ _id: { $in: module.videos } });
+			await Module.findByIdAndDelete(moduleId);
+
+			// Optionally, remove this module’s reference from its parent course
+			await Course.findOneAndUpdate(
+				{ modules: moduleId },
+				{ $pull: { modules: moduleId } }
 			);
-			res.json(classObj);
+
+			res
+				.status(200)
+				.json({ message: 'Module and its videos deleted successfully' });
 		} catch (error) {
-			res.status(400).json({ message: error.message });
+			res
+				.status(500)
+				.json({ message: 'Error deleting module', error: error.message });
 		}
 	}
 );
 
-app.put(
-	'/api/classes/:classId/teacher',
+// --------------------------
+// Video Routes
+// --------------------------
+
+// Add a video to a module
+app.post(
+	'/add-video',
 	authenticateToken,
-	checkRole('Admin'),
+	checkRole('admin'),
 	async (req, res) => {
 		try {
-			const classObj = await Class.findByIdAndUpdate(
-				req.params.classId,
-				{ teacher: req.body.teacherId },
+			const { title, url, moduleId } = req.body;
+			if (!title || !url || !moduleId)
+				return res.status(400).json({ message: 'All fields are required' });
+
+			const newVideo = new Video({ title, url });
+			const savedVideo = await newVideo.save();
+
+			await Module.findByIdAndUpdate(moduleId, {
+				$push: { videos: savedVideo._id },
+			});
+
+			res
+				.status(201)
+				.json({ message: 'Video added successfully', video: savedVideo });
+		} catch (error) {
+			res
+				.status(500)
+				.json({ message: 'Error adding video', error: error.message });
+		}
+	}
+);
+
+// --------------------------
+// Enrollment Routes
+// --------------------------
+
+// Enroll in a course
+app.post('/enroll', authenticateToken, async (req, res) => {
+	try {
+		const { courseId } = req.body;
+		const userId = req.user.userId;
+
+		// Check if the user is already enrolled in this course
+		const existingEnrollment = await Enrollment.findOne({ userId, courseId });
+		if (existingEnrollment) {
+			return res
+				.status(400)
+				.json({ message: 'User is already enrolled in this course' });
+		}
+
+		// Create a new enrollment (lastWatched will be empty initially)
+		const enrollment = new Enrollment({ userId, courseId });
+		await enrollment.save();
+
+		// Update the user's enrolledCourses array (if needed)
+		await User.findByIdAndUpdate(userId, {
+			$push: {
+				enrolledCourses: {
+					course: courseId,
+					progress: 0,
+					completed: false,
+					enrolledAt: new Date(),
+				},
+			},
+		});
+
+		res.status(201).json({ message: 'Enrolled successfully' });
+	} catch (error) {
+		res.status(500).json({ message: 'Error enrolling', error: error.message });
+	}
+});
+
+// Update Enrollment Progress and Last Watched Video
+app.put(
+	'/update-enrollment/:enrollmentId',
+	authenticateToken,
+	async (req, res) => {
+		try {
+			const { enrollmentId } = req.params;
+			const { progress, lastWatchedModuleId, lastWatchedVideoId } = req.body;
+
+			// Build the update object
+			const updateData = { progress };
+			if (lastWatchedModuleId && lastWatchedVideoId) {
+				updateData.lastWatched = {
+					module: lastWatchedModuleId,
+					video: lastWatchedVideoId,
+					updatedAt: Date.now(),
+				};
+			}
+
+			const updatedEnrollment = await Enrollment.findByIdAndUpdate(
+				enrollmentId,
+				{ $set: updateData },
 				{ new: true }
 			);
-			res.json(classObj);
+
+			if (!updatedEnrollment) {
+				return res.status(404).json({ message: 'Enrollment not found' });
+			}
+
+			res.json({
+				message: 'Enrollment updated',
+				enrollment: updatedEnrollment,
+			});
 		} catch (error) {
-			res.status(400).json({ message: error.message });
+			res
+				.status(500)
+				.json({ message: 'Error updating enrollment', error: error.message });
 		}
 	}
 );

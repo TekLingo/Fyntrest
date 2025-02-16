@@ -11,7 +11,7 @@ const Register = () => {
 	const handleClick = async () => {
 		try {
 			setError('');
-			const response = await axiosInstance.post('/api/auth/register', {
+			const response = await axiosInstance.post('/register', {
 				email,
 			});
 

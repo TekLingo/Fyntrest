@@ -9,9 +9,8 @@ const ContinueCard = () => {
 	const [loading, setLoading] = useState(true);
 	const [videoStatus, setVideoStatus] = useState("Let's Start");
 	const [videoUrl, setVideoUrl] = useState('');
+	const [courseId, setCourseId] = useState(null);
 	const navigate = useNavigate();
-
-	const videoBaseUrl = 'http://localhost:8000/uploads/course-videos'; // Video folder path
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -22,43 +21,57 @@ const ContinueCard = () => {
 					return;
 				}
 
-				// Fetch user data
-				const userResponse = await axiosInstance.get('/api/get-user', {
+				// Fetch user data (assumed to populate enrolledCourses with course details if available)
+				const userResponse = await axiosInstance.get('/get-user', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
-
 				const userData = userResponse.data.user || {};
-				console.log('User Data:', userData);
 				setUserName(userData.firstName || 'Guest');
 
 				if (userData.enrolledCourses && userData.enrolledCourses.length > 0) {
-					const latestCourse =
+					// Get the latest enrollment
+					const latestEnrollment =
 						userData.enrolledCourses[userData.enrolledCourses.length - 1];
 
-					if (latestCourse.progress === 0) {
-						setVideoStatus("Let's Start");
-
-						// Fetch video list from backend
-						const videoResponse = await axiosInstance.get(
-							'/api/get-course-videos'
-						);
-						const videoFiles = videoResponse.data.videos || [];
-
-						if (videoFiles.length > 0) {
-							console.log('videoFiles:', videoFiles);
-							const randomVideo =
-								videoFiles[Math.floor(Math.random() * videoFiles.length)];
-							console.log('randomVideo:', randomVideo);
-							setVideoUrl(`"${videoBaseUrl}/${randomVideo}"`);
-							console.log('Final video URL:', videoUrl);
-						} else {
-							console.log('videoFiles is empty or null.');
-							setVideoUrl('');
-						}
+					// Check if the course details are populated
+					let courseData = null;
+					if (
+						latestEnrollment.course &&
+						typeof latestEnrollment.course === 'object'
+					) {
+						courseData = latestEnrollment.course;
 					} else {
+						// If not, fetch course details using the course ID
+						const courseResponse = await axiosInstance.get(
+							`/courses/${latestEnrollment.course}`
+						);
+						courseData = courseResponse.data;
+					}
+					// Set the course ID (whether populated or not)
+					setCourseId(courseData._id || latestEnrollment.course);
+
+					// Determine video URL:
+					// If there's lastWatched info, try to use that video
+					if (
+						latestEnrollment.lastWatched &&
+						latestEnrollment.lastWatched.video
+					) {
+						let videoData = null;
+						if (typeof latestEnrollment.lastWatched.video === 'object') {
+							videoData = latestEnrollment.lastWatched.video;
+						} else {
+							// Otherwise, fetch the video details by ID
+							const videoResponse = await axiosInstance.get(
+								`/videos/${latestEnrollment.lastWatched.video}`
+							);
+							videoData = videoResponse.data;
+						}
+						setVideoUrl(videoData.videoUrl);
 						setVideoStatus("Let's Resume");
-						setVideoUrl(latestCourse.course.videoUrl);
-						console.log(latestCourse.course.videoUrl);
+					} else {
+						// No last watched info – use the course's default video URL
+						setVideoUrl(courseData.videoUrl);
+						setVideoStatus("Let's Start");
 					}
 				}
 			} catch (error) {
@@ -78,7 +91,12 @@ const ContinueCard = () => {
 	}, [navigate]);
 
 	const handleNavigate = () => {
-		navigate('/logged/course/');
+		if (courseId) {
+			// Redirect to the course page, where further logic can resume at the proper module/video.
+			navigate(`/logged/course/${courseId}`);
+		} else {
+			navigate('/logged/home');
+		}
 	};
 
 	if (loading) {
@@ -116,17 +134,16 @@ const ContinueCard = () => {
 				>
 					{videoUrl ? (
 						<ReactPlayer
-							// url={videoUrl}
-							url="http://localhost:8000/uploads/course-videos/video-1739030282862-574686968.mp4"
+							url={videoUrl}
 							playing={false}
 							controls={true}
 							width="100%"
 							height="100%"
-							className="object-cover w-full h-full" // Added width/height classes
+							className="object-cover w-full h-full"
 							config={{
 								file: {
 									attributes: {
-										controlsList: 'nodownload', // Add if needed
+										controlsList: 'nodownload',
 									},
 								},
 							}}

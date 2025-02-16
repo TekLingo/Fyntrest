@@ -42,7 +42,7 @@ const App = () => {
 						</RegistrationGuard>
 					}
 				/>
-				<Route path="/course/:slug" element={<CoursePage />} />
+				<Route path="/course" element={<CoursePage />} />
 				<Route path="/module" element={<ModulePage />} />
 				<Route path="/quiz" element={<Quiz />} />
 

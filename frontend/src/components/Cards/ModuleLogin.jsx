@@ -1,16 +1,17 @@
 import React from 'react';
-import { MdOutlinePlayCircle } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-const ModuleLogin = ({ thumbnail, title, description }) => {
+const ModuleLogin = ({ videoId, thumbnail, title, description }) => {
 	const navigate = useNavigate();
 
 	const handleClick = () => {
-		navigate('/logged/video');
+		// Navigate to the video page with the videoId
+		navigate(`/logged/video/${videoId}`);
 	};
+
 	return (
 		<div
-			className="flex items-center justify-between rounded-2xl p-4 bg-bg-color max-w-3xl min-w-full h-80"
+			className="flex items-center justify-between rounded-2xl p-4 bg-bg-color max-w-3xl min-w-full h-80 cursor-pointer"
 			onClick={handleClick}
 		>
 			{/* Thumbnail */}

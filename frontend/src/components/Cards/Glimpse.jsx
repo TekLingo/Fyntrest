@@ -39,7 +39,7 @@ const Glimpse = ({ content, description, topics }) => {
 									<div className="absolute inset-0 bg-black bg-opacity-10 backdrop-blur-sm flex justify-center items-center text-white">
 										<MdLock className="text-3xl" />
 									</div>
-									<iframe
+									<iframez
 										className="w-full h-full"
 										src={topic.videoSrc}
 										title={topic.title}
