@@ -27,7 +27,6 @@ const App = () => {
   // Check for JWT token in localStorage
   const isAuthenticated = !!localStorage.getItem("token");
 
-<<<<<<< HEAD
 	return (
 		<Router>
 			<Routes>
@@ -48,30 +47,6 @@ const App = () => {
 				<Route path="/course" element={<CoursePage />} />
 				<Route path="/module" element={<ModulePage />} />
 				<Route path="/quiz" element={<Quiz />} />
-=======
-  return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Root />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/verify" element={<Verify />} />
-        <Route
-          path="/personal-info"
-          element={
-            <RegistrationGuard>
-              <PersonalInfo />
-            </RegistrationGuard>
-          }
-        />
-        <Route path="/blog" element={<BlogPage />} />
-        <Route path="/blog-open" element={<BlogOpenPage />} />
-        <Route path="/course/:slug" element={<CoursePage />} />
-        <Route path="/module" element={<ModulePage />} />
-        <Route path="/quiz" element={<Quiz />} />
->>>>>>> 224da3e96effd613734761e7bab4c96896b788a8
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
