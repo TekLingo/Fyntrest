@@ -14,7 +14,7 @@ const Verify = () => {
 		try {
 			console.log('Sending OTP verification request with email:', email);
 			const response = await axiosInstance.post(
-				'/api/auth/verify-otp',
+				'/verify-otp',
 				{ email, otp },
 				{ headers: { 'Content-Type': 'application/json' } }
 			);

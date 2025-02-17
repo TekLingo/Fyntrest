@@ -1,7 +1,7 @@
 // models/user.model.js
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
 	role: {
 		type: String,
 		enum: ['admin', 'teacher', 'student'], // now 'student' is allowed
@@ -23,13 +23,24 @@ const userSchema = new mongoose.Schema({
 	streaks: { type: Number, default: 0 },
 	enrolledCourses: [
 		{
-			course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
+			course: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Course',
+				required: true,
+			},
 			progress: { type: Number, default: 0 },
 			completed: { type: Boolean, default: false },
+			enrolledAt: { type: Date, default: Date.now },
+			lastWatched: {
+				module: { type: mongoose.Schema.Types.ObjectId, ref: 'Module' },
+				video: { type: mongoose.Schema.Types.ObjectId, ref: 'Video' },
+				updatedAt: { type: Date, default: Date.now },
+			},
 		},
 	],
+
 	joinDate: { type: Date, default: Date.now },
 	lastLogin: Date,
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', UserSchema);

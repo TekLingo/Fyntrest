@@ -35,7 +35,7 @@ const LoggedProfileDetailPage = () => {
 					return;
 				}
 
-				const response = await axiosInstance.get('/api/get-user', {
+				const response = await axiosInstance.get('/get-user', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 				// Axios stores response data in `response.data`

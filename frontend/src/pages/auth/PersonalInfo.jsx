@@ -74,7 +74,7 @@ const PersonalInfo = () => {
 		try {
 			// Override any Authorization header added by the axios interceptor
 			const response = await axiosInstance.post(
-				'/api/auth/complete-registration',
+				'/complete-registration',
 				payload,
 				{ headers: { Authorization: '' } }
 			);

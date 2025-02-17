@@ -1,40 +1,48 @@
 const mongoose = require('mongoose');
 
-const courseSchema = new mongoose.Schema(
+const CourseSchema = new mongoose.Schema(
 	{
 		title: { type: String, required: true, trim: true },
 		description: { type: String, required: true, trim: true },
-		videoUrl: { type: String, required: true, trim: true },
-		module: { type: String, required: true, trim: true },
-		semester: { type: String, required: true, trim: true },
-		enrolledStudents: [
-			{
-				userId: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: 'User',
-					required: true,
-				},
-				progress: { type: Number, default: 0 },
-			},
-		],
+		image: { type: String, required: true, trim: true }, // File link or external URL
+		modules: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Module' }], // References to modules
+		semester: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Semester',
+			required: true,
+		},
 		createdBy: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
 			required: true,
 		},
+		// New field: list of enrolled students (if you wish to track it directly)
+		enrolledStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 	},
 	{
 		timestamps: true, // Adds createdAt and updatedAt automatically
-		toJSON: { virtuals: false }, // Include virtuals in JSON output
-		toObject: { virtuals: false },
+		toJSON: {
+			virtuals: true,
+			versionKey: false,
+			transform: (_, ret) => {
+				delete ret.id;
+			},
+		},
+		toObject: {
+			virtuals: true,
+			versionKey: false,
+			transform: (_, ret) => {
+				delete ret.id;
+			},
+		},
 	}
 );
 
 // Virtual for enrolledStudentsCount
-courseSchema.virtual('enrolledStudentsCount').get(function () {
-	return this.enrolledStudents.length;
+CourseSchema.virtual('enrolledStudentsCount').get(function () {
+	return this.enrolledStudents ? this.enrolledStudents.length : 0;
 });
 
-const Course = mongoose.model('Course', courseSchema);
+const Course = mongoose.model('Course', CourseSchema);
 
 module.exports = Course;

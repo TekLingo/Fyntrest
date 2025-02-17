@@ -23,7 +23,7 @@ const Login = () => {
 				password: password, // Don't log actual password
 			});
 
-			const response = await axiosInstance.post('/api/auth/login', {
+			const response = await axiosInstance.post('/login', {
 				email: email.trim().toLowerCase(),
 				password,
 			});

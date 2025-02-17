@@ -96,7 +96,7 @@ const courses = [
 const Journey = () => {
 	return (
 		<div className="my-40">
-			<div className="mx-[5%] border-4 rounded-3xl flex flex-col justify-center items-center gap-12 px-[5%] pt-[5%] text-text-g border-secondary-lt shadow-lg">
+			<div className="mx-[5%] border-4 rounded-3xl flex flex-col justify-center items-center px-[5%] pt-[5%] text-text-g border-secondary-lt shadow-lg">
 				<h1 className="font-title text-3xl">Your Journey</h1>
 				<div className="relative w-full h-[760px] overflow-scroll">
 					{/* Scrollable background image */}
