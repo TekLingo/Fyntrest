@@ -22,6 +22,7 @@ import ModulePage from "./pages/courses/ModulePage";
 import Home from "./pages/Home";
 import BlogPage from "./pages/BlogPage";
 import BlogOpenPage from "./pages/BlogOpenPage";
+import Dashboard from "./pages/admin/Dashboard";
 
 const App = () => {
   // Check for JWT token in localStorage
@@ -49,6 +50,7 @@ const App = () => {
         <Route path="/course/:slug" element={<CoursePage />} />
         <Route path="/module" element={<ModulePage />} />
         <Route path="/quiz" element={<Quiz />} />
+        <Route path="/admin/dashboard" element={<Dashboard />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
