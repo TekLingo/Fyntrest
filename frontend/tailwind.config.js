@@ -13,7 +13,7 @@ export default {
 			},
 			colors: {
 				'bg-color': '#0c0a31',
-				primary_p: '#28114c', // purple
+				'primary_p': '#28114c', // purple
 				'primary-fp': '#473966', // faded purple
 				'primary-b': '#1d194f', // blueish purple 1
 				'secondary-lt': '#ACA6FF', // lightest
