@@ -27,6 +27,7 @@ import Users from "./pages/admin/Users";
 import Content from "./pages/admin/Content";
 import Analysis from "./pages/admin/Analysis";
 import Main from "./pages/admin/Main";
+import Semester from "./pages/after-login/Semester";
 
 const App = () => {
   // Check for JWT token in localStorage
@@ -59,6 +60,7 @@ const App = () => {
         <Route path="/admin/content" element={<Content />} />
         <Route path="/admin/analysis" element={<Analysis />} />
         <Route path="/admin/main" element={<Main />} />
+        <Route path="/semester" element={<Semester />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { MdKeyboardArrowRight, MdLock } from "react-icons/md";
 
-const Semester = ({ content, description, topics }) => {
+const SemesterCard = ({ content, description, topics }) => {
   const [nav, setNav] = useState(false);
 
   const handleNav = () => setNav((prev) => !prev);
@@ -31,9 +31,9 @@ const Semester = ({ content, description, topics }) => {
                   <div className="absolute inset-0 bg-black bg-opacity-10 backdrop-blur-sm flex justify-center items-center text-white">
                     <MdLock className="text-3xl" />
                   </div>
-                  <iframe
+                  <img
                     className="w-full h-full"
-                    src={topic.videoSrc}
+                    src={topic.img}
                     title={topic.title}
                   />
                 </div>
@@ -47,4 +47,4 @@ const Semester = ({ content, description, topics }) => {
   );
 };
 
-export default Semester;
+export default SemesterCard;
