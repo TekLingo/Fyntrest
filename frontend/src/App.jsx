@@ -23,6 +23,10 @@ import Home from "./pages/Home";
 import BlogPage from "./pages/BlogPage";
 import BlogOpenPage from "./pages/BlogOpenPage";
 import Dashboard from "./pages/admin/Dashboard";
+import Users from "./pages/admin/Users";
+import Content from "./pages/admin/Content";
+import Analysis from "./pages/admin/Analysis";
+import Main from "./pages/admin/Main";
 
 const App = () => {
   // Check for JWT token in localStorage
@@ -51,6 +55,10 @@ const App = () => {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog-open" element={<BlogOpenPage />} />
         <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/users" element={<Users />} />
+        <Route path="/admin/content" element={<Content />} />
+        <Route path="/admin/analysis" element={<Analysis />} />
+        <Route path="/admin/main" element={<Main />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>

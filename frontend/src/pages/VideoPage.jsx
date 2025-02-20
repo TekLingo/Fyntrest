@@ -63,7 +63,7 @@ const VideoPage = () => {
 					/>
 				</div>
 				{/* Up next */}
-				<div className="">
+				<div>
 					<h2 className="text-4xl font-body font-bold mb-8">Up Next</h2>
 					<div className="w-full h-60 mr-4 flex gap-8">
 						<div className="w-1/3 relative rounded-lg overflow-hidden">
