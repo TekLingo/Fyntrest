@@ -2,6 +2,20 @@ import React, { useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
 
 const Dashboard = () => {
+  const sampleArray = Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`);
+  const sampleDict = {
+    a: "Apple",
+    b: "Banana",
+    c: "Cherry",
+    d: "Date",
+    e: "Elderberry",
+    f: "Fig",
+    g: "Grape",
+    h: "Honeydew",
+    i: "Indian Fig",
+    j: "Jackfruit",
+  };
+
   const amButton = [
     "Schools",
     "Students",
@@ -53,10 +67,10 @@ const Dashboard = () => {
 
   return (
     <div className="w-full text-text-g">
-      <div className="bg-[#362856] flex h-full p-4 gap-6">
+      <div className="bg-[#362856] flex h-full p-4 gap-4">
         {/* Left content */}
-        <div className="w-2/3 h-full flex flex-col gap-6">
-          <div className="flex h-1/2 gap-6">
+        <div className="w-2/3 h-full flex flex-col gap-4">
+          <div className="flex h-1/2 gap-4">
             <div className="w-1/2 bg-primary_p h-full rounded-xl p-8">
               {/* Left-most card content */}
               <div>
@@ -129,8 +143,8 @@ const Dashboard = () => {
                 {activeSection === "schools" && (
                   <div className="w-9/10">
                     {hasSchools ? (
-                      <div className="flex py-4 w-full">
-                        <div className="w-full overflow-y-auto max-h-48">
+                      <div className="flex flex-col gap-2 py-4 w-full">
+                        <div className="w-full overflow-y-auto max-h-40">
                           <table className="w-full text-left rounded-xl overflow-hidden font-body">
                             <thead className="rounded-xl bg-[#362856] h-10 z-10">
                               <tr className="h-10">
@@ -144,13 +158,19 @@ const Dashboard = () => {
                             <tbody>
                               {sortedData.map((player, index) => (
                                 <tr key={index} className="bg-[#311B53]">
-                                  <td className="p-4">{player.rank}</td>
-                                  <td className="p-4">{player.school}</td>
-                                  <td className="p-4">{player.joinDate}</td>
-                                  <td className="p-4">{player.students}</td>
-                                  <td className="p-2">
-                                    <button>
-                                      <FaChevronRight />
+                                  <td className="p-4 w-20">{player.rank}</td>
+                                  <td className="p-4 w-80 overflow-hidden">
+                                    {player.school}
+                                  </td>
+                                  <td className="p-4 w-40 overflow-hidden">
+                                    {player.joinDate}
+                                  </td>
+                                  <td className="p-4 w-40 overflow-hidden">
+                                    {player.students}
+                                  </td>
+                                  <td className="p-2 w-20 overflow-hidden">
+                                    <button className="hover:border-2 hover:border-secondary-dt w-8 h-8 rounded-full">
+                                      <FaChevronRight className="place-self-center" />
                                     </button>
                                   </td>
                                 </tr>
@@ -158,6 +178,7 @@ const Dashboard = () => {
                             </tbody>
                           </table>
                         </div>
+                        <p>hi</p>
                       </div>
                     ) : (
                       <div className="p-4 flex flex-col gap-8 items-center justify-center w-full h-full font-body">
@@ -188,14 +209,14 @@ const Dashboard = () => {
           <div className="flex flex-col gap-8 font-body">
             {/* Update content */}
             <div className="flex flex-col gap-2">
-              <h2 className="text-2xl font-semibold">Updates</h2>
+              <h2 className="text-xl font-semibold">Updates</h2>
               <h3 className="text-lg font-normal">Recently Added</h3>
               {/* Button section */}
               <div className=" gap-2 w-full flex-wrap flex">
                 {amButton.map((item, index) => (
                   <button
                     key={index}
-                    className="border border-secondary-d p-2 max-w-48 min-w-20 h-auto rounded-md"
+                    className="text-xs border border-secondary-d p-2 max-w-48 min-w-20 h-auto rounded-md"
                   >
                     {item}
                   </button>
