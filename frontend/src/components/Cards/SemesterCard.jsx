@@ -25,18 +25,18 @@ const SemesterCard = ({ content, topics, index }) => {
   return (
     <div
       className={`transition-all duration-300 ease-in-out ${
-        nav ? "h-auto items-start" : "h-20 items-center overflow-hidden cursor-pointer"
+        nav ? "h-auto items-start" : "h-20 items-center overflow-hidden"
       } flex flex-col w-full bg-primary_p rounded-2xl font-body text-xl`}
-      onClick={handleNav}
     >
       <div className="p-6 w-full flex justify-between items-center">
         <h1>{content}</h1>
         <MdKeyboardArrowRight
-          className={`text-3xl transition-transform duration-300 ${
+          onClick={handleNav}
+          className={`text-3xl transition-transform duration-300 cursor-pointer ${
             nav ? "rotate-90" : "rotate-0"
           }`}
         />
-      </div>
+      </div> 
       {nav && (
         <div className="p-6 text-white font-thin w-full">
           <div className="gap-6 py-6 grid grid-cols-2 w-full">
@@ -44,8 +44,8 @@ const SemesterCard = ({ content, topics, index }) => {
               <div key={index} className="w-full">
                 {/* Locked video container */}
                 <div className="rounded-lg w-full h-9/10 overflow-hidden ">
-                  <div className="flex flex-col items-center justify-center">
-                    <div className="w-full rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-primary-b cursor-pointer">
+                  <div className="flex flex-col items-center justify-center gap-4 hover:bg-secondary-dt">
+                    <div className="w-full h-56 rounded-lg flex flex-col items-center justify-center shadow-lg relative overflow-hidden bg-primary-b cursor-pointer">
                       {/* Gradient Blur Background */}
                       <span
                         className={`absolute w-36 h-36 rounded-full blur-2xl opacity-80 ${selectedStyle.bg} ${selectedStyle.position}`}
@@ -60,7 +60,7 @@ const SemesterCard = ({ content, topics, index }) => {
                         />
                       </div>
                     </div>
-                    <div className="mb-4 flex flex-col justify-start w-full gap-4">
+                    <div className="mb-4 flex flex-col justify-start w-full gap-4 p-4">
                       <p className="text-3xl font-normal">{topic.title}</p>
                       <p className="text-lg font-normal">{topic.description}</p>
                     </div>
