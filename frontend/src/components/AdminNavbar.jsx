@@ -9,7 +9,7 @@ const AdminNavbar = () => {
   };
 
   return (
-    <div className="bg-primary-b h-14 text-text-g">
+    <div className=" h-14 text-text-g">
       {/* navbar content */}
       <div className=" w-2/5 h-full place-self-end font-body">
         {/* navbar content */}

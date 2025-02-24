@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+<<<<<<< HEAD
 	Navigate,
 	Route,
 	BrowserRouter as Router,
@@ -23,6 +24,36 @@ import BlogPage from './pages/BlogPage';
 import CoursePage from './pages/courses/coursePage';
 import ModulePage from './pages/courses/ModulePage';
 import Home from './pages/Home';
+=======
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
+import LoginCoursePage from "./pages/after-login/LoggedCoursesPage";
+import LoggedLandingPage from "./pages/after-login/LoggedLandingPage";
+import LoggedModulePage from "./pages/after-login/LoggedModulePage";
+import LoggedProfileDetailPage from "./pages/after-login/LoggedProfileDetailPage";
+import LoggedProfilePage from "./pages/after-login/LoggedProfilePage";
+import LoggedVideoPage from "./pages/after-login/LoggedVideoPage";
+import Quiz from "./pages/after-login/Quiz";
+import Login from "./pages/auth/Login";
+import PersonalInfo from "./pages/auth/PersonalInfo";
+import Register from "./pages/auth/Register";
+import Verify from "./pages/auth/Verify";
+import CoursePage from "./pages/courses/coursePage";
+import ModulePage from "./pages/courses/ModulePage";
+import Home from "./pages/Home";
+import BlogPage from "./pages/BlogPage";
+import BlogOpenPage from "./pages/BlogOpenPage";
+import Dashboard from "./pages/admin/Dashboard";
+import Users from "./pages/admin/Users";
+import Content from "./pages/admin/Content";
+import Analysis from "./pages/admin/Analysis";
+import Main from "./pages/admin/Main";
+import Semester from "./pages/after-login/Semester";
+>>>>>>> b739e5bc8f36ba7cfcf9f91d2a33abd5144d0b4f
 
 const App = () => {
 	// Check for JWT token in localStorage
