@@ -20,7 +20,7 @@ const Login = () => {
 			setError('');
 			console.log('Login attempt with:', {
 				email: email.trim().toLowerCase(),
-				password: password, // Don't log actual password
+				password, // Mask password for security
 			});
 
 			const response = await axiosInstance.post('/login', {
@@ -29,8 +29,19 @@ const Login = () => {
 			});
 
 			console.log('Login response:', response.data);
-			localStorage.setItem('token', response.data.token);
-			navigate('/logged/home');
+
+			const { token, role } = response.data;
+
+			// Store token and role in localStorage
+			localStorage.setItem('token', token);
+			localStorage.setItem('role', role);
+
+			// Redirect based on role
+			if (role === 'admin') {
+				navigate('/admin/dashboard');
+			} else {
+				navigate('/logged/home');
+			}
 		} catch (error) {
 			console.error('Full error details:', {
 				message: error.message,

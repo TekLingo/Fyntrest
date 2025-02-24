@@ -97,7 +97,7 @@ const LoggedModulePage = () => {
 						{moduleData.videos.map((video, index) => (
 							<ModuleLogin
 								key={index}
-								// Use video.thumbnail if available, otherwise fallback to video.url
+								videoId={video._id}
 								thumbnail={video.url}
 								title={video.title}
 								description={video.description}

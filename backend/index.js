@@ -297,9 +297,9 @@ app.post('/upload-video', upload.single('video'), (req, res) => {
 			return res.status(400).json({ message: 'No video file uploaded' });
 		}
 
-		const videoUrl = `${req.protocol}://${req.get('host')}/uploads/videos/${
-			req.file.filename
-		}`;
+		const videoUrl = `${req.protocol}://${req.get(
+			'host'
+		)}/uploads/course-videos/${req.file.filename}`;
 		res.status(200).json({ message: 'Video uploaded successfully', videoUrl });
 	} catch (error) {
 		res
@@ -663,11 +663,11 @@ app.post(
 	checkRole('admin'),
 	async (req, res) => {
 		try {
-			const { title, url, moduleId } = req.body;
-			if (!title || !url || !moduleId)
+			const { title, url, moduleId, description } = req.body;
+			if (!title || !url || !moduleId || !description)
 				return res.status(400).json({ message: 'All fields are required' });
 
-			const newVideo = new Video({ title, url });
+			const newVideo = new Video({ title, url, description });
 			const savedVideo = await newVideo.save();
 
 			await Module.findByIdAndUpdate(moduleId, {
@@ -684,6 +684,8 @@ app.post(
 		}
 	}
 );
+
+
 
 // --------------------------
 // Enrollment Routes

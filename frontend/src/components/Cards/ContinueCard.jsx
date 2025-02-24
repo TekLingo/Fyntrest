@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import ReactPlayer from 'react-player';
 import { useNavigate } from 'react-router-dom';
 import GirlImg from '../../assets/Images/landing page/after-login/Girl.png';
 import axiosInstance from '../../utils/axiosInstance';
@@ -21,46 +20,36 @@ const ContinueCard = () => {
 					return;
 				}
 
-				// Fetch user data (assumed to populate enrolledCourses with course details if available)
+				// Fetch user details
 				const userResponse = await axiosInstance.get('/get-user', {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 				const userData = userResponse.data.user || {};
 				setUserName(userData.firstName || 'Guest');
 
-				if (userData.enrolledCourses && userData.enrolledCourses.length > 0) {
-					// Get the latest enrollment
+				if (userData.enrolledCourses?.length > 0) {
 					const latestEnrollment =
 						userData.enrolledCourses[userData.enrolledCourses.length - 1];
 
-					// Check if the course details are populated
-					let courseData = null;
-					if (
-						latestEnrollment.course &&
-						typeof latestEnrollment.course === 'object'
-					) {
+					// Fetch course details
+					let courseData;
+					if (typeof latestEnrollment.course === 'object') {
 						courseData = latestEnrollment.course;
 					} else {
-						// If not, fetch course details using the course ID
 						const courseResponse = await axiosInstance.get(
 							`/courses/${latestEnrollment.course}`
 						);
 						courseData = courseResponse.data;
 					}
-					// Set the course ID (whether populated or not)
+
 					setCourseId(courseData._id || latestEnrollment.course);
 
-					// Determine video URL:
-					// If there's lastWatched info, try to use that video
-					if (
-						latestEnrollment.lastWatched &&
-						latestEnrollment.lastWatched.video
-					) {
-						let videoData = null;
+					// Decide which video to display
+					if (latestEnrollment.lastWatched?.video) {
+						let videoData;
 						if (typeof latestEnrollment.lastWatched.video === 'object') {
 							videoData = latestEnrollment.lastWatched.video;
 						} else {
-							// Otherwise, fetch the video details by ID
 							const videoResponse = await axiosInstance.get(
 								`/videos/${latestEnrollment.lastWatched.video}`
 							);
@@ -68,10 +57,12 @@ const ContinueCard = () => {
 						}
 						setVideoUrl(videoData.videoUrl);
 						setVideoStatus("Let's Resume");
-					} else {
-						// No last watched info – use the course's default video URL
-						setVideoUrl(courseData.videoUrl);
+					} else if (courseData.videos?.length > 0) {
+						// Show the first uploaded video if no last watched video is found
+						setVideoUrl(courseData.videos[0].videoUrl);
 						setVideoStatus("Let's Start");
+					} else {
+						setVideoUrl(''); // No videos available
 					}
 				}
 			} catch (error) {
@@ -92,7 +83,6 @@ const ContinueCard = () => {
 
 	const handleNavigate = () => {
 		if (courseId) {
-			// Redirect to the course page, where further logic can resume at the proper module/video.
 			navigate(`/logged/course/${courseId}`);
 		} else {
 			navigate('/logged/home');
@@ -133,21 +123,13 @@ const ContinueCard = () => {
 					onClick={handleNavigate}
 				>
 					{videoUrl ? (
-						<ReactPlayer
-							url={videoUrl}
-							playing={false}
-							controls={true}
-							width="100%"
-							height="100%"
-							className="object-cover w-full h-full"
-							config={{
-								file: {
-									attributes: {
-										controlsList: 'nodownload',
-									},
-								},
-							}}
-							onError={(error) => console.error('Video Error:', error)}
+						<video
+							className="w-full h-full rounded-lg object-cover"
+							src={videoUrl}
+							controls={false}
+							disablePictureInPicture
+							onLoadedMetadata={(e) => (e.target.currentTime = 1)} // Seek to 1s for a thumbnail-like effect
+							onPlay={(e) => e.preventDefault()} // Prevent playing
 						/>
 					) : (
 						<div className="w-full h-full flex items-center justify-center">

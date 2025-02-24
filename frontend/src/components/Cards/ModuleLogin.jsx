@@ -15,12 +15,14 @@ const ModuleLogin = ({ videoId, thumbnail, title, description }) => {
 			onClick={handleClick}
 		>
 			{/* Thumbnail */}
-			<div className="w-1/3 h-full mr-4 relative rounded-lg overflow-hidden">
-				<iframe
-					className="w-full h-full"
+			<div className="w-1/3 h-5/6 mr-4 relative rounded-lg overflow-hidden">
+				<video
+					className="w-full h-full rounded-lg object-cover"
 					src={thumbnail}
-					title="Course Video Thumbnail"
-					allowFullScreen
+					controls={false}
+					disablePictureInPicture
+					onLoadedMetadata={(e) => (e.target.currentTime = 1)} // Seek to 1s for a thumbnail-like effect
+					onPlay={(e) => e.preventDefault()} // Prevent playing
 				/>
 			</div>
 

@@ -1,13 +1,11 @@
 import React from 'react';
 import { GoHome } from 'react-icons/go';
 import { MdOutlinePlayCircle } from 'react-icons/md';
-import understanding from '../../assets/Images/landing page/course/basics-of-banking.png';
-import understandingImg from '../../assets/Images/landing page/course/Basics-of-budget-2.png';
 import Breadcrumb from '../../components/Breadcrumb';
 import PracticeTest from '../../components/Cards/PracticeTest';
-import Footer from '../../components/Footer';
-import Navbar from '../../components/Navbar';
 import FlashcardCarousel from '../../components/FlashcardCarousel';
+import Footer from '../../components/Footer';
+import Navbar2 from '../../components/Navbar2';
 
 const VideoPage = () => {
 	const pageData = [
@@ -20,16 +18,9 @@ const VideoPage = () => {
 		'https://youtube.com/embed/qaeHKoq_CLM?si=rr8IFyHniZrLgfj6',
 	];
 
-	// Card content for related topics
-	const cardContent = [
-		{ title: 'Basics of Banking', img: understanding },
-		{ title: 'Understanding Money', img: understanding },
-		{ title: 'Basics of Budget', img: understandingImg },
-	];
-
 	return (
 		<div>
-			<Navbar />
+			<Navbar2 />
 			{/* Breadcrumb Navigation */}
 			<Breadcrumb
 				items={[
