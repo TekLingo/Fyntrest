@@ -6,7 +6,7 @@ import {
 	Routes,
 } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
-import Dashboard from './pages/admin/Dashboard';
+import AdminMain from './pages/admin/AdminMain';
 import LoginCoursePage from './pages/after-login/LoggedCoursesPage';
 import LoggedLandingPage from './pages/after-login/LoggedLandingPage';
 import LoggedModulePage from './pages/after-login/LoggedModulePage';
@@ -23,6 +23,7 @@ import BlogPage from './pages/BlogPage';
 import CoursePage from './pages/courses/coursePage';
 import ModulePage from './pages/courses/ModulePage';
 import Home from './pages/Home';
+import Temp from './pages/admin/Pagination';
 
 const App = () => {
 	// Check for JWT token in localStorage
@@ -50,6 +51,7 @@ const App = () => {
 				<Route path="/quiz" element={<Quiz />} />
 				<Route path="/blog" element={<BlogPage />} />
 				<Route path="/blog-open" element={<BlogOpenPage />} />
+				<Route path="/temp" element={<Temp />} />
 
 				{/* Protected Routes */}
 				<Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
@@ -71,7 +73,7 @@ const App = () => {
 				</Route>
 
 				{/* Admin Routes */}
-				<Route path="/admin/dashboard" element={<Dashboard />} />
+				<Route path="/admin/main" element={<AdminMain />} />
 
 				{/* Redirect invalid routes */}
 				<Route path="*" element={<Navigate to="/" replace />} />
@@ -96,7 +98,7 @@ const Root = () => {
 	}
 
 	if (userRole === 'admin') {
-		return <Navigate to="/admin/dashboard" />;
+		return <Navigate to="/admin/main" />;
 	}
 
 	return <Navigate to="/logged/home" />;
