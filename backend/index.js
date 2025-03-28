@@ -483,6 +483,23 @@ app.get('/courses/:semesterId', async (req, res) => {
 	}
 });
 
+// Get all courses
+app.get('/courses', async (req, res) => {
+	try {
+		const courses = await Course.find({})
+			.populate('modules', 'title description') // Populate module details you want
+			.select('-__v'); // Exclude version key
+
+		res.status(200).json(courses);
+	} catch (error) {
+		console.error('Error fetching courses:', error);
+		res.status(500).json({
+			message: 'Error fetching courses',
+			error: error.message,
+		});
+	}
+});
+
 // Update a course
 app.put('/update-course/:courseId', authenticateToken, async (req, res) => {
 	try {
@@ -684,8 +701,6 @@ app.post(
 		}
 	}
 );
-
-
 
 // --------------------------
 // Enrollment Routes
