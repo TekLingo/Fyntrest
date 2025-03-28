@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
+import Pagination from "./Pagination";
 
 const Dashboard = () => {
   const sampleArray = Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`);
@@ -27,6 +28,11 @@ const Dashboard = () => {
     "Flashcards",
   ];
 
+  const courses_f = [
+    { link: "", coursename: "Course Name-xyz" },
+    { link: "", coursename: "Course Name-xyz" },
+  ];
+
   const [sortBy, setSortBy] = useState("xp");
   const leaderboardData = [
     { srNo: 1, school: "ABC School", joinDate: "12 Jan 2025", students: 2000 },
@@ -42,6 +48,11 @@ const Dashboard = () => {
     { srNo: 1, school: "ABC School", joinDate: "12 Jan 2025", students: 2000 },
     { srNo: 1, school: "ABC School", joinDate: "12 Jan 2025", students: 2000 },
     { srNo: 1, school: "ABC School", joinDate: "12 Jan 2025", students: 2000 },
+  ];
+
+  const coursenameData = [
+    { moduleName: "Module Name", numOfVid: "5" },
+    { moduleName: "Module Name", numOfVid: "5" },
   ];
 
   const sortedData = [...leaderboardData].sort((a, b) => b[sortBy] - a[sortBy]);
@@ -178,7 +189,7 @@ const Dashboard = () => {
                             </tbody>
                           </table>
                         </div>
-                        <p>hi</p>
+                        <Pagination />
                       </div>
                     ) : (
                       <div className="p-4 flex flex-col gap-8 items-center justify-center w-full h-full font-body">
@@ -192,7 +203,43 @@ const Dashboard = () => {
                 {activeSection === "students" && (
                   <div className="w-full">
                     {hasStudents ? (
-                      <div className="flex gap-4 p-4">Data1</div>
+                      <div className="flex flex-col gap-2 py-4 w-full">
+                        <div className="w-full overflow-y-auto max-h-40">
+                          <table className="w-full text-left rounded-xl overflow-hidden font-body">
+                            <thead className="rounded-xl bg-[#362856] h-10 z-10">
+                              <tr className="h-10">
+                                <th className="p-4 h-10">Sr.No</th>
+                                <th className="p-4">School</th>
+                                <th className="p-4">Joining Date</th>
+                                <th>Students</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {sortedData.map((player, index) => (
+                                <tr key={index} className="bg-[#311B53]">
+                                  <td className="p-4 w-20">{player.rank}</td>
+                                  <td className="p-4 w-80 overflow-hidden">
+                                    {player.school}
+                                  </td>
+                                  <td className="p-4 w-40 overflow-hidden">
+                                    {player.joinDate}
+                                  </td>
+                                  <td className="p-4 w-40 overflow-hidden">
+                                    {player.students}
+                                  </td>
+                                  <td className="p-2 w-20 overflow-hidden">
+                                    <button className="hover:border-2 hover:border-secondary-dt w-8 h-8 rounded-full">
+                                      <FaChevronRight className="place-self-center" />
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        <Pagination />
+                      </div>
                     ) : (
                       <div className="p-4 flex flex-col gap-8 items-center justify-center w-full h-full font-body">
                         No Data
@@ -209,8 +256,8 @@ const Dashboard = () => {
           <div className="flex flex-col gap-8 font-body">
             {/* Update content */}
             <div className="flex flex-col gap-2">
-              <h2 className="text-xl font-semibold">Updates</h2>
-              <h3 className="text-lg font-normal">Recently Added</h3>
+              <h2 className="text-2xl font-semibold">Updates</h2>
+              <h3 className="text-xl font-normal">Recently Added</h3>
               {/* Button section */}
               <div className=" gap-2 w-full flex-wrap flex">
                 {amButton.map((item, index) => (
@@ -221,6 +268,37 @@ const Dashboard = () => {
                     {item}
                   </button>
                 ))}
+              </div>
+            </div>
+            {/* Course content */}
+            <div>
+              <div className="h-10">
+                <h2 className="font-body font-bold text-xl">Courses</h2>
+              </div>
+              <div className="flex gap-2">
+                {/* preview course content */}
+                {courses_f.map((item, index) => (
+                  <div key={index}>
+                    <div className="bg-primary-fp h-20 w-32 rounded"></div>
+                    {item.coursename}
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Course name content */}
+            <div className="">
+              <div>
+                <h2 className="font-body text-lg">Course Name - XYZ</h2>
+                <div className="flex flex-col gap-2">
+                  {coursenameData.map((item, index) => (
+                    <div key={index} className="flex gap-2 items-center">
+                      <div className="bg-primary-fp h-10 w-16 rounded"></div>
+                      <p>
+                        {item.moduleName} | {item.numOfVid} Videos
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
