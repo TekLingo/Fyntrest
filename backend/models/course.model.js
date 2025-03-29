@@ -16,8 +16,7 @@ const CourseSchema = new mongoose.Schema(
 			ref: 'User',
 			required: true,
 		},
-		// New field: list of enrolled students (if you wish to track it directly)
-		enrolledStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+		enrolledStudents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Tracks enrolled students
 	},
 	{
 		timestamps: true, // Adds createdAt and updatedAt automatically
@@ -25,6 +24,7 @@ const CourseSchema = new mongoose.Schema(
 			virtuals: true,
 			versionKey: false,
 			transform: (_, ret) => {
+				delete ret._id; // Ensure _id is removed
 				delete ret.id;
 			},
 		},
@@ -32,6 +32,7 @@ const CourseSchema = new mongoose.Schema(
 			virtuals: true,
 			versionKey: false,
 			transform: (_, ret) => {
+				delete ret._id; // Ensure _id is removed
 				delete ret.id;
 			},
 		},
@@ -43,6 +44,4 @@ CourseSchema.virtual('enrolledStudentsCount').get(function () {
 	return this.enrolledStudents ? this.enrolledStudents.length : 0;
 });
 
-const Course = mongoose.model('Course', CourseSchema);
-
-module.exports = Course;
+module.exports = mongoose.model('Course', CourseSchema);

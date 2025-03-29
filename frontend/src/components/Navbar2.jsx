@@ -57,7 +57,11 @@ const Navbar2 = () => {
 	useEffect(() => {
 		const fetchUserData = async () => {
 			try {
-				const token = localStorage.getItem('authToken'); // Get token from local storage
+				const token = localStorage.getItem('token'); // Use 'token' for consistency
+				if (!token) {
+					navigate('/login');
+					return;
+				}
 				const response = await axiosInstance.get('/get-user', {
 					headers: {
 						Authorization: `Bearer ${token}`,

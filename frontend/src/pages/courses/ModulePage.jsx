@@ -21,9 +21,9 @@ const ModulePage = () => {
 			{/* Breadcrumb Navigation */}
 			<Breadcrumb
 				items={[
-					<GoHome className="h-auto w-6" />,
+					<GoHome key="home-icon" className="h-auto w-6" />,
 					'Course',
-					'Basics of Financial Literacy',
+					'Module',
 					title,
 				]}
 			/>

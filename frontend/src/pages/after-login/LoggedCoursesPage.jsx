@@ -23,14 +23,15 @@ const LoginCoursePage = () => {
 		const fetchCourseData = async () => {
 			try {
 				const res = await axiosInstance.get(`/courses/${courseId}`);
-				const course = res.data;
-				setCourseTitle(course.title);
-				setCourseDescription(course.description);
-				setCourseImageUrl(course.image);
-				setModules(course.modules || []);
-
-				// Log the entire modules array for debugging
-				console.log('Fetched modules:', course.modules);
+				if (res.status === 200 && res.data) {
+					const course = res.data;
+					setCourseTitle(course.title);
+					setCourseDescription(course.description);
+					setCourseImageUrl(course.image);
+					setModules(course.modules || []);
+				} else {
+					throw new Error('Invalid response from server');
+				}
 			} catch (err) {
 				console.error('Error fetching course:', err);
 				setError('Course not found');
@@ -58,7 +59,12 @@ const LoginCoursePage = () => {
 		<div>
 			<Navbar2 />
 			<Breadcrumb
-				items={[<GoHome className="h-auto w-6" />, 'Course', courseTitle]}
+				items={[
+					<GoHome key="home-icon" className="h-auto w-6" />,
+					'User',
+					'Course',
+					courseTitle,
+				]}
 			/>
 			<div className="mx-28 text-text-g">
 				{/* Heading Section */}

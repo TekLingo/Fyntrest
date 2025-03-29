@@ -25,7 +25,11 @@ const CoursePage = () => {
 		<div>
 			<Navbar />
 			<Breadcrumb
-				items={[<GoHome className="h-auto w-6" />, 'Course', course.title]}
+				items={[
+					<GoHome key="home-icon" className="h-auto w-6" />,
+					'Course',
+					course.title,
+				]}
 			/>
 			<div className="mx-28 text-text-g">
 				{/* Heading Section */}

@@ -28,10 +28,11 @@ const ContinueCard = () => {
 				setUserName(userData.firstName || 'Guest');
 
 				if (userData.enrolledCourses?.length > 0) {
-					const latestEnrollment =
-						userData.enrolledCourses[userData.enrolledCourses.length - 1];
+					const sortedCourses = [...userData.enrolledCourses].sort(
+						(a, b) => new Date(a.enrolledAt) - new Date(b.enrolledAt)
+					);
+					const latestEnrollment = sortedCourses[0];
 
-					// Fetch course details
 					let courseData;
 					if (typeof latestEnrollment.course === 'object') {
 						courseData = latestEnrollment.course;
@@ -43,26 +44,53 @@ const ContinueCard = () => {
 					}
 
 					setCourseId(courseData._id || latestEnrollment.course);
+					console.log('Current Course:', courseData.title || courseData._id);
+					console.log(
+						'Current Modules:',
+						courseData.modules || 'No modules available'
+					);
 
-					// Decide which video to display
+					// Flatten all videos from modules into a single array
+					const allVideos = courseData.modules.flatMap(
+						(module) => module.videos || []
+					);
+
 					if (latestEnrollment.lastWatched?.video) {
-						let videoData;
-						if (typeof latestEnrollment.lastWatched.video === 'object') {
-							videoData = latestEnrollment.lastWatched.video;
+						const videoResponse = await axiosInstance.get(
+							`/videos/${latestEnrollment.lastWatched.video}`
+						);
+						const videoData = videoResponse.data;
+						console.log('Current Video:', videoData.title || videoData._id);
+
+						const lastWatchedVideoId = latestEnrollment.lastWatched.video;
+						const index = allVideos.findIndex(
+							(v) => v._id === lastWatchedVideoId
+						);
+
+						if (index !== -1) {
+							if (
+								latestEnrollment.lastWatched.completed &&
+								index < allVideos.length - 1
+							) {
+								setVideoUrl(allVideos[index + 1].url);
+								setVideoStatus("Let's Start Next");
+							} else {
+								setVideoUrl(allVideos[index].url);
+								setVideoStatus("Let's Resume");
+							}
 						} else {
-							const videoResponse = await axiosInstance.get(
-								`/videos/${latestEnrollment.lastWatched.video}`
+							// Fallback if last watched video isn’t found
+							setVideoUrl(allVideos[0]?.url || null);
+							setVideoStatus(
+								allVideos[0] ? "Let's Start" : 'No videos available'
 							);
-							videoData = videoResponse.data;
 						}
-						setVideoUrl(videoData.videoUrl);
-						setVideoStatus("Let's Resume");
-					} else if (courseData.videos?.length > 0) {
-						// Show the first uploaded video if no last watched video is found
-						setVideoUrl(courseData.videos[0].videoUrl);
+					} else if (allVideos.length > 0) {
+						setVideoUrl(allVideos[0].url);
 						setVideoStatus("Let's Start");
 					} else {
-						setVideoUrl(''); // No videos available
+						setVideoUrl(null);
+						setVideoStatus('No videos available');
 					}
 				}
 			} catch (error) {
@@ -78,7 +106,7 @@ const ContinueCard = () => {
 			}
 		};
 
-		fetchUserData();
+		fetchUserData().catch((err) => console.error('Unhandled error:', err));
 	}, [navigate]);
 
 	const handleNavigate = () => {
@@ -119,7 +147,7 @@ const ContinueCard = () => {
 
 				{/* Video Section */}
 				<div
-					className="w-1/3 h-60 cursor-pointer rounded-2xl overflow-hidden bg-purple-300"
+					className="w-1/3 h-75 cursor-pointer rounded-2xl overflow-hidden bg-purple-300"
 					onClick={handleNavigate}
 				>
 					{videoUrl ? (

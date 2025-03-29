@@ -13,7 +13,9 @@ const CourseEnrollmentSchema = new mongoose.Schema({
 	},
 	progress: {
 		type: Number,
-		default: 0, // Tracks overall course progress (e.g., percentage)
+		default: 0, // Tracks overall course progress (percentage)
+		min: 0,
+		max: 100,
 	},
 	enrolledAt: {
 		type: Date,

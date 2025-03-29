@@ -22,11 +22,20 @@ import BlogOpenPage from './pages/BlogOpenPage';
 import BlogPage from './pages/BlogPage';
 import CoursePage from './pages/courses/coursePage';
 import ModulePage from './pages/courses/ModulePage';
+import NotFound from './pages/Error/NotFound'; // New 404 page component (to be created)
 import Home from './pages/Home';
-import Temp from './pages/admin/Pagination';
+
+// Role-Based Access Control (RBAC) Wrapper
+const RoleBasedRoute = ({ allowedRoles, children }) => {
+	const userRole = localStorage.getItem('role');
+	return allowedRoles.includes(userRole) ? (
+		children
+	) : (
+		<Navigate to="/" replace />
+	);
+};
 
 const App = () => {
-	// Check for JWT token in localStorage
 	const isAuthenticated = !!localStorage.getItem('token');
 
 	return (
@@ -46,13 +55,13 @@ const App = () => {
 						</RegistrationGuard>
 					}
 				/>
-				<Route path="/course" element={<CoursePage />} />
-				<Route path="/module" element={<ModulePage />} />
+				<Route path="/course-overview" element={<CoursePage />} />{' '}
+				{/* Renamed */}
+				<Route path="/module-overview" element={<ModulePage />} />{' '}
+				{/* Renamed */}
 				<Route path="/quiz" element={<Quiz />} />
 				<Route path="/blog" element={<BlogPage />} />
 				<Route path="/blog-open" element={<BlogOpenPage />} />
-				<Route path="/temp" element={<Temp />} />
-
 				{/* Protected Routes */}
 				<Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
 					<Route path="/logged/home" element={<LoggedLandingPage />} />
@@ -64,44 +73,55 @@ const App = () => {
 						path="/logged/module/:moduleId"
 						element={<LoggedModulePage />}
 					/>
-					<Route path="/logged/video/:videoId" element={<LoggedVideoPage />} />
+					<Route
+						path="/logged/module/:moduleId/video/:videoId"
+						element={<LoggedVideoPage />}
+					/>
 					<Route path="/logged/profile" element={<LoggedProfilePage />} />
 					<Route
 						path="/logged/profile-detail"
 						element={<LoggedProfileDetailPage />}
 					/>
 				</Route>
-
 				{/* Admin Routes */}
-				<Route path="/admin/main" element={<AdminMain />} />
-
-				{/* Redirect invalid routes */}
-				<Route path="*" element={<Navigate to="/" replace />} />
+				<Route
+					path="/admin/main"
+					element={
+						<RoleBasedRoute allowedRoles={['admin']}>
+							<AdminMain />
+						</RoleBasedRoute>
+					}
+				/>
+				{/* Additional Parameterized Routes */}
+				<Route path="/courses/:semesterId" element={<CoursePage />} />
+				<Route path="/modules/:courseId" element={<ModulePage />} />
+				{/* 404 Route */}
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</Router>
 	);
 };
 
-// Additional guard for registration steps
+// Registration Guard
 const RegistrationGuard = ({ children }) => {
 	const registrationToken = localStorage.getItem('registrationToken');
 	return registrationToken ? children : <Navigate to="/register" replace />;
 };
 
-// // Define the Root component to handle the initial redirect
+// Root Component with Enhanced Logic
 const Root = () => {
+	const [isLoading, setIsLoading] = React.useState(true);
 	const token = localStorage.getItem('token');
-	const userRole = localStorage.getItem('role'); // Get user role from localStorage
+	const userRole = localStorage.getItem('role');
 
-	if (!token) {
-		return <Navigate to="/home" />;
-	}
+	React.useEffect(() => {
+		setIsLoading(false); // Replace with actual validation if needed
+	}, []);
 
-	if (userRole === 'admin') {
-		return <Navigate to="/admin/main" />;
-	}
-
-	return <Navigate to="/logged/home" />;
+	if (isLoading) return <div>Loading...</div>;
+	if (!token) return <Navigate to="/home" replace />;
+	if (userRole === 'admin') return <Navigate to="/admin/main" replace />;
+	return <Navigate to="/logged/home" replace />;
 };
 
 export default App;

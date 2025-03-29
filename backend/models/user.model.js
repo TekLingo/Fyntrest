@@ -4,21 +4,21 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
 	role: {
 		type: String,
-		enum: ['admin', 'teacher', 'student'], // now 'student' is allowed
-		default: 'student', // optional: automatically defaults to 'student' if not provided
+		enum: ['admin', 'teacher', 'student'], // Allowed roles
+		default: 'student', // Default role
 	},
-	firstName: { type: String, required: true },
-	lastName: String,
-	email: { type: String, unique: true, required: true },
-	gender: { type: String, enum: ['Male', 'Female', 'Other'] },
+	firstName: { type: String, required: true, trim: true },
+	lastName: { type: String, trim: true },
+	email: { type: String, unique: true, required: true, trim: true },
+	gender: { type: String, enum: ['Male', 'Female', 'Other'], required: true },
 	password: { type: String, required: true },
-	school: { type: String },
-	class: { type: String },
+	school: { type: String, trim: true },
+	class: { type: String, trim: true },
 	profilePicture: {
 		type: String,
 		default: '/assets/default-profile.jpg',
 	},
-	bio: String,
+	bio: { type: String, trim: true },
 	coins: { type: Number, default: 0 },
 	streaks: { type: Number, default: 0 },
 	enrolledCourses: [
@@ -38,9 +38,8 @@ const UserSchema = new mongoose.Schema({
 			},
 		},
 	],
-
 	joinDate: { type: Date, default: Date.now },
-	lastLogin: Date,
+	lastLogin: { type: Date },
 });
 
 module.exports = mongoose.model('User', UserSchema);

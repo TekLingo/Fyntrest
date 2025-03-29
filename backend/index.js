@@ -451,10 +451,10 @@ app.post(
 // Get course by ID
 app.get('/courses/:courseId', async (req, res) => {
 	try {
-		const { courseId } = req.params;
-		const course = await Course.findById(req.params.courseId).populate(
-			'modules'
-		); // Adjust the fields as needed
+		const course = await Course.findById(req.params.courseId).populate({
+			path: 'modules',
+			populate: { path: 'videos', select: 'title url' }, // Populate videos within modules
+		});
 
 		if (!course) {
 			return res.status(404).json({ message: 'Course not found' });
@@ -484,16 +484,21 @@ app.get('/courses/:semesterId', async (req, res) => {
 });
 
 // Get all courses
-app.get('/courses', async (req, res) => {
+app.get('/courses', authenticateToken, async (req, res) => {
 	try {
 		const courses = await Course.find({})
-			.populate('modules', 'title description') // Populate module details you want
+			.populate('modules', 'title description') // Populate module details
 			.select('-__v'); // Exclude version key
 
-		res.status(200).json(courses);
+		res.status(200).json({
+			success: true,
+			message: 'Courses fetched successfully',
+			data: courses,
+		});
 	} catch (error) {
 		console.error('Error fetching courses:', error);
 		res.status(500).json({
+			success: false,
 			message: 'Error fetching courses',
 			error: error.message,
 		});
@@ -507,25 +512,40 @@ app.put('/update-course/:courseId', authenticateToken, async (req, res) => {
 		const courseId = req.params.courseId;
 
 		const course = await Course.findById(courseId);
-		if (!course) return res.status(404).json({ message: 'Course not found' });
+		if (!course) {
+			return res.status(404).json({
+				success: false,
+				message: 'Course not found',
+			});
+		}
 
 		// Only admins or the creator can update
 		if (
 			req.user.role !== 'admin' &&
 			!course.createdBy.equals(req.user.userId)
 		) {
-			return res.status(403).json({ message: 'Unauthorized' });
+			return res.status(403).json({
+				success: false,
+				message: 'Unauthorized to update this course',
+			});
 		}
 
 		course.title = title || course.title;
 		course.description = description || course.description;
 		await course.save();
 
-		res.status(200).json({ message: 'Course updated successfully', course });
+		res.status(200).json({
+			success: true,
+			message: 'Course updated successfully',
+			data: course,
+		});
 	} catch (error) {
-		res
-			.status(500)
-			.json({ message: 'Error updating course', error: error.message });
+		console.error('Error updating course:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Error updating course',
+			error: error.message,
+		});
 	}
 });
 
@@ -534,14 +554,22 @@ app.delete('/delete-course/:courseId', authenticateToken, async (req, res) => {
 	try {
 		const courseId = req.params.courseId;
 		const course = await Course.findById(courseId);
-		if (!course) return res.status(404).json({ message: 'Course not found' });
+		if (!course) {
+			return res.status(404).json({
+				success: false,
+				message: 'Course not found',
+			});
+		}
 
 		// Only admin or creator can delete the course
 		if (
 			req.user.role !== 'admin' &&
 			!course.createdBy.equals(req.user.userId)
 		) {
-			return res.status(403).json({ message: 'Unauthorized' });
+			return res.status(403).json({
+				success: false,
+				message: 'Unauthorized to delete this course',
+			});
 		}
 
 		// Find and delete modules and their videos for this course
@@ -554,12 +582,16 @@ app.delete('/delete-course/:courseId', authenticateToken, async (req, res) => {
 		// Delete the course
 		await Course.findByIdAndDelete(courseId);
 		res.status(200).json({
+			success: true,
 			message: 'Course and its modules and videos deleted successfully',
 		});
 	} catch (error) {
-		res
-			.status(500)
-			.json({ message: 'Error deleting course', error: error.message });
+		console.error('Error deleting course:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Error deleting course',
+			error: error.message,
+		});
 	}
 });
 
@@ -568,7 +600,7 @@ app.delete('/delete-course/:courseId', authenticateToken, async (req, res) => {
 // --------------------------
 
 // GET Module by ID
-app.get('/modules/:moduleId', async (req, res) => {
+app.get('/modules/:moduleId', authenticateToken, async (req, res) => {
 	try {
 		const { moduleId } = req.params;
 		let moduleData = await Module.findById(moduleId).populate(
@@ -576,9 +608,13 @@ app.get('/modules/:moduleId', async (req, res) => {
 			'title url duration'
 		);
 		if (!moduleData) {
-			return res.status(404).json({ message: 'Module not found' });
+			return res.status(404).json({
+				success: false,
+				message: 'Module not found',
+			});
 		}
-		// Convert to plain object and add videoSrc to each video (so UI can use topic.videoSrc)
+
+		// Convert to plain object and add videoSrc to each video
 		moduleData = moduleData.toObject();
 		if (Array.isArray(moduleData.videos)) {
 			moduleData.videos = moduleData.videos.map((video) => ({
@@ -586,12 +622,19 @@ app.get('/modules/:moduleId', async (req, res) => {
 				videoSrc: video.url,
 			}));
 		}
-		res.status(200).json(moduleData);
+
+		res.status(200).json({
+			success: true,
+			message: 'Module fetched successfully',
+			data: moduleData,
+		});
 	} catch (error) {
 		console.error('Error fetching module:', error);
-		res
-			.status(500)
-			.json({ message: 'Error fetching module', error: error.message });
+		res.status(500).json({
+			success: false,
+			message: 'Error fetching module',
+			error: error.message,
+		});
 	}
 });
 
@@ -603,17 +646,22 @@ app.post(
 	async (req, res) => {
 		try {
 			const { title, description, courseId, image } = req.body;
-			if (!title || !courseId || !image)
-				return res
-					.status(400)
-					.json({ message: 'Title, courseId, and image are required' });
-
-			if (!isValidImage(image)) {
-				return res.status(400).json({ message: 'Invalid image selection' });
+			if (!title || !courseId || !image) {
+				return res.status(400).json({
+					success: false,
+					message: 'Title, courseId, and image are required',
+				});
 			}
 
-			const baseUrl = `${req.protocol}://${req.get('host')}`; // Get dynamic base URL
-			const imageUrl = `${baseUrl}/assets/${image}`; // Generate full image URL
+			if (!isValidImage(image)) {
+				return res.status(400).json({
+					success: false,
+					message: 'Invalid image selection',
+				});
+			}
+
+			const baseUrl = `${req.protocol}://${req.get('host')}`;
+			const imageUrl = `${baseUrl}/assets/${image}`;
 
 			const newModule = new Module({
 				title,
@@ -626,13 +674,18 @@ app.post(
 				$push: { modules: savedModule._id },
 			});
 
-			res
-				.status(201)
-				.json({ message: 'Module added successfully', module: savedModule });
+			res.status(201).json({
+				success: true,
+				message: 'Module added successfully',
+				data: savedModule,
+			});
 		} catch (error) {
-			res
-				.status(500)
-				.json({ message: 'Error adding module', error: error.message });
+			console.error('Error adding module:', error);
+			res.status(500).json({
+				success: false,
+				message: 'Error adding module',
+				error: error.message,
+			});
 		}
 	}
 );
@@ -669,9 +722,85 @@ app.delete(
 	}
 );
 
+// Fetch current module videos for the user
+app.get('/modules/current/videos', authenticateToken, async (req, res) => {
+	try {
+		const { userId } = req.user;
+
+		// Find the user's enrollment and get the last watched module
+		const enrollment = await Enrollment.findOne({ userId }).populate({
+			path: 'lastWatched.module',
+			populate: { path: 'videos', select: 'title url description' },
+		});
+
+		if (!enrollment || !enrollment.lastWatched.module) {
+			return res.status(404).json({ message: 'No current module found' });
+		}
+
+		const videos = enrollment.lastWatched.module.videos;
+		res.status(200).json({ videos });
+	} catch (error) {
+		console.error('Error fetching current module videos:', error);
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+});
+
 // --------------------------
 // Video Routes
 // --------------------------
+
+// Fetch all videos
+app.get('/videos', authenticateToken, async (req, res) => {
+	try {
+		const videos = await Video.find().select('title url description duration');
+		if (!videos || videos.length === 0) {
+			// Return an empty array instead of a 404 error
+			return res.status(200).json({ success: true, videos: [] });
+		}
+		res.status(200).json({ success: true, videos });
+	} catch (error) {
+		console.error('Error fetching videos:', error);
+		// Include detailed error information for debugging
+		res.status(500).json({
+			success: false,
+			message: 'Error fetching videos',
+			error: error.message,
+		});
+	}
+});
+
+app.get('/videos/:videoId', authenticateToken, async (req, res) => {
+	try {
+		const { videoId } = req.params;
+
+		// Validate ObjectId
+		if (!mongoose.Types.ObjectId.isValid(videoId)) {
+			return res.status(400).json({
+				success: false,
+				message: 'Invalid video ID',
+			});
+		}
+
+		const video = await Video.findById(videoId).select(
+			'title url description duration'
+		);
+
+		if (!video) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Video not found' });
+		}
+
+		res.status(200).json({ success: true, video });
+	} catch (error) {
+		console.error('Error fetching video by ID:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Error fetching video',
+			error: error.message,
+		});
+	}
+});
 
 // Add a video to a module
 app.post(
@@ -681,8 +810,12 @@ app.post(
 	async (req, res) => {
 		try {
 			const { title, url, moduleId, description } = req.body;
-			if (!title || !url || !moduleId || !description)
-				return res.status(400).json({ message: 'All fields are required' });
+			if (!title || !url || !moduleId || !description) {
+				return res.status(400).json({
+					success: false,
+					message: 'All fields are required',
+				});
+			}
 
 			const newVideo = new Video({ title, url, description });
 			const savedVideo = await newVideo.save();
@@ -691,13 +824,18 @@ app.post(
 				$push: { videos: savedVideo._id },
 			});
 
-			res
-				.status(201)
-				.json({ message: 'Video added successfully', video: savedVideo });
+			res.status(201).json({
+				success: true,
+				message: 'Video added successfully',
+				data: savedVideo,
+			});
 		} catch (error) {
-			res
-				.status(500)
-				.json({ message: 'Error adding video', error: error.message });
+			console.error('Error adding video:', error);
+			res.status(500).json({
+				success: false,
+				message: 'Error adding video',
+				error: error.message,
+			});
 		}
 	}
 );
@@ -712,19 +850,33 @@ app.post('/enroll', authenticateToken, async (req, res) => {
 		const { courseId } = req.body;
 		const userId = req.user.userId;
 
+		if (!courseId) {
+			return res
+				.status(400)
+				.json({ success: false, message: 'Course ID is required' });
+		}
+
+		// Check if the course exists
+		const course = await Course.findById(courseId);
+		if (!course) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Course not found' });
+		}
+
 		// Check if the user is already enrolled in this course
 		const existingEnrollment = await Enrollment.findOne({ userId, courseId });
 		if (existingEnrollment) {
 			return res
 				.status(400)
-				.json({ message: 'User is already enrolled in this course' });
+				.json({ success: false, message: 'Already enrolled in this course' });
 		}
 
-		// Create a new enrollment (lastWatched will be empty initially)
+		// Create a new enrollment
 		const enrollment = new Enrollment({ userId, courseId });
 		await enrollment.save();
 
-		// Update the user's enrolledCourses array (if needed)
+		// Update the user's enrolledCourses array
 		await User.findByIdAndUpdate(userId, {
 			$push: {
 				enrolledCourses: {
@@ -736,9 +888,14 @@ app.post('/enroll', authenticateToken, async (req, res) => {
 			},
 		});
 
-		res.status(201).json({ message: 'Enrolled successfully' });
+		res
+			.status(201)
+			.json({ success: true, message: 'Enrolled successfully', enrollment });
 	} catch (error) {
-		res.status(500).json({ message: 'Error enrolling', error: error.message });
+		console.error('Error enrolling:', error);
+		res
+			.status(500)
+			.json({ success: false, message: 'Server error', error: error.message });
 	}
 });
 
@@ -751,8 +908,16 @@ app.put(
 			const { enrollmentId } = req.params;
 			const { progress, lastWatchedModuleId, lastWatchedVideoId } = req.body;
 
+			if (!progress && (!lastWatchedModuleId || !lastWatchedVideoId)) {
+				return res.status(400).json({
+					success: false,
+					message: 'Progress or last watched module and video IDs are required',
+				});
+			}
+
 			// Build the update object
-			const updateData = { progress };
+			const updateData = {};
+			if (progress !== undefined) updateData.progress = progress;
 			if (lastWatchedModuleId && lastWatchedVideoId) {
 				updateData.lastWatched = {
 					module: lastWatchedModuleId,
@@ -768,20 +933,56 @@ app.put(
 			);
 
 			if (!updatedEnrollment) {
-				return res.status(404).json({ message: 'Enrollment not found' });
+				return res
+					.status(404)
+					.json({ success: false, message: 'Enrollment not found' });
 			}
 
-			res.json({
-				message: 'Enrollment updated',
+			res.status(200).json({
+				success: true,
+				message: 'Enrollment updated successfully',
 				enrollment: updatedEnrollment,
 			});
 		} catch (error) {
-			res
-				.status(500)
-				.json({ message: 'Error updating enrollment', error: error.message });
+			console.error('Error updating enrollment:', error);
+			res.status(500).json({
+				success: false,
+				message: 'Server error',
+				error: error.message,
+			});
 		}
 	}
 );
+
+// Get Current Enrollment
+app.get('/enrollment/current', authenticateToken, async (req, res) => {
+	try {
+		const { userId } = req.user;
+		const enrollment = await Enrollment.findOne({ userId })
+			.populate({
+				path: 'course',
+				select: 'title',
+			})
+			.populate({
+				path: 'lastWatched.module',
+				select: 'title description videos',
+				populate: {
+					path: 'videos',
+					select: 'title url description',
+				},
+			})
+			.populate('lastWatched.video', 'title url description');
+
+		if (!enrollment) {
+			return res.status(404).json({ message: 'No enrollment found' });
+		}
+
+		res.status(200).json({ enrollment });
+	} catch (error) {
+		console.error('Error fetching enrollment:', error);
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+});
 
 // --------------------------
 // Server Setup
