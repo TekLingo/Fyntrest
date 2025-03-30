@@ -6,6 +6,8 @@ import Breadcrumb from "../../components/Breadcrumb";
 import GradeDropdownMenu from "../../components/GradeDropMenu";
 import FactDropdownMenu from "../../components/FactDropMenu";
 import WordDropdownMenu from "../../components/WordDropMenu";
+import MCQComponent from "../../components/MCQComponent";
+import Popup from "../../components/PopUp";
 
 const Content = () => {
   const [activeGrade, setActiveGrade] = useState("8th"); // Default to 8th grade
@@ -96,6 +98,9 @@ const Content = () => {
     { courseName: "course-1", coursePreview: "ABC School" },
   ];
 
+  const [popupOpen, setPopupOpen] = useState(false);
+  const togglePopup = () => setPopupOpen((prev) => !prev);
+
   return (
     <div className="flex text-text-g h-screen bg-[#362856] p-4 flex-col gap-8 overflow-auto">
       {/* Grade card */}
@@ -158,9 +163,13 @@ const Content = () => {
                 </div>
               ))}
               {/* Course Plus button */}
-              <div className="rounded-full w-14 h-14 place-self-center bg-secondary-d flex items-center justify-center cursor-pointer">
+              <div
+                className="rounded-full w-14 h-14 place-self-center bg-secondary-d flex items-center justify-center cursor-pointer"
+                onClick={togglePopup}
+              >
                 <GoPlus size={40} />
               </div>
+              <Popup isOpen={popupOpen} onClose={togglePopup} />
             </div>
           )}
           {activeGrade === "9th" && (
@@ -179,6 +188,7 @@ const Content = () => {
               <div className="rounded-full w-14 h-14 place-self-center bg-secondary-d flex items-center justify-center cursor-pointer">
                 <GoPlus size={40} />
               </div>
+              <Popup isOpen={popupOpen} onClose={togglePopup} />
             </div>
           )}
           {activeGrade === "10th" && (
