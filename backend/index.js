@@ -911,36 +911,62 @@ app.post(
 // Get All Enrollments for a User
 app.get('/enrollments', authenticateToken, async (req, res) => {
 	try {
-		const { userId } = req.user;
-		const enrollments = await Enrollment.find({ userId }).populate({
+	  const { userId } = req.user;
+	  
+	  const enrollments = await Enrollment.find({ userId })
+		 .populate({
 			path: 'course',
 			select: 'title image modules',
 			populate: {
-				path: 'modules',
-				select: 'title status', // Add status field population
-			},
-		});
-
-		if (!enrollments || enrollments.length === 0) {
-			return res.status(404).json({
-				success: false,
-				message: 'No enrollments found',
-			});
-		}
-
-		res.status(200).json({
+			  path: 'modules',
+			  select: 'title status order',
+			  options: { sort: { order: 1 } }
+			}
+		 })
+		 .lean();
+ 
+	  if (!enrollments.length) {
+		 return res.status(200).json({
 			success: true,
-			enrollments,
-		});
+			enrollments: [],
+			message: 'No enrollments found'
+		 });
+	  }
+ 
+	  // Calculate module statuses
+	  const processed = enrollments.map(enrollment => {
+		 const totalModules = enrollment.course.modules.length;
+		 const completedCount = Math.floor((enrollment.progress / 100) * totalModules);
+		 
+		 const modules = enrollment.course.modules.map((module, index) => ({
+			...module,
+			status: index < completedCount ? 'completed' : 
+					  index === completedCount ? 'unlocked' : 'locked'
+		 }));
+ 
+		 return {
+			...enrollment,
+			course: {
+			  ...enrollment.course,
+			  modules
+			}
+		 };
+	  });
+ 
+	  res.status(200).json({
+		 success: true,
+		 enrollments: processed
+	  });
+ 
 	} catch (error) {
-		console.error('Error fetching enrollments:', error);
-		res.status(500).json({
-			success: false,
-			message: 'Server error',
-			error: error.message,
-		});
+	  console.error('Error fetching enrollments:', error);
+	  res.status(500).json({
+		 success: false,
+		 message: 'Server error',
+		 error: error.message
+	  });
 	}
-});
+ });
 
 // Enroll in a course
 app.post('/enroll', authenticateToken, async (req, res) => {

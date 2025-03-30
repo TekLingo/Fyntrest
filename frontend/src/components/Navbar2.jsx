@@ -57,7 +57,7 @@ const Navbar2 = () => {
 	useEffect(() => {
 		const fetchUserData = async () => {
 			try {
-				const response = await axiosInstance.get('/user/get-user');
+				const response = await axiosInstance.get('/get-user');
 				setUserData(response.data.user);
 			} catch (error) {
 				console.error('Error fetching user data:', error);
