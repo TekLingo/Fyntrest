@@ -22,7 +22,15 @@ import BlogOpenPage from './pages/BlogOpenPage';
 import BlogPage from './pages/BlogPage';
 import CoursePage from './pages/courses/coursePage';
 import ModulePage from './pages/courses/ModulePage';
+import BadGateway from './pages/Error/BadGateway';
+import BadRequest from './pages/Error/BadRequest';
+import Forbidden from './pages/Error/Forbidden';
+import GatewayTimeout from './pages/Error/GatewayTimeout';
+import InternalServerError from './pages/Error/InternalServerError';
 import NotFound from './pages/Error/NotFound'; // 404 page component
+import RequestTimeout from './pages/Error/RequestTimeout';
+import ServiceUnavailable from './pages/Error/ServiceUnavailable';
+import Unauthorized from './pages/Error/Unauthorized';
 import Home from './pages/Home';
 
 // Role-Based Access Control (RBAC) Wrapper
@@ -102,6 +110,16 @@ const App = () => {
 				{/* Additional Parameterized Routes */}
 				<Route path="/courses/:semesterId" element={<CoursePage />} />
 				<Route path="/modules/:courseId" element={<ModulePage />} />
+				{/* Error Pages */}
+				<Route path="/error/400" element={<BadRequest />} />
+				<Route path="/error/401" element={<Unauthorized />} />
+				<Route path="/error/403" element={<Forbidden />} />
+				<Route path="/error/404" element={<NotFound />} />
+				<Route path="/error/500" element={<InternalServerError />} />
+				<Route path="/error/502" element={<BadGateway />} />
+				<Route path="/error/503" element={<ServiceUnavailable />} />
+				<Route path="/error/504" element={<GatewayTimeout />} />
+				<Route path="/error/408" element={<RequestTimeout />} />
 				{/* 404 Route */}
 				<Route path="*" element={<NotFound />} />
 			</Routes>
