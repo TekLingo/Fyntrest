@@ -8,6 +8,10 @@ const config = require('./config.json');
 const upload = require('./multer');
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process'); // Add this for executing ffmpeg commands
+const Video = require('./models/video.model'); // Ensure the Video model is imported
+const Quiz = require('./models/quiz.model'); // Import the Quiz model
+const Question = require('./models/question.model'); // Import the Question model
 
 // Middleware
 const { authenticateToken, checkRole } = require('./utilities');
@@ -19,7 +23,6 @@ const School = require('./models/school.model');
 const Course = require('./models/course.model');
 const Semester = require('./models/semester.model');
 const Module = require('./models/module.model');
-const Video = require('./models/video.model');
 const Enrollment = require('./models/enrollment.model');
 
 // Database Connection
@@ -291,7 +294,23 @@ app.delete('/delete-user', authenticateToken, async (req, res) => {
 // --------------------------
 // Video Upload
 // --------------------------
-app.post('/upload-video', upload.single('video'), (req, res) => {
+
+// Helper function to generate thumbnail
+const generateThumbnail = (videoPath, thumbnailPath) => {
+	return new Promise((resolve, reject) => {
+		const command = `ffmpeg -i "${videoPath}" -ss 00:00:01 -vframes 1 "${thumbnailPath}"`;
+		exec(command, (error) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(thumbnailPath);
+			}
+		});
+	});
+};
+
+// Modify the /upload-video endpoint
+app.post('/upload-video', upload.single('video'), async (req, res) => {
 	try {
 		if (!req.file) {
 			return res.status(400).json({ message: 'No video file uploaded' });
@@ -300,8 +319,32 @@ app.post('/upload-video', upload.single('video'), (req, res) => {
 		const videoUrl = `${req.protocol}://${req.get(
 			'host'
 		)}/uploads/course-videos/${req.file.filename}`;
-		res.status(200).json({ message: 'Video uploaded successfully', videoUrl });
+
+		// Generate thumbnail
+		const thumbnailPath = `uploads/thumbnails/${req.file.filename}.jpg`;
+		await generateThumbnail(req.file.path, thumbnailPath);
+
+		const thumbnailUrl = `${req.protocol}://${req.get(
+			'host'
+		)}/${thumbnailPath}`;
+
+		// Save video details to the database
+		const newVideo = new Video({
+			title: req.body.title || 'Untitled Video',
+			url: videoUrl,
+			description: req.body.description || 'No description provided',
+			duration: req.body.duration || 0,
+			thumbnail: thumbnailUrl, // Save thumbnail URL
+		});
+		await newVideo.save();
+
+		res.status(200).json({
+			message: 'Video uploaded successfully',
+			videoUrl,
+			thumbnailUrl,
+		});
 	} catch (error) {
+		console.error('Error uploading video:', error);
 		res
 			.status(500)
 			.json({ message: 'Error uploading video', error: error.message });
@@ -605,7 +648,7 @@ app.get('/modules/:moduleId', authenticateToken, async (req, res) => {
 		const { moduleId } = req.params;
 		let moduleData = await Module.findById(moduleId).populate(
 			'videos',
-			'title url duration'
+			'title url duration description'
 		);
 		if (!moduleData) {
 			return res.status(404).json({
@@ -745,6 +788,27 @@ app.get('/modules/current/videos', authenticateToken, async (req, res) => {
 	}
 });
 
+app.put('/modules/:moduleId/status', authenticateToken, async (req, res) => {
+	try {
+		const { status } = req.body;
+		const module = await Module.findByIdAndUpdate(
+			req.params.moduleId,
+			{ status },
+			{ new: true }
+		);
+
+		res.json({
+			success: true,
+			module,
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: 'Error updating module status',
+		});
+	}
+});
+
 // --------------------------
 // Video Routes
 // --------------------------
@@ -754,13 +818,11 @@ app.get('/videos', authenticateToken, async (req, res) => {
 	try {
 		const videos = await Video.find().select('title url description duration');
 		if (!videos || videos.length === 0) {
-			// Return an empty array instead of a 404 error
 			return res.status(200).json({ success: true, videos: [] });
 		}
 		res.status(200).json({ success: true, videos });
 	} catch (error) {
 		console.error('Error fetching videos:', error);
-		// Include detailed error information for debugging
 		res.status(500).json({
 			success: false,
 			message: 'Error fetching videos',
@@ -843,6 +905,42 @@ app.post(
 // --------------------------
 // Enrollment Routes
 // --------------------------
+
+// In your server file (e.g., index.js or app.js)
+
+// Get All Enrollments for a User
+app.get('/enrollments', authenticateToken, async (req, res) => {
+	try {
+		const { userId } = req.user;
+		const enrollments = await Enrollment.find({ userId }).populate({
+			path: 'course',
+			select: 'title image modules',
+			populate: {
+				path: 'modules',
+				select: 'title status', // Add status field population
+			},
+		});
+
+		if (!enrollments || enrollments.length === 0) {
+			return res.status(404).json({
+				success: false,
+				message: 'No enrollments found',
+			});
+		}
+
+		res.status(200).json({
+			success: true,
+			enrollments,
+		});
+	} catch (error) {
+		console.error('Error fetching enrollments:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Server error',
+			error: error.message,
+		});
+	}
+});
 
 // Enroll in a course
 app.post('/enroll', authenticateToken, async (req, res) => {
@@ -983,6 +1081,324 @@ app.get('/enrollment/current', authenticateToken, async (req, res) => {
 		res.status(500).json({ message: 'Server error', error: error.message });
 	}
 });
+
+// --------------------------
+// Create an empty quiz
+// --------------------------
+app.post(
+	'/quizzes',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const { videoId } = req.body;
+			if (videoId && !mongoose.Types.ObjectId.isValid(videoId)) {
+				return res
+					.status(400)
+					.json({ success: false, message: 'Invalid video ID' });
+			}
+
+			const newQuiz = new Quiz({
+				questions: [],
+				videos: videoId ? [videoId] : [],
+			});
+			const savedQuiz = await newQuiz.save();
+
+			if (videoId) {
+				await Video.findByIdAndUpdate(videoId, {
+					$push: { quizzes: savedQuiz._id },
+				});
+			}
+
+			res.status(201).json({
+				success: true,
+				message: 'Empty quiz created successfully',
+				quiz: savedQuiz,
+			});
+		} catch (error) {
+			console.error('Error creating quiz:', error);
+			res.status(500).json({
+				success: false,
+				message: 'Server error',
+				error: error.message,
+			});
+		}
+	}
+);
+
+// --------------------------
+// Get all quizzes (no videoId filter)
+// --------------------------
+app.get('/quizzes/all', async (req, res) => {
+	try {
+		const quizzes = await Quiz.find().populate('questions');
+		res.status(200).json({ success: true, quizzes });
+	} catch (error) {
+		console.error('Error fetching all quizzes:', error);
+		res
+			.status(500)
+			.json({ success: false, message: 'Server error', error: error.message });
+	}
+});
+
+// --------------------------
+// Fetch quizzes for a specific video
+// --------------------------
+app.get('/quizzes', authenticateToken, async (req, res) => {
+	try {
+		const { videoId } = req.query;
+
+		if (!videoId) {
+			return res
+				.status(400)
+				.json({ success: false, message: 'Video ID is required' });
+		}
+
+		if (!mongoose.Types.ObjectId.isValid(videoId)) {
+			return res
+				.status(400)
+				.json({ success: false, message: 'Invalid video ID' });
+		}
+
+		const quizzes = await Quiz.find({ videos: videoId }).populate('questions');
+		if (!quizzes || quizzes.length === 0) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'No quizzes found for this video' });
+		}
+
+		res.status(200).json({ success: true, quizzes });
+	} catch (error) {
+		console.error('Error fetching quizzes:', error);
+		res
+			.status(500)
+			.json({ success: false, message: 'Server error', error: error.message });
+	}
+});
+
+// --------------------------
+// Get a quiz by ID
+// --------------------------
+app.get('/quizzes/:quizId', async (req, res) => {
+	try {
+		const { quizId } = req.params;
+		if (!mongoose.Types.ObjectId.isValid(quizId)) {
+			return res
+				.status(400)
+				.json({ success: false, message: 'Invalid quiz ID' });
+		}
+
+		const quiz = await Quiz.findById(quizId).populate('questions');
+		if (!quiz) {
+			return res
+				.status(404)
+				.json({ success: false, message: 'Quiz not found' });
+		}
+
+		res.status(200).json({ success: true, quiz });
+	} catch (error) {
+		console.error('Error fetching quiz:', error);
+		res
+			.status(500)
+			.json({ success: false, message: 'Server error', error: error.message });
+	}
+});
+
+// --------------------------
+// Update a quiz
+// --------------------------
+app.put(
+	'/quizzes/:quizId',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const { quizId } = req.params;
+			const { questions, videos } = req.body;
+
+			// Update questions if provided
+			if (questions && Array.isArray(questions)) {
+				await Promise.all(
+					questions.map(async (q) => {
+						if (q._id) {
+							// Update existing question
+							await Question.findByIdAndUpdate(q._id, q);
+						} else {
+							// Create new question
+							const newQuestion = new Question(q);
+							await newQuestion.save();
+						}
+					})
+				);
+			}
+
+			const updatedQuiz = await Quiz.findByIdAndUpdate(
+				quizId,
+				{ questions, videos },
+				{ new: true }
+			).populate('questions');
+
+			if (!updatedQuiz) {
+				return res.status(404).json({ message: 'Quiz not found' });
+			}
+
+			// Update video associations if provided
+			if (videos && Array.isArray(videos)) {
+				// Remove quiz from old videos
+				await Video.updateMany(
+					{ quizzes: quizId },
+					{ $pull: { quizzes: quizId } }
+				);
+				// Add quiz to new videos
+				await Video.updateMany(
+					{ _id: { $in: videos } },
+					{ $push: { quizzes: quizId } }
+				);
+			}
+
+			res
+				.status(200)
+				.json({ message: 'Quiz updated successfully', quiz: updatedQuiz });
+		} catch (error) {
+			console.error('Error updating quiz:', error);
+			res.status(500).json({ message: 'Server error', error: error.message });
+		}
+	}
+);
+
+// --------------------------
+// Delete a quiz
+// --------------------------
+app.delete(
+	'/quizzes/:quizId',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const { quizId } = req.params;
+			const quiz = await Quiz.findById(quizId);
+			if (!quiz) {
+				return res.status(404).json({ message: 'Quiz not found' });
+			}
+
+			// Delete associated questions if stored as separate documents
+			await Question.deleteMany({ _id: { $in: quiz.questions } });
+
+			// Delete the quiz
+			await Quiz.findByIdAndDelete(quizId);
+
+			res
+				.status(200)
+				.json({ message: 'Quiz and its questions deleted successfully' });
+		} catch (error) {
+			console.error('Error deleting quiz:', error);
+			res.status(500).json({ message: 'Server error', error: error.message });
+		}
+	}
+);
+
+// --------------------------
+// Add a question to a quiz
+// --------------------------
+app.post(
+	'/quizzes/:quizId/questions',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const { quizId } = req.params;
+			const { question, options, answer } = req.body;
+
+			if (!question || !options || !answer || options.length < 2) {
+				return res.status(400).json({
+					message: 'Question, at least two options, and an answer are required',
+				});
+			}
+
+			const quiz = await Quiz.findById(quizId);
+			if (!quiz) {
+				return res.status(404).json({ message: 'Quiz not found' });
+			}
+
+			// Here we assume questions are stored as subdocuments in Quiz
+			quiz.questions.push({ question, options, answer });
+			await quiz.save();
+
+			res.status(201).json({ message: 'Question added successfully', quiz });
+		} catch (error) {
+			console.error('Error adding question:', error);
+			res.status(500).json({ message: 'Server error', error: error.message });
+		}
+	}
+);
+
+// --------------------------
+// Update a question in a quiz
+// --------------------------
+app.put(
+	'/quizzes/:quizId/questions/:questionId',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const { quizId, questionId } = req.params;
+			const { question, options, answer } = req.body;
+
+			const quiz = await Quiz.findById(quizId);
+			if (!quiz) {
+				return res.status(404).json({ message: 'Quiz not found' });
+			}
+
+			const questionToUpdate = quiz.questions.id(questionId);
+			if (!questionToUpdate) {
+				return res.status(404).json({ message: 'Question not found' });
+			}
+
+			if (question) questionToUpdate.question = question;
+			if (options) questionToUpdate.options = options;
+			if (answer) questionToUpdate.answer = answer;
+
+			await quiz.save();
+
+			res.status(200).json({ message: 'Question updated successfully', quiz });
+		} catch (error) {
+			console.error('Error updating question:', error);
+			res.status(500).json({ message: 'Server error', error: error.message });
+		}
+	}
+);
+
+// --------------------------
+// Delete a question from a quiz
+// --------------------------
+app.delete(
+	'/quizzes/:quizId/questions/:questionId',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const { quizId, questionId } = req.params;
+
+			const quiz = await Quiz.findById(quizId);
+			if (!quiz) {
+				return res.status(404).json({ message: 'Quiz not found' });
+			}
+
+			const questionToDelete = quiz.questions.id(questionId);
+			if (!questionToDelete) {
+				return res.status(404).json({ message: 'Question not found' });
+			}
+
+			questionToDelete.remove();
+			await quiz.save();
+
+			res.status(200).json({ message: 'Question deleted successfully', quiz });
+		} catch (error) {
+			console.error('Error deleting question:', error);
+			res.status(500).json({ message: 'Server error', error: error.message });
+		}
+	}
+);
 
 // --------------------------
 // Server Setup

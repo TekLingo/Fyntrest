@@ -13,7 +13,7 @@ export default {
 			},
 			colors: {
 				'bg-color': '#0c0a31',
-				'primary_p': '#28114c', // purple
+				primary_p: '#28114c', // purple
 				'primary-fp': '#473966', // faded purple
 				'primary-b': '#1d194f', // blueish purple 1
 				'secondary-lt': '#ACA6FF', // lightest
@@ -31,7 +31,7 @@ export default {
 			backgroundImage: {
 				'Menu-open': 'url(./src/assets/Images/landing page/Exclude4x.png)',
 				Hero: 'url(./src/assets/Images/Landing Page/hero-img.png)',
-				Menu: 'url(./src/assets/Images/Navbar.svg)',
+				Menu: 'url(./src/assets/Images/navbar.svg)',
 				'money-gradient':
 					'linear-gradient(180deg, rgba(12,10,49,0) 0%, rgba(12,10,49,0.4) 3%, rgba(12,10,49,0.6) 5%, rgba(12,10,49,0.8) 10%, rgba(12,10,49,1) 20%)',
 				'journey-path':

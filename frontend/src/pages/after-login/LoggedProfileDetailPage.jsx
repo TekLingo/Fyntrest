@@ -29,26 +29,17 @@ const LoggedProfileDetailPage = () => {
 	useEffect(() => {
 		const fetchUserData = async () => {
 			try {
-				const token = localStorage.getItem('token');
-				if (!token) {
-					navigate('/login');
-					return;
-				}
-
-				const response = await axiosInstance.get('/get-user', {
-					headers: { Authorization: `Bearer ${token}` },
-				});
-				// Axios stores response data in `response.data`
-				const data = response.data;
-				if (data && data.user) {
+				const response = await axiosInstance.get('/user/get-user');
+				const data = response.data.user;
+				if (data) {
 					setFormData({
-						firstName: data.user.firstName || '',
-						lastName: data.user.lastName || '',
-						gender: data.user.gender || 'Prefer not to say',
-						email: data.user.email || '',
-						school: data.user.school || '',
-						schoolCode: data.user.schoolCode || '',
-						grade: data.user.grade || '',
+						firstName: data.firstName || '',
+						lastName: data.lastName || '',
+						gender: data.gender || 'Prefer not to say',
+						email: data.email || '',
+						school: data.school || '',
+						schoolCode: data.schoolCode || '',
+						grade: data.grade || '',
 					});
 				}
 			} catch (error) {
@@ -78,19 +69,10 @@ const LoggedProfileDetailPage = () => {
 		}));
 	};
 
-	// Save updated details to the backend using the `/api/update-user` route
+	// Save updated details to the backend
 	const handleSave = async () => {
 		try {
-			const token = localStorage.getItem('token');
-			if (!token) {
-				navigate('/login');
-				return;
-			}
-			// Send the updated user details to the backend
-			const response = await axiosInstance.put('/api/update-user', formData, {
-				headers: { Authorization: `Bearer ${token}` },
-			});
-			// Optionally, you can display a success message from response.data.message
+			const response = await axiosInstance.put('/user/update-user', formData);
 			console.log(response.data.message);
 			setIsEditMode(false);
 		} catch (error) {
@@ -112,14 +94,7 @@ const LoggedProfileDetailPage = () => {
 		if (!confirmed) return;
 
 		try {
-			const token = localStorage.getItem('token');
-			if (!token) {
-				navigate('/login');
-				return;
-			}
-			const response = await axiosInstance.delete('/api/delete-user', {
-				headers: { Authorization: `Bearer ${token}` },
-			});
+			const response = await axiosInstance.delete('/user/delete-user');
 			console.log(response.data.message);
 			// Show a sad goodbye message after deletion
 			setAccountDeleted(true);

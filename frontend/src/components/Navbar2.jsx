@@ -57,17 +57,8 @@ const Navbar2 = () => {
 	useEffect(() => {
 		const fetchUserData = async () => {
 			try {
-				const token = localStorage.getItem('token'); // Use 'token' for consistency
-				if (!token) {
-					navigate('/login');
-					return;
-				}
-				const response = await axiosInstance.get('/get-user', {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				});
-				setUserData(response.data.user); // Set user data
+				const response = await axiosInstance.get('/user/get-user');
+				setUserData(response.data.user);
 			} catch (error) {
 				console.error('Error fetching user data:', error);
 			}

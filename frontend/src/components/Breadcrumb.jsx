@@ -17,14 +17,13 @@ const Breadcrumb = ({ items }) => {
 								index === items.length - 1 ? 'font-bold' : 'cursor-pointer'
 							}
 							onClick={() => {
-								// For example, let the home icon (first item) navigate to the root.
-								if (index === 0) {
-									navigate('/');
+								// Navigate to the provided item's path if available
+								if (item.path) {
+									navigate(item.path);
 								}
-								// Add navigation for other items if needed.
 							}}
 						>
-							{item}
+							{item.label || item}
 						</span>
 					</React.Fragment>
 				))}
@@ -55,7 +54,7 @@ const Breadcrumb = ({ items }) => {
 						}`}
 						onClick={() => handleClick(index)}
 					>
-						{item}
+						{decodeURIComponent(item)}
 					</p>
 				</React.Fragment>
 			))}

@@ -22,10 +22,12 @@ import BlogOpenPage from './pages/BlogOpenPage';
 import BlogPage from './pages/BlogPage';
 import CoursePage from './pages/courses/coursePage';
 import ModulePage from './pages/courses/ModulePage';
-import NotFound from './pages/Error/NotFound'; // New 404 page component (to be created)
+import NotFound from './pages/Error/NotFound'; // 404 page component
 import Home from './pages/Home';
 
 // Role-Based Access Control (RBAC) Wrapper
+import PropTypes from 'prop-types';
+
 const RoleBasedRoute = ({ allowedRoles, children }) => {
 	const userRole = localStorage.getItem('role');
 	return allowedRoles.includes(userRole) ? (
@@ -33,6 +35,11 @@ const RoleBasedRoute = ({ allowedRoles, children }) => {
 	) : (
 		<Navigate to="/" replace />
 	);
+};
+
+RoleBasedRoute.propTypes = {
+	allowedRoles: PropTypes.arrayOf(PropTypes.string).isRequired,
+	children: PropTypes.node.isRequired,
 };
 
 const App = () => {
@@ -59,7 +66,7 @@ const App = () => {
 				{/* Renamed */}
 				<Route path="/module-overview" element={<ModulePage />} />{' '}
 				{/* Renamed */}
-				<Route path="/quiz" element={<Quiz />} />
+				<Route path="/logged/quiz/:videoId" element={<Quiz />} />
 				<Route path="/blog" element={<BlogPage />} />
 				<Route path="/blog-open" element={<BlogOpenPage />} />
 				{/* Protected Routes */}
@@ -102,10 +109,13 @@ const App = () => {
 	);
 };
 
-// Registration Guard
 const RegistrationGuard = ({ children }) => {
 	const registrationToken = localStorage.getItem('registrationToken');
 	return registrationToken ? children : <Navigate to="/register" replace />;
+};
+
+RegistrationGuard.propTypes = {
+	children: PropTypes.node.isRequired,
 };
 
 // Root Component with Enhanced Logic

@@ -96,7 +96,10 @@ const LoggedModulePage = () => {
 							Glimpse of Module
 						</h2>
 						{moduleData.videos.map((video, index) => (
-							<Link key={index} to={`/modules/${moduleId}/videos/${video._id}`}>
+							<Link
+								key={index}
+								to={`/logged/module/${moduleId}/video/${video._id}`}
+							>
 								<ModuleLogin
 									videoId={video._id}
 									thumbnail={video.url} // Assuming url is used as thumbnail
