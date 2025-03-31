@@ -12,10 +12,9 @@ const Popup = ({ isOpen, onClose }) => {
   const [description, setDescription] = useState("");
 
   return (
-    <div className="fixed top-0 left-0 w-full bg-primary-b bg-opacity-80 flex justify-center items-center flex-col gap-20">
-      <div className="w-4/5 popup-container bg-primary-b p-6 rounded-lg shadow-lg relative text-text-g flex flex-col gap-8 h-screen overflow-y-auto">
-        <div></div>
-        {/* tittle section */}
+    <div className="fixed top-0 left-0 w-full bg-bg-color bg-opacity-80 flex justify-center items-center flex-col gap-20">
+      <div className="w-4/5 popup-container bg-bg-color p-6 rounded-lg shadow-lg relative text-text-g flex flex-col gap-8 h-screen overflow-y-auto">
+        {/* title section */}
         <div className="flex justify-between items-center">
           <h1 className="text-4xl">Add Course</h1>
           <IoIosClose size={40} onClick={onClose} className="cursor-pointer" />
@@ -30,7 +29,7 @@ const Popup = ({ isOpen, onClose }) => {
               <input
                 type="text"
                 placeholder="Course Name"
-                className="p-2 rounded-lg w-full bg-primary-fp outline-none"
+                className="p-2 rounded-lg w-full bg-primary-fp outline-none text-xl"
                 value={courseName}
                 onChange={(e) => setCourseName(e.target.value)}
               />
@@ -40,7 +39,7 @@ const Popup = ({ isOpen, onClose }) => {
                 Grade
               </label>
               <select
-                className="p-2 bg-primary-fp outline-none rounded-lg w-full"
+                className="p-2 bg-primary-fp outline-none rounded-lg w-full text-xl"
                 value={grade}
                 onChange={(e) => setGrade(e.target.value)}
               >
@@ -54,7 +53,7 @@ const Popup = ({ isOpen, onClose }) => {
                 Semester
               </label>
               <select
-                className="p-2 bg-primary-fp outline-none rounded-lg w-full"
+                className="p-2 bg-primary-fp outline-none rounded-lg w-full text-xl"
                 value={semester}
                 onChange={(e) => setSemester(e.target.value)}
               >
@@ -69,7 +68,7 @@ const Popup = ({ isOpen, onClose }) => {
             </label>
             <textarea
               placeholder="Description"
-              className="p-2 bg-primary-fp outline-none rounded-lg w-full"
+              className="p-2 bg-primary-fp outline-none rounded-lg w-full text-xl"
               rows="3"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -83,8 +82,7 @@ const Popup = ({ isOpen, onClose }) => {
         <div>
           <MCQComponent />
         </div>
-        
-        <div className="min-h-20"></div>
+        <div></div>
       </div>
     </div>
   );

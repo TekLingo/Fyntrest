@@ -4,6 +4,7 @@ import { RiCheckboxBlankLine } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
 import { GoPlus } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
+import AddModulePopUp from "./AddModulePopUp";
 
 const MCQComponent = () => {
   const [questions, setQuestions] = useState([
@@ -17,6 +18,8 @@ const MCQComponent = () => {
     },
   ]);
   const [error, setError] = useState("");
+  const [showPopUp, setShowPopUp] = useState(false);
+  const navigate = useNavigate();
 
   const addQuestion = () => {
     const lastQuestion = questions[questions.length - 1];
@@ -81,22 +84,25 @@ const MCQComponent = () => {
 
   const handleAddModules = () => {
     for (let q of questions) {
-      if (!q.question.trim() || (q.type !== "Short Answer" && q.options.some((opt) => !opt.trim()))) {
+      if (
+        !q.question.trim() ||
+        (q.type !== "Short Answer" && q.options.some((opt) => !opt.trim()))
+      ) {
         setError("Please fill in all questions and options before proceeding.");
         return;
       }
     }
     setError("");
-    navigate("/modules");
+    setShowPopUp(true);
   };
 
   return (
-    <div className="w-full mx-auto space-y-6 text-text-g">
+    <div className="w-full mx-auto flex flex-col gap-5 text-text-g">
       {error && <div className="text-red-600 text-sm">{error}</div>}
       {questions.map((q, questionIndex) => (
         <div
           key={questionIndex}
-          className="p-6 rounded-lg shadow-md  relative break-words w-full bg-transparent"
+          className="p-6 rounded-lg shadow-md relative break-words w-full bg-primary_p"
           style={{ boxShadow: "-7px 0 0 0 #A990FA" }}
         >
           <div className="flex justify-between items-center">
@@ -210,19 +216,24 @@ const MCQComponent = () => {
           )}
         </div>
       ))}
-
-      <button
-        onClick={addQuestion}
-        className="w-44 bg-transparent border-2 border-secondary-lt py-2 rounded-lg flex items-center justify-center gap-2 justify-self-center"
-      >
-        <GoPlus size={25} />
-        <p className="text-xl">Add Question</p>
-      </button>
+      <div className="w-full">
+        <button
+          onClick={addQuestion}
+          className="w-44 bg-transparent border-2 border-secondary-lt py-2 rounded-lg flex items-center justify-center gap-2 justify-self-center"
+        >
+          <GoPlus size={25} />
+          <p className="text-xl">Add Question</p>
+        </button>
+      </div>
       <div className="justify-center items-center flex">
-        <button className="bg-primary-fp text-text-g text-base p-4 rounded-lg" onClick={handleAddModules}>
+        <button
+          className="bg-primary-fp text-text-g text-base p-4 rounded-lg"
+          onClick={handleAddModules}
+        >
           Add Modules
         </button>
       </div>
+      {showPopUp && <AddModulePopUp onClose={() => setShowPopUp(false)} />}
     </div>
   );
 };
