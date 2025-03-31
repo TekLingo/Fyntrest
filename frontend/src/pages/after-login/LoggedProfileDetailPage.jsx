@@ -29,7 +29,7 @@ const LoggedProfileDetailPage = () => {
 	useEffect(() => {
 		const fetchUserData = async () => {
 			try {
-				const response = await axiosInstance.get('/user/get-user');
+				const response = await axiosInstance.get('get-user');
 				const data = response.data.user;
 				if (data) {
 					setFormData({
