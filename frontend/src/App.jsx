@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
 	Navigate,
 	Route,
@@ -6,6 +6,7 @@ import {
 	Routes,
 } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
+import AboutUsPage from './pages/AboutUsPage';
 import AdminMain from './pages/admin/AdminMain';
 import LoginCoursePage from './pages/after-login/LoggedCoursesPage';
 import LoggedLandingPage from './pages/after-login/LoggedLandingPage';
@@ -14,12 +15,14 @@ import LoggedProfileDetailPage from './pages/after-login/LoggedProfileDetailPage
 import LoggedProfilePage from './pages/after-login/LoggedProfilePage';
 import LoggedVideoPage from './pages/after-login/LoggedVideoPage';
 import Quiz from './pages/after-login/Quiz';
+import Semester from './pages/after-login/Semester';
 import Login from './pages/auth/Login';
 import PersonalInfo from './pages/auth/PersonalInfo';
 import Register from './pages/auth/Register';
 import Verify from './pages/auth/Verify';
 import BlogOpenPage from './pages/BlogOpenPage';
 import BlogPage from './pages/BlogPage';
+import ContactUsPage from './pages/ContactUsPage';
 import CoursePage from './pages/courses/coursePage';
 import ModulePage from './pages/courses/ModulePage';
 import BadGateway from './pages/Error/BadGateway';
@@ -34,24 +37,24 @@ import Unauthorized from './pages/Error/Unauthorized';
 import Home from './pages/Home';
 
 // Role-Based Access Control (RBAC) Wrapper
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 const RoleBasedRoute = ({ allowedRoles, children }) => {
-  const userRole = localStorage.getItem("role");
-  return allowedRoles.includes(userRole) ? (
-    children
-  ) : (
-    <Navigate to="/" replace />
-  );
+	const userRole = localStorage.getItem('role');
+	return allowedRoles.includes(userRole) ? (
+		children
+	) : (
+		<Navigate to="/" replace />
+	);
 };
 
 RoleBasedRoute.propTypes = {
-  allowedRoles: PropTypes.arrayOf(PropTypes.string).isRequired,
-  children: PropTypes.node.isRequired,
+	allowedRoles: PropTypes.arrayOf(PropTypes.string).isRequired,
+	children: PropTypes.node.isRequired,
 };
 
 const App = () => {
-  const isAuthenticated = !!localStorage.getItem("token");
+	const isAuthenticated = !!localStorage.getItem('token');
 
 	return (
 		<Router>
@@ -70,6 +73,9 @@ const App = () => {
 						</RegistrationGuard>
 					}
 				/>
+				<Route path="/about" element={<AboutUsPage />} />
+				<Route path="/blog" element={<BlogPage />} />
+				<Route path="/contact" element={<ContactUsPage />} />
 				<Route path="/course-overview" element={<CoursePage />} />{' '}
 				{/* Renamed */}
 				<Route path="/module-overview" element={<ModulePage />} />{' '}
@@ -80,6 +86,7 @@ const App = () => {
 				{/* Protected Routes */}
 				<Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
 					<Route path="/logged/home" element={<LoggedLandingPage />} />
+					<Route path="/logged/semester" element={<Semester />} />
 					<Route
 						path="/logged/course/:courseId"
 						element={<LoginCoursePage />}
@@ -128,28 +135,28 @@ const App = () => {
 };
 
 const RegistrationGuard = ({ children }) => {
-  const registrationToken = localStorage.getItem("registrationToken");
-  return registrationToken ? children : <Navigate to="/register" replace />;
+	const registrationToken = localStorage.getItem('registrationToken');
+	return registrationToken ? children : <Navigate to="/register" replace />;
 };
 
 RegistrationGuard.propTypes = {
-  children: PropTypes.node.isRequired,
+	children: PropTypes.node.isRequired,
 };
 
 // Root Component with Enhanced Logic
 const Root = () => {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const token = localStorage.getItem("token");
-  const userRole = localStorage.getItem("role");
+	const [isLoading, setIsLoading] = React.useState(true);
+	const token = localStorage.getItem('token');
+	const userRole = localStorage.getItem('role');
 
-  React.useEffect(() => {
-    setIsLoading(false); // Replace with actual validation if needed
-  }, []);
+	React.useEffect(() => {
+		setIsLoading(false); // Replace with actual validation if needed
+	}, []);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (!token) return <Navigate to="/home" replace />;
-  if (userRole === "admin") return <Navigate to="/admin/main" replace />;
-  return <Navigate to="/logged/home" replace />;
+	if (isLoading) return <div>Loading...</div>;
+	if (!token) return <Navigate to="/home" replace />;
+	if (userRole === 'admin') return <Navigate to="/admin/main" replace />;
+	return <Navigate to="/logged/home" replace />;
 };
 
 export default App;

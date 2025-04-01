@@ -12,6 +12,10 @@ const { exec } = require('child_process'); // Add this for executing ffmpeg comm
 const Video = require('./models/video.model'); // Ensure the Video model is imported
 const Quiz = require('./models/quiz.model'); // Import the Quiz model
 const Question = require('./models/question.model'); // Import the Question model
+const Fact = require('./models/fact.model');
+const Word = require('./models/word.model');
+const ContactMessage = require('./models/contact-message.model'); // Create this model
+const nodemailer = require('nodemailer'); // For sending emails
 
 // Middleware
 const { authenticateToken, checkRole } = require('./utilities');
@@ -69,7 +73,7 @@ app.get(
 					name: img,
 					url: `${baseUrl}/assets/${img}`,
 				})),
-			});
+			}); // Ensure this closing brace matches an open block or remove it if unnecessary
 		} catch (error) {
 			res
 				.status(500)
@@ -249,6 +253,21 @@ app.get('/get-user', authenticateToken, async (req, res) => {
 	}
 });
 
+// Fetch user details by userId
+app.get('/get-user-details', authenticateToken, async (req, res) => {
+	try {
+		const { userId } = req.user;
+		const user = await User.findById(userId).select('-password'); // Exclude password
+		if (!user) {
+			return res.status(404).json({ message: 'User not found' });
+		}
+		res.status(200).json({ success: true, user });
+	} catch (error) {
+		console.error('Error fetching user details:', error);
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+});
+
 // Update User
 app.put('/update-user', authenticateToken, async (req, res) => {
 	try {
@@ -356,15 +375,42 @@ app.post('/upload-video', upload.single('video'), async (req, res) => {
 // --------------------------
 
 // Get all semesters
-app.get('/get-semesters', async (req, res) => {
+app.get('/get-semesters', authenticateToken, async (req, res) => {
 	try {
-		const semesters = await Semester.find().populate('courses', 'title');
+		const { userId } = req.user;
+		const user = await User.findById(userId).select('-password');
+		const semesters = await Semester.find().populate({
+			path: 'courses',
+			select: 'title description image modules',
+			populate: {
+				path: 'modules',
+				select: 'title description videos',
+				populate: {
+					path: 'videos',
+					select: 'title url description',
+				},
+			},
+		});
 
 		if (!semesters || semesters.length === 0) {
 			return res.status(404).json({ message: 'No semesters found' });
 		}
-		res.status(200).json(semesters);
+
+		const enrollments = await Enrollment.find({ userId }).select('course');
+		const enrolledCourseIds = enrollments.map((enrollment) =>
+			enrollment.course.toString()
+		);
+
+		const updatedSemesters = semesters.map((semester) => {
+			const isEnrolled = semester.courses.some((course) =>
+				enrolledCourseIds.includes(course._id.toString())
+			);
+			return { ...semester.toObject(), enrolled: isEnrolled };
+		});
+
+		res.status(200).json({ success: true, semesters: updatedSemesters, user });
 	} catch (error) {
+		console.error('Error fetching semesters:', error);
 		res
 			.status(500)
 			.json({ message: 'Error fetching semesters', error: error.message });
@@ -496,7 +542,7 @@ app.get('/courses/:courseId', async (req, res) => {
 	try {
 		const course = await Course.findById(req.params.courseId).populate({
 			path: 'modules',
-			populate: { path: 'videos', select: 'title url' }, // Populate videos within modules
+			populate: { path: 'videos', select: 'title url' },
 		});
 
 		if (!course) {
@@ -911,62 +957,67 @@ app.post(
 // Get All Enrollments for a User
 app.get('/enrollments', authenticateToken, async (req, res) => {
 	try {
-	  const { userId } = req.user;
-	  
-	  const enrollments = await Enrollment.find({ userId })
-		 .populate({
-			path: 'course',
-			select: 'title image modules',
-			populate: {
-			  path: 'modules',
-			  select: 'title status order',
-			  options: { sort: { order: 1 } }
-			}
-		 })
-		 .lean();
- 
-	  if (!enrollments.length) {
-		 return res.status(200).json({
+		const { userId } = req.user;
+
+		const enrollments = await Enrollment.find({ userId })
+			.populate({
+				path: 'course',
+				select: 'title image modules enrolledStudents',
+				populate: {
+					path: 'modules',
+					select: 'title status order',
+					options: { sort: { order: 1 } },
+				},
+			})
+			.lean();
+
+		if (!enrollments.length) {
+			return res.status(200).json({
+				success: true,
+				enrollments: [],
+				message: 'No enrollments found',
+			});
+		}
+
+		// Calculate module statuses
+		const processed = enrollments.map((enrollment) => {
+			const totalModules = enrollment.course.modules.length;
+			const completedCount = Math.floor(
+				(enrollment.progress / 100) * totalModules
+			);
+
+			const modules = enrollment.course.modules.map((module, index) => ({
+				...module,
+				status:
+					index < completedCount
+						? 'completed'
+						: index === completedCount
+						? 'unlocked'
+						: 'locked',
+			}));
+
+			return {
+				...enrollment,
+				course: {
+					...enrollment.course,
+					modules,
+				},
+			};
+		});
+
+		res.status(200).json({
 			success: true,
-			enrollments: [],
-			message: 'No enrollments found'
-		 });
-	  }
- 
-	  // Calculate module statuses
-	  const processed = enrollments.map(enrollment => {
-		 const totalModules = enrollment.course.modules.length;
-		 const completedCount = Math.floor((enrollment.progress / 100) * totalModules);
-		 
-		 const modules = enrollment.course.modules.map((module, index) => ({
-			...module,
-			status: index < completedCount ? 'completed' : 
-					  index === completedCount ? 'unlocked' : 'locked'
-		 }));
- 
-		 return {
-			...enrollment,
-			course: {
-			  ...enrollment.course,
-			  modules
-			}
-		 };
-	  });
- 
-	  res.status(200).json({
-		 success: true,
-		 enrollments: processed
-	  });
- 
+			enrollments: processed,
+		});
 	} catch (error) {
-	  console.error('Error fetching enrollments:', error);
-	  res.status(500).json({
-		 success: false,
-		 message: 'Server error',
-		 error: error.message
-	  });
+		console.error('Error fetching enrollments:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Server error',
+			error: error.message,
+		});
 	}
- });
+});
 
 // Enroll in a course
 app.post('/enroll', authenticateToken, async (req, res) => {
@@ -974,52 +1025,26 @@ app.post('/enroll', authenticateToken, async (req, res) => {
 		const { courseId } = req.body;
 		const userId = req.user.userId;
 
-		if (!courseId) {
-			return res
-				.status(400)
-				.json({ success: false, message: 'Course ID is required' });
-		}
-
-		// Check if the course exists
-		const course = await Course.findById(courseId);
-		if (!course) {
-			return res
-				.status(404)
-				.json({ success: false, message: 'Course not found' });
-		}
-
-		// Check if the user is already enrolled in this course
-		const existingEnrollment = await Enrollment.findOne({ userId, courseId });
-		if (existingEnrollment) {
-			return res
-				.status(400)
-				.json({ success: false, message: 'Already enrolled in this course' });
-		}
-
-		// Create a new enrollment
-		const enrollment = new Enrollment({ userId, courseId });
+		// Change to "course: courseId"
+		const enrollment = new Enrollment({ userId, course: courseId }); // <-- Fixed here
 		await enrollment.save();
 
-		// Update the user's enrolledCourses array
-		await User.findByIdAndUpdate(userId, {
-			$push: {
-				enrolledCourses: {
-					course: courseId,
-					progress: 0,
-					completed: false,
-					enrolledAt: new Date(),
-				},
-			},
+		// Update course's enrolledStudents array
+		await Course.findByIdAndUpdate(courseId, {
+			$addToSet: { enrolledStudents: userId },
 		});
 
-		res
-			.status(201)
-			.json({ success: true, message: 'Enrolled successfully', enrollment });
+		res.status(201).json({
+			success: true,
+			message: 'Enrolled successfully',
+			enrollment,
+		});
 	} catch (error) {
-		console.error('Error enrolling:', error);
-		res
-			.status(500)
-			.json({ success: false, message: 'Server error', error: error.message });
+		res.status(500).json({
+			success: false,
+			message: 'Server error',
+			error: error.message,
+		});
 	}
 });
 
@@ -1425,6 +1450,326 @@ app.delete(
 		}
 	}
 );
+
+// --------------------------
+// Daily Content Route
+// --------------------------
+
+app.get('/daily-content', async (req, res) => {
+	try {
+		const now = new Date();
+		const last24Hours = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+		// Fetch the most recent fact and word within the last 24 hours
+		let fact = await Fact.findOne({ createdAt: { $gte: last24Hours } }).sort({
+			createdAt: -1,
+		});
+		let word = await Word.findOne({ createdAt: { $gte: last24Hours } }).sort({
+			createdAt: -1,
+		});
+
+		// Fallback to the oldest available fact/word if none exist in the last 24 hours
+		if (!fact) {
+			fact = await Fact.findOne().sort({ createdAt: 1 });
+		}
+		if (!word) {
+			word = await Word.findOne().sort({ createdAt: 1 });
+		}
+
+		// If no fact or word exists, return an error
+		if (!fact || !word) {
+			return res.status(404).json({
+				success: false,
+				message: 'No facts or words available in the database',
+			});
+		}
+
+		// Return only the text content
+		res.status(200).json({
+			success: true,
+			fact: {
+				fact: fact.fact,
+			},
+			word: {
+				word: word.word,
+				description: word.description,
+			},
+		});
+	} catch (error) {
+		console.error('Error fetching daily content:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Server error',
+			error: error.message,
+		});
+	}
+});
+// --------------------------
+// Fact Routes (Admin Only)
+// --------------------------
+app.post('/facts', authenticateToken, checkRole('admin'), async (req, res) => {
+	try {
+		const { fact } = req.body;
+		if (!fact) {
+			return res.status(400).json({ message: 'Fact is required' });
+		}
+
+		const newFact = new Fact({ fact });
+		await newFact.save();
+
+		console.log(`Fact added: ${newFact.fact}, ID: ${newFact._id}`);
+		res.status(201).json({
+			success: true,
+			message: 'Fact added successfully',
+			fact: newFact,
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: 'Server error',
+			error: error.message,
+		});
+	}
+});
+
+app.put(
+	'/facts/:id',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const { fact } = req.body;
+			const updatedFact = await Fact.findByIdAndUpdate(
+				req.params.id,
+				{ fact },
+				{ new: true }
+			);
+
+			if (!updatedFact) {
+				return res.status(404).json({ message: 'Fact not found' });
+			}
+
+			res.status(200).json({
+				success: true,
+				message: 'Fact updated successfully',
+				fact: updatedFact,
+			});
+		} catch (error) {
+			res.status(500).json({
+				success: false,
+				message: 'Server error',
+				error: error.message,
+			});
+		}
+	}
+);
+
+app.delete(
+	'/facts/:id',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const deletedFact = await Fact.findByIdAndDelete(req.params.id);
+			if (!deletedFact) {
+				return res.status(404).json({ message: 'Fact not found' });
+			}
+
+			res
+				.status(200)
+				.json({ success: true, message: 'Fact deleted successfully' });
+		} catch (error) {
+			res.status(500).json({
+				success: false,
+				message: 'Server error',
+				error: error.message,
+			});
+		}
+	}
+);
+
+app.get('/facts', authenticateToken, checkRole('admin'), async (req, res) => {
+	try {
+		const facts = await Fact.find();
+		res.status(200).json({ success: true, facts });
+	} catch (error) {
+		res
+			.status(500)
+			.json({ success: false, message: 'Server error', error: error.message });
+	}
+});
+
+// --------------------------
+// Word Routes (Admin Only)
+// --------------------------
+app.post('/words', authenticateToken, checkRole('admin'), async (req, res) => {
+	try {
+		const { word, description } = req.body;
+		if (!word || !description) {
+			return res
+				.status(400)
+				.json({ message: 'Word and description are required' });
+		}
+
+		const newWord = new Word({ word, description });
+		await newWord.save();
+
+		console.log(
+			`Word added: ${newWord.word}, Description: ${newWord.description}, ID: ${newWord._id}`
+		);
+		res.status(201).json({
+			success: true,
+			message: 'Word added successfully',
+			word: newWord,
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: 'Server error',
+			error: error.message,
+		});
+	}
+});
+
+app.put(
+	'/words/:id',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const { word, description } = req.body;
+			const updatedWord = await Word.findByIdAndUpdate(
+				req.params.id,
+				{ word, description },
+				{ new: true }
+			);
+
+			if (!updatedWord) {
+				return res.status(404).json({ message: 'Word not found' });
+			}
+
+			res.status(200).json({
+				success: true,
+				message: 'Word updated successfully',
+				word: updatedWord,
+			});
+		} catch (error) {
+			res.status(500).json({
+				success: false,
+				message: 'Server error',
+				error: error.message,
+			});
+		}
+	}
+);
+
+app.delete(
+	'/words/:id',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const deletedWord = await Word.findByIdAndDelete(req.params.id);
+			if (!deletedWord) {
+				return res.status(404).json({ message: 'Word not found' });
+			}
+
+			res
+				.status(200)
+				.json({ success: true, message: 'Word deleted successfully' });
+		} catch (error) {
+			res.status(500).json({
+				success: false,
+				message: 'Server error',
+				error: error.message,
+			});
+		}
+	}
+);
+
+app.get('/words', authenticateToken, checkRole('admin'), async (req, res) => {
+	try {
+		const words = await Word.find();
+		res.status(200).json({ success: true, words });
+	} catch (error) {
+		res
+			.status(500)
+			.json({ success: false, message: 'Server error', error: error.message });
+	}
+});
+
+// --------------------------
+// Contact Us Form Submission
+// --------------------------
+app.post('/contact-us', async (req, res) => {
+	try {
+		const { firstName, lastName, email, role, phoneNumber, message } = req.body;
+
+		// Save the form data to the database
+		const newMessage = new ContactMessage({
+			firstName,
+			lastName,
+			email,
+			role,
+			phoneNumber,
+			message,
+		});
+		await newMessage.save();
+
+		// Configure the transporter with SMTP settings
+		const transporter = nodemailer.createTransport({
+			host: process.env.SMTP_HOST,
+			port: process.env.SMTP_PORT,
+			secure: process.env.SMTP_SECURE === 'true', // Convert string to boolean
+			auth: {
+				user: process.env.SMTP_USER,
+				pass: process.env.SMTP_PASS,
+			},
+		});
+
+		const mailOptions = {
+			from: process.env.SMTP_USER,
+			to: process.env.ADMIN_EMAIL || 'defaultadmin@example.com', // Fallback email
+			subject: 'New Contact Us Form Submission',
+			text: `You have received a new message from ${firstName} ${lastName} (${role}):
+			
+			Email: ${email}
+			Phone: ${phoneNumber}
+			Message: ${message}`,
+		};
+
+		await transporter.sendMail(mailOptions);
+
+		res.status(200).json({ message: 'Form submitted successfully' });
+	} catch (error) {
+		console.error('Error handling contact form submission:', error);
+		res.status(500).json({ message: 'Server error', error: error.message });
+	}
+});
+
+// Test SMTP connection
+app.get('/test-smtp', async (req, res) => {
+	try {
+		const transporter = nodemailer.createTransport({
+			host: process.env.SMTP_HOST,
+			port: process.env.SMTP_PORT,
+			secure: process.env.SMTP_SECURE === 'true',
+			auth: {
+				user: process.env.SMTP_USER,
+				pass: process.env.SMTP_PASS,
+			},
+		});
+
+		// Verify connection
+		await transporter.verify();
+		res.status(200).json({ message: 'SMTP connection successful' });
+	} catch (error) {
+		console.error('SMTP connection failed:', error);
+		res
+			.status(500)
+			.json({ message: 'SMTP connection failed', error: error.message });
+	}
+});
 
 // --------------------------
 // Server Setup

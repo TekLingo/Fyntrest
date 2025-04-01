@@ -35,7 +35,7 @@ const Navbar2 = () => {
 	};
 
 	const handleClick = () => {
-		navigate('/logged/profile-detail');
+		navigate('/logged/profile');
 	};
 
 	useEffect(() => {

@@ -1,40 +1,26 @@
 const mongoose = require('mongoose');
 
-const CourseEnrollmentSchema = new mongoose.Schema({
-	userId: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User',
-		required: true,
-	},
-	courseId: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Course',
-		required: true,
-	},
-	progress: {
-		type: Number,
-		default: 0, // Tracks overall course progress (percentage)
-		min: 0,
-		max: 100,
-	},
-	enrolledAt: {
-		type: Date,
-		default: Date.now,
-	},
-	lastWatched: {
-		module: {
+// models/enrollment.model.js
+const enrollmentSchema = new mongoose.Schema(
+	{
+		userId: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Module',
+			ref: 'User',
+			required: true,
 		},
-		video: {
+		course: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Video',
-		},
-		updatedAt: {
-			type: Date,
-			default: Date.now,
+			ref: 'Course',
+			required: true,
+		}, // Changed from courseId
+		progress: { type: Number, default: 0 },
+		lastWatched: {
+			module: { type: mongoose.Schema.Types.ObjectId, ref: 'Module' },
+			video: { type: mongoose.Schema.Types.ObjectId, ref: 'Video' },
+			updatedAt: Date,
 		},
 	},
-});
+	{ timestamps: true }
+);
 
-module.exports = mongoose.model('Enrollment', CourseEnrollmentSchema);
+module.exports = mongoose.model('Enrollment', enrollmentSchema);
