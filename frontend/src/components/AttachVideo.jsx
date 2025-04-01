@@ -205,14 +205,14 @@ export default function AttachVideo() {
 
   return (
     <div className="p-6 bg-primary-fp rounded-xl text-white w-full max-w-lg mx-auto flex flex-col gap-4">
-        <div className="flex justify-center">
-            <label
-            className="h-10 w-1/3 bg-purple-500 hover:bg-purple-600 p-2 text-center text-lg rounded-lg cursor-pointer"
-            onClick={triggerFileInput}
-            >
-            Browse
-            </label>
-        </div>
+      <div className="flex justify-center">
+        <label
+          className="h-10 w-1/3 bg-purple-500 hover:bg-purple-600 p-2 text-center text-lg rounded-lg cursor-pointer"
+          onClick={triggerFileInput}
+        >
+          Browse
+        </label>
+      </div>
       <div
         className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-purple-500 rounded-lg cursor-pointer"
         onDrop={handleDrop}
@@ -235,27 +235,27 @@ export default function AttachVideo() {
         Files Uploaded: {files.length}
       </span>
 
-        <div className="flex gap-2">
-            {files.map((file, index) => (
-            <div key={index} className="w-20 h-20 overflow-hidden rounded-lg">
-                {file.type === "image" ? (
-                <img
-                    src={file.url}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                />
-                ) : (
-                <video
-                    src={file.url}
-                    className="w-full h-full object-cover"
-                    muted
-                    autoPlay
-                    loop
-                />
-                )}
-            </div>
-            ))}
-        </div>
+      <div className="flex gap-2">
+        {files.map((file, index) => (
+          <div key={index} className="w-20 h-20 overflow-hidden rounded-lg">
+            {file.type === "image" ? (
+              <img
+                src={file.url}
+                alt="Preview"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <video
+                src={file.url}
+                className="w-full h-full object-cover"
+                muted
+                autoPlay
+                loop
+              />
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
