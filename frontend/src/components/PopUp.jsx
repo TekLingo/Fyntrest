@@ -127,7 +127,6 @@ const Popup = ({ isOpen, onClose }) => {
             validateQuestions={validateQuestions} // Pass validation function
           />
         </div>
-
         {/* Add Module Button */}
         <div className="justify-center items-center flex">
           <button
@@ -137,7 +136,6 @@ const Popup = ({ isOpen, onClose }) => {
             Add Modules
           </button>
         </div>
-
         {/* Add Module PopUp */}
         {showPopUp && <AddModulePopUp onClose={() => setShowPopUp(false)} />}
       </div>
