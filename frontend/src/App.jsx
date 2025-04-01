@@ -109,9 +109,9 @@ const App = () => {
 				<Route
 					path="/admin/main"
 					element={
-						<RoleBasedRoute allowedRoles={['admin']}>
+						// <RoleBasedRoute allowedRoles={['admin']}>
 							<AdminMain />
-						</RoleBasedRoute>
+						// </RoleBasedRoute>
 					}
 				/>
 				{/* Additional Parameterized Routes */}

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { IoIosClose } from "react-icons/io";
-import MCQComponent from "./MCQComponent";
 import AttachVideo from "./AttachVideo";
-import FlashcardUploader from "./AddFlashcard";
-import AddVideo from "./AddVideo";
+import MCQComponent from "./MCQComponent";
+import AdminPanel from "../pages/admin/AdminMain";
 
-const AddModulePopUp = ({ onClose }) => {
+const AddVideo = ({ onClose }) => {
   const [courseName, setCourseName] = useState("");
+  const [moduleName, setModuleName] = useState("");
   const [grade, setGrade] = useState("8th");
   const [semester, setSemester] = useState("1");
-  const [description, setDescription] = useState("");
+  const [vidDescription, setVidDescription] = useState("");
   const [questions, setQuestions] = useState([
     {
       question: "",
@@ -24,7 +24,6 @@ const AddModulePopUp = ({ onClose }) => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [showVidPopUp, setShowVidPopUp] = useState(false);
   const [isValid, setIsValid] = useState(false); // To track form validity
-
   // Update questions in Popup state
   const updateQuestions = (newQuestions) => {
     setQuestions(newQuestions);
@@ -68,28 +67,40 @@ const AddModulePopUp = ({ onClose }) => {
     setShowVidPopUp(true);
   };
 
+  // Handle form submission
+  const handleBacktrack = () => {
+    if (!validateQuestions()) {
+      setError("Please fill in all questions and options before proceeding.");
+      setTimeout(() => setError(""), 3000);
+      return;
+    }
+    setError("");
+    setShowVidPopUp(true);
+  };
+
+  const courseList = ["Course1", "Course1", "Course1"];
+
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-bg-color bg-opacity-60 flex justify-center items-center flex-col gap-20 z-50">
       <div className="w-4/5 popup-container bg-bg-color p-6 rounded-lg shadow-lg relative text-text-g flex flex-col gap-8 h-auto overflow-y-auto">
         {/* Title Section */}
         <div className="flex justify-between items-center">
-          <h1 className="text-4xl">Add Module</h1>
+          <h1 className="text-4xl">Add Videos</h1>
           <IoIosClose size={40} onClick={onClose} className="cursor-pointer" />
         </div>
         {/* Body Section */}
         <div className="flex flex-col gap-5">
-          {/* Input fields and other form components */}
           <div className="flex gap-10">
             <div className="w-1/3">
               <label htmlFor="" className="text-base">
-                Course Name
+                Module Name
               </label>
               <input
                 type="text"
-                placeholder="Course Name"
+                placeholder="Module Name"
                 className="p-2 rounded-lg w-full bg-primary-fp outline-none text-xl"
-                value={courseName}
-                onChange={(e) => setCourseName(e.target.value)}
+                value={moduleName}
+                onChange={(e) => setModuleName(e.target.value)}
               />
             </div>
             <div className="w-1/5">
@@ -121,17 +132,21 @@ const AddModulePopUp = ({ onClose }) => {
             </div>
           </div>
           <div className="flex flex-col gap-10">
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 w-2/3">
               <label htmlFor="" className="text-base">
-                Description
+                Course Name
               </label>
-              <textarea
-                placeholder="Description"
+              <select
                 className="p-2 bg-primary-fp outline-none rounded-lg w-full text-xl"
-                rows="3"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              ></textarea>
+                value={courseName}
+                onChange={(e) => setCourseName(e.target.value)}
+              >
+                {courseList.map((item, index) => (
+                  <option key={index} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex flex-col gap-2">
               <label htmlFor="" className="text-base">
@@ -147,52 +162,36 @@ const AddModulePopUp = ({ onClose }) => {
                 placeholder="Description"
                 className="p-2 bg-primary-fp outline-none rounded-lg w-full text-xl"
                 rows="3"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                value={vidDescription}
+                onChange={(e) => setVidDescription(e.target.value)}
               ></textarea>
             </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor="" className="text-xl">
-                Flashcards
-              </label>
-              <FlashcardUploader />
-            </div>
-            <div className="flex flex-col gap-4">
-              <label htmlFor="" className="text-xl">
-                Module Questions
-              </label>
-              <MCQComponent
-                questions={questions}
-                updateQuestions={updateQuestions}
-                validateQuestions={validateQuestions}
-              />
-            </div>
-            {/* Add Module Button */}
-            <div className="justify-center items-center flex gap-5">
-              <button
-                className="bg-primary-fp text-text-g text-base p-4 rounded-lg"
-                onClick={handleAddModules}
-              >
-                Add New Module
-              </button>
-              {/* Add Module PopUp */}
-              {showPopUp && (
-                <AddModulePopUp onClose={() => setShowPopUp(false)} />
-              )}
-              <button
-                className="bg-primary-fp text-text-g text-base p-4 rounded-lg"
-                onClick={handleAddVideos}
-              >
-                Add Video
-              </button>
-              {showVidPopUp && <AddVideo onClose={() => setShowPopUp(false)} />}
-              <button
-                className="bg-secondary-d text-text-g text-base p-4 rounded-lg"
-                onClick={handleAddModules}
-              >
-                Done
-              </button>
-            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="" className="text-base">
+              Video Questions
+            </label>
+            <MCQComponent
+              questions={questions}
+              updateQuestions={updateQuestions}
+              validateQuestions={validateQuestions}
+            />
+          </div>
+          <div className="flex justify-center items-center gap-5">
+            <button
+              className="bg-primary-fp text-text-g text-base p-4 rounded-lg"
+              onClick={handleAddVideos}
+            >
+              Add Video
+            </button>
+            {showVidPopUp && <AddVideo onClose={() => setShowPopUp(false)} />}
+            <button
+              className="bg-secondary-d text-text-g text-base p-4 rounded-lg"
+              onClick={handleBacktrack}
+            >
+              Done
+            </button>
+            {showVidPopUp && <AdminPanel />}
           </div>
         </div>
       </div>
@@ -200,4 +199,4 @@ const AddModulePopUp = ({ onClose }) => {
   );
 };
 
-export default AddModulePopUp;
+export default AddVideo;

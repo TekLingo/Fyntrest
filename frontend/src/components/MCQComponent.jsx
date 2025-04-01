@@ -1,22 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoMdRadioButtonOn } from "react-icons/io";
 import { RiCheckboxBlankLine } from "react-icons/ri";
 import { IoClose } from "react-icons/io5";
 import { GoPlus } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
+import AddModulePopUp from "./AddModulePopUp";
 
-const MCQComponent = () => {
-  const [questions, setQuestions] = useState([
-    {
-      question: "",
-      options: [""],
-      hasOther: false,
-      otherValue: "",
-      selectedOption: null,
-      type: "Multiple Choice",
-    },
-  ]);
+const MCQComponent = ({ questions, updateQuestions, validateQuestions }) => {
   const [error, setError] = useState("");
+  const [showPopUp, setShowPopUp] = useState(false);
+  const navigate = useNavigate();
 
   const addQuestion = () => {
     const lastQuestion = questions[questions.length - 1];
@@ -28,10 +21,11 @@ const MCQComponent = () => {
       setError(
         "Please fill in the question and all options before adding a new question."
       );
+      setTimeout(() => setError(""), 3000);
       return;
     }
     setError("");
-    setQuestions([
+    updateQuestions([
       ...questions,
       {
         question: "",
@@ -47,56 +41,50 @@ const MCQComponent = () => {
   const updateQuestion = (index, updatedQuestion) => {
     const newQuestions = [...questions];
     newQuestions[index] = updatedQuestion;
-    setQuestions(newQuestions);
+    updateQuestions(newQuestions);
   };
 
   const handleTypeChange = (index, type) => {
     const newQuestions = [...questions];
     newQuestions[index].type = type;
-    newQuestions[index].options = type === "Short Answer" ? [] : [""];
-    newQuestions[index].hasOther = false;
-    newQuestions[index].otherValue = "";
-    setQuestions(newQuestions);
+    newQuestions[index].options = type === "Short Answer" ? [] : [""]; // Reset options for Short Answer
+    newQuestions[index].hasOther = false; // Reset "Other" option
+    newQuestions[index].otherValue = ""; // Clear "Other" value
+    updateQuestions(newQuestions);
   };
 
   const addOption = (questionIndex) => {
     const newQuestions = [...questions];
     newQuestions[questionIndex].options.push("");
-    setQuestions(newQuestions);
+    updateQuestions(newQuestions);
   };
 
   const deleteOption = (questionIndex, optionIndex) => {
     const newQuestions = [...questions];
     newQuestions[questionIndex].options.splice(optionIndex, 1);
-    setQuestions(newQuestions);
+    updateQuestions(newQuestions);
   };
 
   const deleteQuestion = (index) => {
     if (questions.length > 1) {
       const newQuestions = [...questions];
       newQuestions.splice(index, 1);
-      setQuestions(newQuestions);
+      updateQuestions(newQuestions);
     }
   };
 
-  const handleAddModules = () => {
-    for (let q of questions) {
-      if (!q.question.trim() || (q.type !== "Short Answer" && q.options.some((opt) => !opt.trim()))) {
-        setError("Please fill in all questions and options before proceeding.");
-        return;
-      }
-    }
-    setError("");
-    navigate("/modules");
-  };
+  useEffect(() => {
+    // Trigger validation whenever questions change
+    validateQuestions();
+  }, [questions, validateQuestions]);
 
   return (
-    <div className="w-full mx-auto space-y-6 text-text-g">
+    <div className="w-full mx-auto flex flex-col gap-5 text-text-g">
       {error && <div className="text-red-600 text-sm">{error}</div>}
       {questions.map((q, questionIndex) => (
         <div
           key={questionIndex}
-          className="p-6 rounded-lg shadow-md  relative break-words w-full bg-transparent"
+          className="p-6 rounded-lg shadow-md relative break-words w-full bg-primary_p"
           style={{ boxShadow: "-7px 0 0 0 #A990FA" }}
         >
           <div className="flex justify-between items-center">
@@ -195,32 +183,17 @@ const MCQComponent = () => {
                   Add Option
                 </button>
               </div>
-              {!q.hasOther && (
-                <div className="flex items-center mt-2">
-                  <GoPlus className="mr-2 text-lg" />
-                  <button
-                    onClick={() => addOtherOption(questionIndex)}
-                    className="text-left p-2 rounded cursor-pointer hover:border-2 hover:border-secondary-d text-lg"
-                  >
-                    Add "Other"
-                  </button>
-                </div>
-              )}
             </div>
           )}
         </div>
       ))}
-
-      <button
-        onClick={addQuestion}
-        className="w-44 bg-transparent border-2 border-secondary-lt py-2 rounded-lg flex items-center justify-center gap-2 justify-self-center"
-      >
-        <GoPlus size={25} />
-        <p className="text-xl">Add Question</p>
-      </button>
-      <div className="justify-center items-center flex">
-        <button className="bg-primary-fp text-text-g text-base p-4 rounded-lg" onClick={handleAddModules}>
-          Add Modules
+      <div className="w-full">
+        <button
+          onClick={addQuestion}
+          className="w-44 bg-transparent border-2 border-secondary-lt py-2 rounded-lg flex items-center justify-center gap-2 justify-self-center"
+        >
+          <GoPlus size={25} />
+          <p className="text-xl">Add Question</p>
         </button>
       </div>
     </div>

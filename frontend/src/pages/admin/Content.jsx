@@ -84,18 +84,18 @@ const Content = () => {
     { courseName: "course-1", coursePreview: "ABC School" },
   ];
   const nineCourse = [
-    { courseName: "course-1", coursePreview: "ABC School" },
-    { courseName: "course-1", coursePreview: "ABC School" },
-    { courseName: "course-1", coursePreview: "ABC School" },
-    { courseName: "course-1", coursePreview: "ABC School" },
-    { courseName: "course-1", coursePreview: "ABC School" },
+    { courseName: "course-2", coursePreview: "ABC School" },
+    { courseName: "course-2", coursePreview: "ABC School" },
+    { courseName: "course-2", coursePreview: "ABC School" },
+    { courseName: "course-2", coursePreview: "ABC School" },
+    { courseName: "course-2", coursePreview: "ABC School" },
   ];
   const tenCourse = [
-    { courseName: "course-1", coursePreview: "ABC School" },
-    { courseName: "course-1", coursePreview: "ABC School" },
-    { courseName: "course-1", coursePreview: "ABC School" },
-    { courseName: "course-1", coursePreview: "ABC School" },
-    { courseName: "course-1", coursePreview: "ABC School" },
+    { courseName: "course-3", coursePreview: "ABC School" },
+    { courseName: "course-3", coursePreview: "ABC School" },
+    { courseName: "course-3", coursePreview: "ABC School" },
+    { courseName: "course-3", coursePreview: "ABC School" },
+    { courseName: "course-3", coursePreview: "ABC School" },
   ];
 
   const [popupOpen, setPopupOpen] = useState(false);
