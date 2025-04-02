@@ -8,8 +8,10 @@ import FactDropdownMenu from "../../components/FactDropMenu";
 import WordDropdownMenu from "../../components/WordDropMenu";
 import MCQComponent from "../../components/MCQComponent";
 import Popup from "../../components/PopUp";
+import { useNavigate } from "react-router-dom";
 
 const Content = () => {
+  const navigate = useNavigate();
   const [activeGrade, setActiveGrade] = useState("8th"); // Default to 8th grade
 
   const handleGradeClick = (grade) => {
@@ -213,9 +215,12 @@ const Content = () => {
       </div>
       <div className="w-full h-min flex bg-primary_p rounded-lg p-4 font-body font-normal text-2xl justify-between items-center">
         <h3>Quiz Questions</h3>
-        <div className="bg-secondary-d w-16 py-1 rounded-full flex justify-center cursor-pointer">
+        <button
+          className="bg-secondary-d w-16 py-1 rounded-full flex justify-center"
+          onClick={() => navigate("/admin/quiz")}
+        >
           <FaArrowRight />
-        </div>
+        </button>
       </div>
       <div className="w-full h-min flex flex-col gap-5 bg-primary_p rounded-lg p-4 font-body font-normal text-2xl">
         <div className="flex gap-10">

@@ -35,6 +35,7 @@ import RequestTimeout from './pages/Error/RequestTimeout';
 import ServiceUnavailable from './pages/Error/ServiceUnavailable';
 import Unauthorized from './pages/Error/Unauthorized';
 import Home from './pages/Home';
+import QuizPage from './pages/admin/Quiz';
 
 // Role-Based Access Control (RBAC) Wrapper
 import PropTypes from 'prop-types';
@@ -74,6 +75,7 @@ const App = () => {
 					}
 				/>
 				<Route path="/about" element={<AboutUsPage />} />
+				<Route path="admin/quiz" element={<QuizPage />} />
 				<Route path="/blog" element={<BlogPage />} />
 				<Route path="/contact" element={<ContactUsPage />} />
 				<Route path="/course-overview" element={<CoursePage />} />{' '}
