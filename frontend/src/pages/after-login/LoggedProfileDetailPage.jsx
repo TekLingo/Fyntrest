@@ -94,15 +94,21 @@ const LoggedProfileDetailPage = () => {
 		if (!confirmed) return;
 
 		try {
-			const response = await axiosInstance.delete('/user/delete-user');
+			const response = await axiosInstance.delete('/delete-user'); // Ensure the endpoint matches the backend
 			console.log(response.data.message);
-			// Show a sad goodbye message after deletion
-			setAccountDeleted(true);
-			localStorage.removeItem('token');
-			// Redirect to the login page after a delay (e.g., 3 seconds)
-			setTimeout(() => {
-				navigate('/login');
-			}, 3000);
+
+			// Check if the response includes a redirect field
+			if (response.data.redirect) {
+				localStorage.removeItem('token');
+				navigate(response.data.redirect); // Redirect to the login page
+			} else {
+				// Fallback: Show goodbye message and redirect after a delay
+				setAccountDeleted(true);
+				localStorage.removeItem('token');
+				setTimeout(() => {
+					navigate('/login');
+				}, 3000);
+			}
 		} catch (error) {
 			console.error('Error deleting account:', error);
 		}
