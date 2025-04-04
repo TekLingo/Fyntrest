@@ -39,6 +39,7 @@ import QuizPage from './pages/admin/Quiz';
 
 // Role-Based Access Control (RBAC) Wrapper
 import PropTypes from 'prop-types';
+import AdminCoursePage from './pages/admin/AdminCoursePage';
 
 const RoleBasedRoute = ({ allowedRoles, children }) => {
 	const userRole = localStorage.getItem('role');
@@ -76,6 +77,7 @@ const App = () => {
 				/>
 				<Route path="/about" element={<AboutUsPage />} />
 				<Route path="admin/quiz" element={<QuizPage />} />
+				<Route path="admin/courses" element={<AdminCoursePage/>} />
 				<Route path="/blog" element={<BlogPage />} />
 				<Route path="/contact" element={<ContactUsPage />} />
 				<Route path="/course-overview" element={<CoursePage />} />{' '}

@@ -79,7 +79,7 @@ const MCQComponent = ({ questions, updateQuestions, validateQuestions }) => {
   }, [questions, validateQuestions]);
 
   return (
-    <div className="w-full mx-auto flex flex-col gap-5 text-text-g">
+    <div className="w-11/12 mx-auto flex flex-col gap-5 text-text-g">
       {error && <div className="text-red-600 text-sm">{error}</div>}
       {questions.map((q, questionIndex) => (
         <div
