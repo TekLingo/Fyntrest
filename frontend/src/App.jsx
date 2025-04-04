@@ -111,11 +111,11 @@ const App = () => {
 				</Route>
 				{/* Admin Routes */}
 				<Route
-					path="/admin/main"
+					path="/admin/*"
 					element={
-						// <RoleBasedRoute allowedRoles={['admin']}>
+						<RoleBasedRoute allowedRoles={['admin']}>
 							<AdminMain />
-						// </RoleBasedRoute>
+						</RoleBasedRoute>
 					}
 				/>
 				{/* Additional Parameterized Routes */}
@@ -159,7 +159,7 @@ const Root = () => {
 
 	if (isLoading) return <div>Loading...</div>;
 	if (!token) return <Navigate to="/home" replace />;
-	if (userRole === 'admin') return <Navigate to="/admin/main" replace />;
+	if (userRole === 'admin') return <Navigate to="/admin/dashboard" replace />;
 	return <Navigate to="/logged/home" replace />;
 };
 

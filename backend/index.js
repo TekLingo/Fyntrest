@@ -222,6 +222,7 @@ app.post('/login', async (req, res) => {
 			token,
 			message: 'Login successful',
 			success: true,
+			role: user.role, // Include the user's role in the response
 		});
 	} catch (error) {
 		console.error('Login error:', error);
@@ -303,7 +304,10 @@ app.delete('/delete-user', authenticateToken, async (req, res) => {
 			return res.status(404).json({ message: 'User not found' });
 		}
 
-		res.json({ message: 'User account deleted successfully' });
+		res.json({
+			message: 'User account deleted successfully. Redirecting to login...',
+			redirect: '/login', // Add this to indicate redirection
+		});
 	} catch (error) {
 		console.error('Error deleting user:', error);
 		res.status(500).json({ message: 'Server error' });
