@@ -84,7 +84,7 @@ const MCQComponent = ({ questions, updateQuestions, validateQuestions }) => {
       {questions.map((q, questionIndex) => (
         <div
           key={questionIndex}
-          className="p-6 rounded-lg shadow-md relative break-words w-full bg-primary_p"
+          className="p-6 rounded-lg shadow-md relative break-words w-full bg-bg-color"
           style={{ boxShadow: "-7px 0 0 0 #A990FA" }}
         >
           <div className="flex justify-between items-center">
@@ -190,10 +190,10 @@ const MCQComponent = ({ questions, updateQuestions, validateQuestions }) => {
       <div className="w-full">
         <button
           onClick={addQuestion}
-          className="w-44 bg-transparent border-2 border-secondary-lt py-2 rounded-lg flex items-center justify-center gap-2 justify-self-center"
+          className="w-40 bg-transparent border-2 border-secondary-lt p-2 rounded-lg flex items-center justify-center gap-1 justify-self-center"
         >
           <GoPlus size={25} />
-          <p className="text-xl">Add Question</p>
+          <p className="text-lg">Add Question</p>
         </button>
       </div>
     </div>

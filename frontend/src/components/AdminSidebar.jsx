@@ -81,7 +81,7 @@ const AdminSidebar = ({ setActiveSection }) => {
 					>
 						{activeMenu === 'users' ? (
 							<HiUsers size={30} />
-						) : (
+						) : (	
 							<HiOutlineUsers size={30} />
 						)}
 						{expanded && <span>Users</span>}
