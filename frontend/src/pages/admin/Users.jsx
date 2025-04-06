@@ -3,32 +3,26 @@ import { FaChevronRight } from "react-icons/fa6";
 import Pagination from "../../components/Pagination";
 import AddEntityPopUp from "../../components/AddEntityPopUp";
 
-const SectionHeader = ({ sections, activeSection, onSectionChange }) => {
-  const [showPopup, setShowPopup] = useState(false);
-
-  <div className="flex justify-between items-center border-b-2 border-[#787878] h-8 px-2">
-    <div className="flex h-8">
-      {sections.map((section) => (
-        <div
-          key={section}
-          className={`h-8 w-min min-w-40 flex flex-col justify-center items-center gap-4 cursor-pointer font-body ${
-            activeSection === section
-              ? "border-secondary-lt text-text-g border-b-4"
-              : "border-[#787878] text-[#787878]"
-          }`}
-          onClick={() => onSectionChange(section)}
-        >
-          <p>{section}</p>
-        </div>
-      ))}
+export const SectionHeader = ({ sections, activeSection, onSectionChange }) => {
+  return (
+    <div className="flex justify-between items-center border-b-2 border-[#787878] h-8 px-2">
+      <div className="flex h-8">
+        {sections.map((section) => (
+          <div
+            key={section}
+            className={`h-8 w-min min-w-40 flex flex-col justify-center items-center gap-4 cursor-pointer font-body ${
+              activeSection === section
+                ? "border-secondary-lt text-text-g border-b-4"
+                : "border-[#787878] text-[#787878]"
+            }`}
+            onClick={() => onSectionChange(section)}
+          >
+            <p>{section}</p>
+          </div>
+        ))}
+      </div>
     </div>
-    <button
-      onClick={() => setShowPopup(true)}
-      className="h-8 mb-2 px-3 text-sm bg-secondary-lt text-white rounded hover:bg-primary-fp transition"
-    >
-      Add
-    </button>
-  </div>;
+  );
 };
 
 const DataTable = ({ data, paginationProps }) => (
@@ -116,16 +110,30 @@ const Users = () => {
     currentPages[activeSection] * itemsPerPage
   );
 
+  const [showPopup, setShowPopup] = useState(false);
+
   return (
     <div className="w-full h-full text-text-g">
       <div className="bg-[#362856] flex h-full p-4 gap-4">
         <div className="w-full h-full flex flex-col gap-4">
           <div className="bg-primary_p rounded-xl p-4 w-full overflow-hidden">
-            <SectionHeader
-              sections={sections}
-              activeSection={activeSection}
-              onSectionChange={setActiveSection}
-            />
+            <div className="flex justify-between">
+              <SectionHeader
+                sections={sections}
+                activeSection={activeSection}
+                onSectionChange={setActiveSection}
+              />
+              <button
+                onClick={() => setShowPopup(true)}
+                className="h-8 mb-2 px-3 text-sm bg-secondary-lt text-white rounded hover:bg-primary-fp transition"
+              >
+                Add
+              </button>
+
+              {showPopup && (
+                <AddEntityPopUp onClose={() => setShowPopup(false)} />
+              )}
+            </div>
             <div className="overflow-auto">
               <DataTable
                 data={currentItems}
