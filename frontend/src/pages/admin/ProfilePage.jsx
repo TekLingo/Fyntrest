@@ -4,10 +4,12 @@ import LogoImg from "../../assets/Images/color-logo.png";
 import { HiOutlinePencil } from "react-icons/hi2";
 import SchoolImg from "../../assets/Images/School.png";
 import { useNavigate } from "react-router-dom";
+import LogOut from "../../components/LogOut";
 
 const ProfilePage = () => {
   // Set activeMenu from the current route
   const [activeMenu, setActiveMenu] = useState("profile");
+  const [showPopup, setShowPopup] = useState(false);
 
   const navigate = useNavigate();
 
@@ -140,7 +142,14 @@ const ProfilePage = () => {
         <div className="flex-grow flex h-full bg-[#362856] p-2 text-text-g overflow-auto">
           <div className="w-full h-full flex flex-col rounded-lg font-body font-normal gap-5 overflow-auto">
             <div className="flex gap-5 w-full h-full">
-              <img src={LogoImg} alt="" className="h-min w-16" />
+              <img
+                src={LogoImg}
+                alt=""
+                className="h-min w-16 cursor-pointer"
+                onClick={() => {
+                  navigate("/admin/dashboard");
+                }}
+              />
               <div className="flex gap-5 w-full h-full">
                 {/* left section */}
                 <div className="w-80 h-full bg-bg-color rounded-xl p-4 text-xl">
@@ -176,7 +185,10 @@ const ProfilePage = () => {
                       <p>General Settings</p>
                     </div>
                     <div
-                      onClick={() => handleMenuClick("logout")}
+                      onClick={() => {
+                        setShowPopup(true);
+                        handleMenuClick("profile");
+                      }}
                       className={`flex items-center hover:bg-primary-fp p-2 w-full gap-4 rounded-xl text-[#FF5F61] cursor-pointer ${
                         activeMenu === "logout"
                           ? "bg-primary-fp font-medium"
@@ -185,6 +197,9 @@ const ProfilePage = () => {
                     >
                       <p>Logout</p>
                     </div>
+                    {showPopup && (
+                      <LogOut onClose={() => setShowPopup(false)} />
+                    )}
                   </div>
                 </div>
                 {/* right section */}
@@ -282,7 +297,7 @@ const ProfilePage = () => {
                             </div>
                             <div>
                               <p className="text-sm text-white/70 flex items-center gap-2">
-                                {entityData.labels.teachers}{" "}
+                                {entityData.labels.teachers}
                                 <span className="text-lg">&#8250;</span>
                               </p>
                               <p className="text-2xl">

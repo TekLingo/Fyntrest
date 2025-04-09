@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaChevronRight } from "react-icons/fa6";
 import Pagination from "../../components/Pagination";
 import AddEntityPopUp from "../../components/AddEntityPopUp";
+import FilterSidebar from "../../components/FilterSidebar";
 
 export const SectionHeader = ({ sections, activeSection, onSectionChange }) => {
   return (
@@ -111,6 +112,7 @@ const Users = () => {
   );
 
   const [showPopup, setShowPopup] = useState(false);
+  const [isFilterPopup, setIsFilterPopup] = useState(false); // New state to toggle between Add and Filter popups
 
   return (
     <div className="w-full h-full text-text-g">
@@ -123,15 +125,33 @@ const Users = () => {
                 activeSection={activeSection}
                 onSectionChange={setActiveSection}
               />
-              <button
-                onClick={() => setShowPopup(true)}
-                className="h-8 mb-2 px-3 text-sm bg-secondary-lt text-white rounded hover:bg-primary-fp transition"
-              >
-                Add
-              </button>
+              <div className="flex gap-2 absolute right-10">
+                <button
+                  onClick={() => {
+                    setShowPopup(true);
+                    setIsFilterPopup(false); // Show Add popup
+                  }}
+                  className=" h-8 mb-2 px-3 text-sm bg-secondary-lt text-white rounded hover:bg-primary-fp transition"
+                >
+                  Add
+                </button>
+                <button
+                  onClick={() => {
+                    setShowPopup(true);
+                    setIsFilterPopup(true); // Show Filter popup
+                  }}
+                  className="h-8 mb-2 px-3 text-sm bg-secondary-lt text-white rounded hover:bg-primary-fp transition"
+                >
+                  Filter
+                </button>
+              </div>
 
               {showPopup && (
-                <AddEntityPopUp onClose={() => setShowPopup(false)} />
+                isFilterPopup ? (
+                  <FilterSidebar onClose={() => setShowPopup(false)} />
+                ) : (
+                  <AddEntityPopUp onClose={() => setShowPopup(false)} />
+                )
               )}
             </div>
             <div className="overflow-auto">
