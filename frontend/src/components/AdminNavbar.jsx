@@ -1,58 +1,72 @@
-import React, { useState } from "react";
-import { IoMdNotificationsOutline, IoMdNotifications } from "react-icons/io";
-import SearchOpen from "./SearchOpen";
-import NotificationPanel from "./NotificationPanel";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { IoMdNotifications, IoMdNotificationsOutline } from 'react-icons/io';
 
 const AdminNavbar = () => {
-  const navigate = useNavigate();
-  const [isNoti, setNoti] = useState(false);
-  const toggleNoti = () => setNoti(!isNoti);
+	const [isnoti, setnoti] = useState(false);
+	const [user, setUser] = useState({ firstName: '', lastName: '' });
 
-  const [isSearch, setSearch] = useState(false);
-  const toggleSearch = () => setSearch(!isSearch);
+	// Function to get initials
+	const getInitials = (firstName, lastName) => {
+		if (!firstName) return '';
+		const firstInitial = firstName.charAt(0).toUpperCase();
+		const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : '';
+		return `${firstInitial}${lastInitial}`;
+	};
 
-  const [inputValue, setInputValue] = useState("");
+	const initials = getInitials(user.firstName, user.lastName);
 
-  return (
-    <div className="h-14 text-text-g relative z-50">
-      <div className="w-2/5 h-full place-self-end font-body">
-        <div className="flex items-center w-full h-full gap-8">
-          <div
-            className="border-none focus:outline-none rounded-xl bg-primary_p px-4 w-2/3 h-8 flex items-center cursor-pointer"
-            onClick={toggleSearch}
-          >
-            <p>Search student, school, course, quiz etc..</p>
-          </div>
+	// Fetch user data from the backend
+	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const response = await fetch('http://localhost:8000/get-user', {
+					method: 'GET',
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token for authentication
+					},
+				});
+				if (response.ok) {
+					const data = await response.json();
+					setUser(data.user);
+				} else {
+					console.error('Failed to fetch user data');
+				}
+			} catch (error) {
+				console.error('Error fetching user:', error);
+			}
+		};
+		fetchUser();
+	}, []);
 
-          {isSearch && (
-            <SearchOpen
-              onClose={() => setSearch(false)}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-            />
-          )}
+	const noti = () => {
+		setnoti(!isnoti);
+	};
 
-          <div onClick={toggleNoti} className="cursor-pointer">
-            {isNoti ? (
-              <IoMdNotificationsOutline size={30} />
-            ) : (
-              <IoMdNotifications size={30} />
-            )}
-          </div>
-
-          {isNoti && <NotificationPanel onClose={() => setNoti(false)} />}
-
-          <div
-            className="bg-secondary-dt h-7 w-7 flex items-center justify-center rounded-full cursor-pointer"
-            onClick={() => navigate("/admin/profile")}
-          >
-            <p className="text-xl select-none">S</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+	return (
+		<div className="h-16 text-text-g">
+			{/* navbar content */}
+			<div className="w-2/5 h-full place-self-end font-body">
+				{/* navbar content */}
+				<div className="flex items-center w-full h-full gap-8">
+					<input
+						type="text"
+						className="border-none focus:outline-none rounded-full bg-primary_p px-4 w-2/3 h-10"
+						placeholder="Search student, school, course, quiz etc.."
+					/>
+					<div>
+						{isnoti ? (
+							<IoMdNotificationsOutline size={30} className="cursor-pointer" />
+						) : (
+							<IoMdNotifications size={30} className="cursor-pointer" />
+						)}
+					</div>
+					<div className="bg-secondary-dt p-2 flex items-center justify-center rounded-full">
+						<p className="text-xl">{initials}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default AdminNavbar;
