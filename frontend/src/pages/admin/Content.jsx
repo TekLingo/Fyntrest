@@ -156,7 +156,11 @@ const Content = () => {
             <div className="py-4 w-full flex gap-10 flex-wrap ">
               {/* Course Cards */}
               {eightCourse.map((item, index) => (
-                <div key={index} className="">
+                <div
+                  key={index}
+                  className="cursor-pointer"
+                  onClick={() => navigate("/admin/course")}
+                >
                   <div>
                     {/* Course Preview */}
                     <div className="bg-primary-fp w-72 h-48 rounded-md"></div>
