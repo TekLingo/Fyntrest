@@ -43,6 +43,12 @@ import AdminCoursePage from "./pages/admin/AdminCoursePage";
 import ReadyQuizPage from "./pages/admin/ReadyQuizPage";
 import EntityDetails from "./pages/admin/EntityDetails";
 import ProfilePage from "./pages/admin/ProfilePage";
+import TeacherPanel from "./pages/teacher_login/TeacherMain";
+import TAdminCoursePage from "./pages/teacher_login/TAdminCoursePage";
+import TProfilePage from "./pages/teacher_login/TProfilePage";
+import TReadyQuizPage from "./pages/teacher_login/TReadyQuizPage";
+import TEntityDetails from "./pages/teacher_login/TEntityDetails";
+import TQuiz from "./pages/teacher_login/TQuiz";
 
 const RoleBasedRoute = ({ allowedRoles, children }) => {
   const userRole = localStorage.getItem("role");
@@ -79,11 +85,19 @@ const App = () => {
           }
         />
         <Route path="/about" element={<AboutUsPage />} />
+
         <Route path="admin/quiz" element={<QuizPage />} />
         <Route path="admin/entity/:entityType" element={<EntityDetails />} />
         <Route path="admin/profile" element={<ProfilePage />} />
         <Route path="admin/ready-quiz" element={<ReadyQuizPage />} />
         <Route path="admin/course" element={<AdminCoursePage />} />
+
+        <Route path="teacher/quiz" element={<TQuiz />} />
+        <Route path="teacher/entity/:entityType" element={<TEntityDetails />} />
+        <Route path="teacher/profile" element={<TProfilePage />} />
+        <Route path="teacher/ready-quiz" element={<TReadyQuizPage />} />
+        <Route path="teacher/course" element={<TAdminCoursePage/>} />
+
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/contact" element={<ContactUsPage />} />
         <Route path="/course-overview" element={<CoursePage />} />{" "}
@@ -121,6 +135,14 @@ const App = () => {
           element={
             <RoleBasedRoute allowedRoles={["admin"]}>
               <AdminMain />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/teacher/*"
+          element={
+            <RoleBasedRoute allowedRoles={["teacher"]}>
+              <TeacherPanel />
             </RoleBasedRoute>
           }
         />
@@ -166,6 +188,7 @@ const Root = () => {
   if (isLoading) return <div>Loading...</div>;
   if (!token) return <Navigate to="/home" replace />;
   if (userRole === "admin") return <Navigate to="/admin/dashboard" replace />;
+  if (userRole === "teacher") return <Navigate to="/teacher/dashboard" replace />;
   return <Navigate to="/logged/home" replace />;
 };
 
