@@ -1,23 +1,10 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { FaChevronRight } from 'react-icons/fa6';
 import Pagination from '../../components/Pagination';
 
 const Dashboard = () => {
 	// Sample data
-	const sampleArray = Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`);
-	const sampleDict = {
-		a: 'Apple',
-		b: 'Banana',
-		c: 'Cherry',
-		d: 'Date',
-		e: 'Elderberry',
-		f: 'Fig',
-		g: 'Grape',
-		h: 'Honeydew',
-		i: 'Indian Fig',
-		j: 'Jackfruit',
-	};
-
 	const amButton = [
 		'Schools',
 		'Students',
@@ -109,14 +96,86 @@ const Dashboard = () => {
 		}));
 	};
 
+	const [enrolledCounts, setEnrolledCounts] = useState({
+		daily: 0, // Changed from 10 to 0
+		monthly: 0, // Changed from 100 to 0
+		yearly: 0, // Changed from 1000 to 0
+	});
+	const [timePeriod, setTimePeriod] = useState('yearly');
+	const [loading, setLoading] = useState(true); // Changed to true initially
+
+	useEffect(() => {
+		const fetchEnrolledCounts = async () => {
+			setLoading(true);
+			try {
+				const response = await axios.get('/students-enrolled-count', {
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
+					},
+				});
+
+				// Make sure we're setting the data correctly from the response
+				if (response.data.success && response.data.data) {
+					setEnrolledCounts({
+						daily: response.data.data.daily || 0,
+						monthly: response.data.data.monthly || 0,
+						yearly: response.data.data.yearly || 0,
+					});
+				}
+			} catch (error) {
+				console.error('Error fetching enrolled counts:', error);
+				// Keep at 0 or set to previous values on error
+				setEnrolledCounts({
+					daily: 0,
+					monthly: 0,
+					yearly: 0,
+				});
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchEnrolledCounts();
+	}, []); // Empty dependency array means it runs once on mount
+
 	return (
 		<div className="w-full h-full text-text-g">
 			<div className="bg-[#362856] flex h-full p-4 gap-4">
-				{/* Left content */}
 				<div className="w-2/3 h-full flex flex-col gap-4">
 					<div className="flex gap-4">
 						<div className="w-1/2 bg-primary_p h-full rounded-xl p-8">
 							<div>
+								<div className="flex justify-between items-center">
+									<h2 className="font-body font-bold text-2xl">
+										Students Enrolled
+									</h2>
+									<select
+										name="time_period"
+										id="tp"
+										className="bg-[#362856] font-body h-8 focus:outline-none rounded-md px-2 text-white"
+										value={timePeriod}
+										onChange={(e) => setTimePeriod(e.target.value)}
+									>
+										<option value="yearly">Yearly</option>
+										<option value="monthly">Monthly</option>
+										<option value="daily">Daily</option>
+									</select>
+								</div>
+								<h2 className="font-title text-4xl h-4/5 flex mt-5 justify-center items-center">
+									{loading ? (
+										'Loading...'
+									) : (
+										<>
+											{enrolledCounts[timePeriod] !== undefined
+												? `${enrolledCounts[timePeriod]} +`
+												: '0+'}
+										</>
+									)}
+								</h2>
+							</div>
+						</div>
+						<div className="w-1/2 bg-primary_p h-full rounded-xl p-8">
+							<div className="h-full">
 								<div className="flex justify-between items-center">
 									<h2 className="font-body font-bold text-2xl">
 										Schools onboard
@@ -131,27 +190,6 @@ const Dashboard = () => {
 										<option value="daily">Daily</option>
 									</select>
 								</div>
-							</div>
-						</div>
-						<div className="w-1/2 bg-primary_p h-full rounded-xl p-8">
-							<div className="h-full">
-								<div className="flex justify-between items-center">
-									<h2 className="font-body font-bold text-2xl">
-										Students enrolled
-									</h2>
-									<select
-										name="time_period"
-										id="tp"
-										className="bg-[#362856] font-body h-8 focus:outline-none rounded-md px-2"
-									>
-										<option value="year">Yearly</option>
-										<option value="month">Monthly</option>
-										<option value="daily">Daily</option>
-									</select>
-								</div>
-								<h2 className="font-title text-4xl h-4/5 flex justify-center items-center">
-									359+
-								</h2>
 							</div>
 						</div>
 					</div>

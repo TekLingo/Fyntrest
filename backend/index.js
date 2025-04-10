@@ -1137,6 +1137,58 @@ app.get('/enrollment/current', authenticateToken, async (req, res) => {
 	}
 });
 
+// Fetch students enrolled count (yearly, monthly, daily)
+app.get(
+	'/students-enrolled-count',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			console.log('Fetching students enrolled count...');
+			const now = new Date();
+
+			// Define time periods
+			const startOfToday = new Date(
+				now.getFullYear(),
+				now.getMonth(),
+				now.getDate()
+			);
+			const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+			const startOfYear = new Date(now.getFullYear(), 0, 1);
+
+			// Fetch counts
+			const dailyCount = await Enrollment.countDocuments({
+				createdAt: { $gte: startOfToday },
+			});
+			const monthlyCount = await Enrollment.countDocuments({
+				createdAt: { $gte: startOfMonth },
+			});
+			const yearlyCount = await Enrollment.countDocuments({
+				createdAt: { $gte: startOfYear },
+			});
+
+			console.log('Counts:', { dailyCount, monthlyCount, yearlyCount });
+
+			// Send response
+			res.status(200).json({
+				success: true,
+				data: {
+					daily: dailyCount,
+					monthly: monthlyCount,
+					yearly: yearlyCount,
+				},
+			});
+		} catch (error) {
+			console.error('Error fetching students enrolled count:', error);
+			res.status(500).json({
+				success: false,
+				message: 'Server error',
+				error: error.message,
+			});
+		}
+	}
+);
+
 // --------------------------
 // Create an empty quiz
 // --------------------------
