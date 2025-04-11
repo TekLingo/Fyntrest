@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../assets/Images/color-logo.png';
+import { useAuth } from '../../contexts/AuthContext';
 import axiosInstance from '../../utils/axiosInstance';
 
 const Login = () => {
@@ -10,6 +11,8 @@ const Login = () => {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const navigate = useNavigate();
+	const location = useLocation();
+	const { login } = useAuth();
 
 	const handleNavigate = () => {
 		navigate('/register');
@@ -18,37 +21,31 @@ const Login = () => {
 	const handleLogin = async () => {
 		try {
 			setError('');
-			console.log('Login attempt with:', {
-				email: email.trim().toLowerCase(),
-				password, // Mask password for security
-			});
-
 			const response = await axiosInstance.post('/login', {
 				email: email.trim().toLowerCase(),
 				password,
 			});
 
-			console.log('Login response:', response.data);
-
 			const { token, role } = response.data;
-
-			// Store token and role in localStorage
-			localStorage.setItem('token', token);
-			localStorage.setItem('role', role);
+			login(token, role);
 
 			// Redirect based on role
-			if (role === 'admin') {
-				navigate('/admin/dashboard');
-			} else {
-				navigate('/logged/home');
+			const from = location.state?.from?.pathname || '/';
+			switch (role.toLowerCase()) {
+				case 'admin':
+					navigate('/admin/dashboard', { replace: true });
+					break;
+				case 'teacher':
+					navigate('/teacher/dashboard', { replace: true });
+					break;
+				case 'student':
+					navigate('/logged/home', { replace: true });
+					break;
+				default:
+					navigate(from, { replace: true });
 			}
 		} catch (error) {
-			console.error('Full error details:', {
-				message: error.message,
-				response: error.response?.data,
-				status: error.response?.status,
-				headers: error.response?.headers,
-			});
+			console.error('Login error:', error);
 			setError(error.response?.data?.message || error.message);
 		}
 	};

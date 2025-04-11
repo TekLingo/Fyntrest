@@ -314,6 +314,80 @@ app.delete('/delete-user', authenticateToken, async (req, res) => {
 	}
 });
 
+app.post(
+	'/add-user',
+	authenticateToken,
+	checkRole('admin'),
+	async (req, res) => {
+		try {
+			const {
+				firstName,
+				lastName,
+				email,
+				password,
+				gender,
+				role,
+				school,
+				userClass,
+			} = req.body;
+
+			const validRoles = ['admin', 'teacher', 'student'];
+			if (!validRoles.includes(role)) {
+				return res.status(400).json({ message: 'Invalid role' });
+			}
+
+			// Validate input
+			if (!firstName || !lastName || !email || !password || !gender || !role) {
+				return res.status(400).json({ message: 'All fields are required' });
+			}
+
+			// Check if the email is already in use
+			const existingUser = await User.findOne({ email });
+			if (existingUser) {
+				return res.status(400).json({ message: 'Email is already in use' });
+			}
+
+			// Hash the password
+			const hashedPassword = await bcrypt.hash(password, 10);
+
+			// Create a new user
+			const newUser = new User({
+				firstName,
+				lastName,
+				email,
+				password: hashedPassword,
+				gender,
+				role,
+				school: role === 'student' || role === 'teacher' ? school : undefined, // Assign school only for students/teachers
+				class: role === 'student' ? userClass : undefined, // Assign class only for students
+			});
+
+			// Save the user to the database
+			await newUser.save();
+
+			res.status(201).json({
+				success: true,
+				message: `${
+					role.charAt(0).toUpperCase() + role.slice(1)
+				} user created successfully`,
+				user: {
+					id: newUser._id,
+					firstName: newUser.firstName,
+					email: newUser.email,
+					role: newUser.role,
+				},
+			});
+		} catch (error) {
+			console.error('Error creating user:', error);
+			res.status(500).json({
+				success: false,
+				message: 'Server error',
+				error: error.message,
+			});
+		}
+	}
+);
+
 // --------------------------
 // Video Upload
 // --------------------------
