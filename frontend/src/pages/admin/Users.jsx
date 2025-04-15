@@ -3,6 +3,9 @@ import { FaChevronRight } from "react-icons/fa6";
 import Pagination from "../../components/Pagination";
 import AddEntityPopUp from "../../components/AddEntityPopUp";
 import FilterSidebar from "../../components/FilterSidebar";
+import SortPopup from "../../components/SortPopup";
+import { RiFilter2Line } from "react-icons/ri";
+import { MdSort } from "react-icons/md";
 
 export const SectionHeader = ({ sections, activeSection, onSectionChange }) => {
   return (
@@ -114,6 +117,15 @@ const Users = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [isFilterPopup, setIsFilterPopup] = useState(false); // New state to toggle between Add and Filter popups
 
+  const [showSort, setShowSort] = useState(false);
+  const [selectedSort, setSelectedSort] = useState("Newest First");
+
+  const handleSortSelect = (option) => {
+    setSelectedSort(option);
+    setShowSort(false);
+    // Do something with the selected option
+  };
+
   return (
     <div className="w-full h-full text-text-g">
       <div className="bg-[#362856] flex h-full p-4 gap-4">
@@ -131,7 +143,7 @@ const Users = () => {
                     setShowPopup(true);
                     setIsFilterPopup(false); // Show Add popup
                   }}
-                  className=" h-8 mb-2 px-3 text-sm bg-secondary-lt text-white rounded hover:bg-primary-fp transition"
+                  className=" h-8 mb-2 px-3 text-sm bg-secondary-dt text-white rounded hover:bg-primary-fp transition"
                 >
                   Add
                 </button>
@@ -140,19 +152,28 @@ const Users = () => {
                     setShowPopup(true);
                     setIsFilterPopup(true); // Show Filter popup
                   }}
-                  className="h-8 mb-2 px-3 text-sm bg-secondary-lt text-white rounded hover:bg-primary-fp transition"
+                  className="h-8 mb-2 px-3 text-sm bg-secondary-dt text-white rounded hover:bg-primary-fp transition flex gap-1 items-center"
                 >
                   Filter
+                  <RiFilter2Line size={16} />
+                </button>
+
+                {showPopup &&
+                  (isFilterPopup ? (
+                    <FilterSidebar onClose={() => setShowPopup(false)} />
+                  ) : (
+                    <AddEntityPopUp onClose={() => setShowPopup(false)} />
+                  ))}
+
+                <button
+                  onClick={() => setShowSort((prev) => !prev)}
+                  className="h-8 mb-2 px-3 text-sm bg-secondary-dt text-white rounded hover:bg-primary-fp transition flex gap-1 items-center"
+                >
+                  Sort
+                  <MdSort size={18} />
                 </button>
               </div>
-
-              {showPopup && (
-                isFilterPopup ? (
-                  <FilterSidebar onClose={() => setShowPopup(false)} />
-                ) : (
-                  <AddEntityPopUp onClose={() => setShowPopup(false)} />
-                )
-              )}
+              <SortPopup onSelect={handleSortSelect} isOpen={showSort} />
             </div>
             <div className="overflow-auto">
               <DataTable

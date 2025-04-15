@@ -95,7 +95,7 @@ const TeacherSidebar = ({ setActiveSection }) => {
             ) : (
               <HiOutlineUsers size={30} />
             )}
-            {expanded && <span>Users</span>}
+            {expanded && <span>Students</span>}
           </NavLink>
 
           {/* Content */}
@@ -113,7 +113,7 @@ const TeacherSidebar = ({ setActiveSection }) => {
             ) : (
               <PiPenNibStraightLight size={30} className="rotate-180" />
             )}
-            {expanded && <span>Content</span>}
+            {expanded && <span>Classwork</span>}
           </NavLink>
         </div>
       </div>
