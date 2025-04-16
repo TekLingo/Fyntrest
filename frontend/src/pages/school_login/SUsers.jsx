@@ -73,13 +73,14 @@ const DataTable = ({ data, paginationProps, navigate }) => (
 
 const Users = () => {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState("Students");
+  const [activeSection, setActiveSection] = useState("Teachers");
   const [currentPages, setCurrentPages] = useState({
+    Teachers: 1,
     Students: 1,
   });
   const itemsPerPage = 5;
 
-  const sections = ["Students"];
+  const sections = ["Teachers", "Students"];
 
   const leaderboardData = Array.from({ length: 13 }, (_, index) => ({
     srNo: index + 1,
@@ -164,7 +165,10 @@ const Users = () => {
                   (isFilterPopup ? (
                     <FilterSidebar onClose={() => setShowPopup(false)} />
                   ) : (
-                    <AddEntityPopUp onClose={() => setShowPopup(false)} />
+                    <AddEntityPopUp
+                      onClose={() => setShowPopup(false)}
+                      role="admin"
+                    />
                   ))}
 
                 <button

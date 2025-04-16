@@ -22,6 +22,15 @@ import NotFound from "./pages/Error/NotFound";
 import Unauthorized from "./pages/Error/Unauthorized";
 import Home from "./pages/Home";
 
+// School components
+import SAdminCoursePage from "./pages/school_login/SAdminCoursePage";
+import SDashboard from "./pages/school_login/SDashboard";
+import SchoolPanel from "./pages/school_login/SchoolMain";
+import SEntityDetails from "./pages/school_login/SEntityDetails";
+import SProfilePage from "./pages/school_login/SProfilePage";
+import SQuiz from "./pages/school_login/SQuiz";
+import SReadyQuizPage from "./pages/school_login/SReadyQuizPage";
+
 // Admin components
 import AdminCoursePage from "./pages/admin/AdminCoursePage";
 import AdminMain from "./pages/admin/AdminMain";
@@ -49,6 +58,7 @@ import LoggedProfilePage from "./pages/after-login/LoggedProfilePage";
 import LoggedVideoPage from "./pages/after-login/LoggedVideoPage";
 import Quiz from "./pages/after-login/Quiz";
 import Semester from "./pages/after-login/Semester";
+import ForgotResetPassword from "./pages/auth/ForgotPassword";
 
 const App = () => {
   return (
@@ -59,6 +69,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotResetPassword />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify" element={<Verify />} />
           <Route path="/about" element={<AboutUsPage />} />
@@ -68,6 +79,16 @@ const App = () => {
           <Route path="/module-overview" element={<ModulePage />} />
           <Route path="/blog-open" element={<BlogOpenPage />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+
+          <Route path="/school/*" element={<SchoolPanel />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<SDashboard />} />
+            <Route path="quiz" element={<SQuiz />} />
+            <Route path="entity/:entityType" element={<SEntityDetails />} />
+            <Route path="profile" element={<SProfilePage />} />
+            <Route path="ready-quiz" element={<SReadyQuizPage />} />
+            <Route path="course" element={<SAdminCoursePage />} />
+          </Route>
 
           {/* Protected Routes - Student */}
           <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
@@ -98,7 +119,7 @@ const App = () => {
             <Route path="/admin/*" element={<AdminMain />}>
               <Route index element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="quiz" element={<QuizPage />} />
+              <Route path="quiz" element={<Quiz />} />
               <Route path="entity/:entityType" element={<EntityDetails />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="ready-quiz" element={<ReadyQuizPage />} />
