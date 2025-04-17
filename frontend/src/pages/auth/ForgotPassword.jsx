@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import LogoImg from "../../assets/Images/color-logo.png";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import LogoImg from "../../assets/Images/color-logo.png";
 
 const ForgotResetPassword = () => {
   const navigate = useNavigate();
@@ -17,8 +17,8 @@ const ForgotResetPassword = () => {
     if (email) setStep("reset");
   };
 
-  const handleLogin = () => {
-    console.log("Navigating to login...");
+  const handleLogin = (e) => {
+    e.preventDefault();
     navigate("/login");
   };
 
@@ -92,8 +92,14 @@ const ForgotResetPassword = () => {
               </button>
             </div>
             <p className="text-center text-sm text-gray-300 mt-4">
-              Already have an account?
-              <span className="text-secondary-lt cursor-pointer"> Login!</span>
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={handleLogin}
+                className="text-secondary-lt hover:text-secondary-d transition-colors"
+              >
+                Login!
+              </button>
             </p>
           </form>
         ) : (
@@ -106,9 +112,8 @@ const ForgotResetPassword = () => {
                 <label className="text-sm text-gray-300">Password</label>
                 <input
                   type="password"
-                  className={`w-full mt-1 p-2 rounded focus:outline-none ${
-                    passwordError ? "border border-red-500" : ""
-                  } bg-secondary-lt text-black`}
+                  className={`w-full mt-1 p-2 rounded focus:outline-none ${passwordError ? "border border-red-500" : ""
+                    } bg-secondary-lt text-black`}
                   value={password}
                   onChange={handlePasswordChange}
                   required
@@ -141,13 +146,14 @@ const ForgotResetPassword = () => {
             </div>
 
             <p className="text-center text-base text-gray-300 mt-6">
-              Already have an account?
-              <span
-                className="text-secondary-lt cursor-pointer select-none focus:outline-none"
+              Already have an account?{" "}
+              <button
+                type="button"
                 onClick={handleLogin}
+                className="text-secondary-lt hover:text-secondary-d transition-colors"
               >
                 Login!
-              </span>
+              </button>
             </p>
           </form>
         )}
