@@ -37,10 +37,11 @@ const app = express();
 app.use(express.json());
 app.use(
 	cors({
-		origin: '*',
-		methods: ['GET', 'POST', 'PUT', 'DELETE'],
+		origin: ['http://localhost:3000', 'http://localhost:5173'],
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		credentials: true,
-		allowedHeaders: ['Content-Type', 'Authorization'],
+		allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+		exposedHeaders: ['Content-Range', 'X-Content-Range']
 	})
 );
 
@@ -872,7 +873,7 @@ app.delete(
 			await Video.deleteMany({ _id: { $in: module.videos } });
 			await Module.findByIdAndDelete(moduleId);
 
-			// Optionally, remove this module’s reference from its parent course
+			// Optionally, remove this module's reference from its parent course
 			await Course.findOneAndUpdate(
 				{ modules: moduleId },
 				{ $pull: { modules: moduleId } }
