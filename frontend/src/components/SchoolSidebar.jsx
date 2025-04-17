@@ -16,11 +16,11 @@ const TeacherSidebar = ({ setActiveSection }) => {
 
   useEffect(() => {
     const path = location.pathname;
-    if (path.includes("/teacher/dashboard")) setActiveMenu("dashboard");
-    else if (path.includes("/teacher/users")) setActiveMenu("users");
-    else if (path.includes("/teacher/content")) setActiveMenu("content");
-    else if (path.includes("/teacher/settings")) setActiveMenu("settings");
-    else if (path.includes("/teacher/logout")) setActiveMenu("logout");
+    if (path.includes("/school/dashboard")) setActiveMenu("dashboard");
+    else if (path.includes("/school/users")) setActiveMenu("users");
+    else if (path.includes("/school/content")) setActiveMenu("content");
+    else if (path.includes("/school/settings")) setActiveMenu("settings");
+    else if (path.includes("/school/logout")) setActiveMenu("logout");
   }, [location.pathname]);
 
   const handleMenuClick = (menu) => {
@@ -64,7 +64,7 @@ const TeacherSidebar = ({ setActiveSection }) => {
         <div className="w-full flex flex-col gap-4 font-body mt-4">
           {/* Dashboard */}
           <NavLink
-            to="/teacher/dashboard"
+            to="/school/dashboard"
             onClick={() => handleMenuClick("dashboard")}
             className={`flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
               activeMenu === "dashboard"
@@ -82,7 +82,7 @@ const TeacherSidebar = ({ setActiveSection }) => {
 
           {/* Users */}
           <NavLink
-            to="/teacher/users"
+            to="/school/users"
             onClick={() => handleMenuClick("users")}
             className={`flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
               activeMenu === "users"
@@ -99,8 +99,8 @@ const TeacherSidebar = ({ setActiveSection }) => {
           </NavLink>
 
           {/* Content */}
-          <NavLink
-            to="/teacher/content"
+          {/* <NavLink
+            to="/school/content"
             onClick={() => handleMenuClick("content")}
             className={`flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
               activeMenu === "content"
@@ -114,7 +114,7 @@ const TeacherSidebar = ({ setActiveSection }) => {
               <PiPenNibStraightLight size={30} className="rotate-180" />
             )}
             {expanded && <span>Classwork</span>}
-          </NavLink>
+          </NavLink> */}
         </div>
       </div>
 
@@ -122,7 +122,7 @@ const TeacherSidebar = ({ setActiveSection }) => {
       <div className="w-full flex flex-col mb-4 font-body">
         {/* Settings */}
         <NavLink
-          to="/teacher/settings"
+          to="/school/settings"
           onClick={() => handleMenuClick("settings")}
           className={`flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
             activeMenu === "settings"
@@ -136,7 +136,7 @@ const TeacherSidebar = ({ setActiveSection }) => {
 
         {/* Logout */}
         <NavLink
-          to="/teacher/logout"
+          to="/school/logout"
           onClick={() => handleMenuClick("logout")}
           className={`flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
             activeMenu === "logout"

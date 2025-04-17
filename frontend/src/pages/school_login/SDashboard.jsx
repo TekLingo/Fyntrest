@@ -23,11 +23,11 @@ const Dashboard = () => {
   ];
 
   const [sortBy, setSortBy] = useState("students");
-  const [activeSection, setActiveSection] = useState("students");
-  const [hasSchools] = useState(true);
+  const [activeSection, setActiveSection] = useState("teachers");
+  const [hasTeachers] = useState(true);
   const [hasStudents] = useState(true);
   const [currentPages, setCurrentPages] = useState({
-    schools: 1,
+    teachers: 1,
     students: 1,
   });
 
@@ -81,7 +81,8 @@ const Dashboard = () => {
   const sortedStudentsData = sortData(leaderboardData, sortBy);
 
   const getCurrentItems = (section) => {
-    const data = section === "schools" ? sortedSchoolsData : sortedStudentsData;
+    const data =
+      section === "teachers" ? sortedSchoolsData : sortedStudentsData;
     const startIndex = (currentPages[section] - 1) * itemsPerPage;
     return data.slice(startIndex, startIndex + itemsPerPage);
   };
@@ -107,23 +108,11 @@ const Dashboard = () => {
               <div className="flex flex-col gap-8">
                 <div className="flex justify-between items-center">
                   <h2 className="font-body font-bold text-2xl">
-                    Upcoming Deadline
+                    No. of Students
                   </h2>
-                  <select
-                    name="time_period"
-                    id="tp"
-                    className="bg-[#362856] font-body h-8 focus:outline-none rounded-md px-2"
-                  >
-                    <option value="month">Monthly</option>
-                    <option value="daily">Daily</option>
-                    <option value="year">Yearly</option>
-                  </select>
                 </div>
                 <div className="flex justify-center">
-                  <p className="font-title text-4xl h-4/5">5th Jan '25</p>
-                </div>
-                <div className=" flex justify-center">
-                  <Pagination />
+                  <p className="font-title text-4xl h-4/5">250</p>
                 </div>
               </div>
             </div>
@@ -131,17 +120,8 @@ const Dashboard = () => {
               <div className="h-full flex flex-col gap-8">
                 <div className="flex justify-between items-center">
                   <h2 className="font-body font-bold text-2xl">
-                    No. of Students
+                    No. of Teachers
                   </h2>
-                  <select
-                    name="time_period"
-                    id="tp"
-                    className="bg-[#362856] font-body h-8 focus:outline-none rounded-md px-2"
-                  >
-                    <option value="year">Yearly</option>
-                    <option value="month">Monthly</option>
-                    <option value="daily">Daily</option>
-                  </select>
                 </div>
                 <h2 className="font-title text-4xl h-4/5 flex justify-center items-center">
                   50
@@ -151,16 +131,16 @@ const Dashboard = () => {
           </div>
           <div className="bg-primary_p h-full rounded-xl p-4 w-full">
             <div className="flex border-b-2 border-[#787878] h-11">
-              {/* <div
+              <div
                 className={`h-11 w-min min-w-40 flex flex-col justify-center items-center gap-4 cursor-pointer font-body ${
-                  activeSection === "schools"
+                  activeSection === "teachers"
                     ? "border-secondary-lt text-text-g border-b-4"
                     : "border-[#787878] text-[#787878]"
                 }`}
-                onClick={() => handleClick("schools")}
+                onClick={() => handleClick("teachers")}
               >
-                <p>Schools</p>
-              </div> */}
+                <p>Teachers</p>
+              </div>
               <div
                 className={`h-11 w-min min-w-40 flex flex-col justify-center items-center gap-4 cursor-pointer font-body ${
                   activeSection === "students"
@@ -174,7 +154,7 @@ const Dashboard = () => {
             </div>
 
             <div className="w-9/10">
-              {(activeSection === "schools" && hasSchools) ||
+              {(activeSection === "teachers" && hasTeachers) ||
               (activeSection === "students" && hasStudents) ? (
                 <div className="flex flex-col gap-2 py-4 w-full">
                   <div className="w-full">
@@ -219,7 +199,7 @@ const Dashboard = () => {
                   <div className="mt-4 flex justify-center">
                     <Pagination
                       totalItems={
-                        activeSection === "schools"
+                        activeSection === "teachers"
                           ? sortedSchoolsData.length
                           : sortedStudentsData.length
                       }

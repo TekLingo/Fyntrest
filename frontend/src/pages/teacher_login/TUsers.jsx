@@ -3,10 +3,14 @@ import { FaChevronRight } from "react-icons/fa6";
 import Pagination from "../../components/Pagination";
 import AddEntityPopUp from "../../components/AddEntityPopUp";
 import FilterSidebar from "../../components/FilterSidebar";
+import SortPopup from "../../components/SortPopup";
+import { RiFilter2Line } from "react-icons/ri";
+import { MdSort } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export const SectionHeader = ({ sections, activeSection, onSectionChange }) => {
   return (
-    <div className="flex justify-between items-center border-b-2 border-[#787878] h-8 px-2">
+    <div className="flex justify-between items-center h-8 px-2">
       <div className="flex h-8">
         {sections.map((section) => (
           <div
@@ -26,17 +30,17 @@ export const SectionHeader = ({ sections, activeSection, onSectionChange }) => {
   );
 };
 
-const DataTable = ({ data, paginationProps }) => (
+const DataTable = ({ data, paginationProps, navigate }) => (
   <div className="flex flex-col gap-2 py-4 w-full">
     <div className="w-full overflow-y-auto">
       <table className="w-full text-left rounded-xl overflow-hidden font-body">
         <thead className="rounded-xl bg-[#362856] h-10 z-10 sticky top-0">
           <tr className="h-10">
-            <th className="p-4 h-10">Rank</th>
+            <th className="p-4 h-10">S. No.</th>
             <th className="p-4">Name</th>
-            <th className="p-4">Category</th>
-            <th className="p-4">Code</th>
-            <th className="p-4">Email Address</th>
+            <th className="p-4">Email</th>
+            <th className="p-4">Grade</th>
+            <th className="p-4">Roll No.</th>
             <th></th>
           </tr>
         </thead>
@@ -45,11 +49,14 @@ const DataTable = ({ data, paginationProps }) => (
             <tr key={index} className="bg-[#311B53] w-full">
               <td className="p-4 w-20">{player.rank}</td>
               <td className="p-4 w-40 overflow-hidden">{player.name}</td>
-              <td className="p-4 w-40 overflow-hidden">{player.category}</td>
-              <td className="p-4 w-40 overflow-hidden">{player.code}</td>
               <td className="p-4 w-40 overflow-hidden">{player.email}</td>
+              <td className="p-4 w-40 overflow-hidden">{player.code}</td>
+              <td className="p-4 w-40 overflow-hidden">{player.roll}</td>
               <td className="p-2 w-20 overflow-hidden">
-                <button className="hover:border-2 hover:border-secondary-dt w-8 h-8 rounded-full">
+                <button
+                  className="hover:border-2 hover:border-secondary-dt w-8 h-8 rounded-full"
+                  onClick={() => navigate("/teacher/entity/student")}
+                >
                   <FaChevronRight className="place-self-center" />
                 </button>
               </td>
@@ -65,23 +72,21 @@ const DataTable = ({ data, paginationProps }) => (
 );
 
 const Users = () => {
-  const [activeSection, setActiveSection] = useState("All");
+  const navigate = useNavigate();
+  const [activeSection, setActiveSection] = useState("Students");
   const [currentPages, setCurrentPages] = useState({
-    All: 1,
-    Schools: 1,
     Students: 1,
-    Admin: 1,
   });
   const itemsPerPage = 5;
 
-  const sections = ["All", "Schools", "Students", "Admin"];
+  const sections = ["Students"];
 
   const leaderboardData = Array.from({ length: 13 }, (_, index) => ({
     srNo: index + 1,
     name: `ABC School ${index + 1}`,
-    category: "12 Jan 2025",
-    code: 2000 + index,
     email: `school${index + 1}@example.com`,
+    code: index,
+    roll: 30 + index,
     xp: Math.floor(Math.random() * 1000), // Added random XP for sorting
   }));
 
@@ -114,6 +119,15 @@ const Users = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [isFilterPopup, setIsFilterPopup] = useState(false); // New state to toggle between Add and Filter popups
 
+  const [showSort, setShowSort] = useState(false);
+  const [selectedSort, setSelectedSort] = useState("Newest First");
+
+  const handleSortSelect = (option) => {
+    setSelectedSort(option);
+    setShowSort(false);
+    // Do something with the selected option
+  };
+
   return (
     <div className="w-full h-full text-text-g">
       <div className="bg-[#362856] flex h-full p-4 gap-4">
@@ -131,7 +145,7 @@ const Users = () => {
                     setShowPopup(true);
                     setIsFilterPopup(false); // Show Add popup
                   }}
-                  className=" h-8 mb-2 px-3 text-sm bg-secondary-lt text-white rounded hover:bg-primary-fp transition"
+                  className=" h-8 mb-2 px-3 text-sm bg-secondary-dt text-white rounded hover:bg-primary-fp transition"
                 >
                   Add
                 </button>
@@ -140,19 +154,33 @@ const Users = () => {
                     setShowPopup(true);
                     setIsFilterPopup(true); // Show Filter popup
                   }}
-                  className="h-8 mb-2 px-3 text-sm bg-secondary-lt text-white rounded hover:bg-primary-fp transition"
+                  className="h-8 mb-2 px-3 text-sm bg-secondary-dt text-white rounded hover:bg-primary-fp transition flex gap-1 items-center"
                 >
                   Filter
+                  <RiFilter2Line size={16} />
+                </button>
+
+                {showPopup &&
+                  (isFilterPopup ? (
+                    <FilterSidebar onClose={() => setShowPopup(false)} />
+                  ) : (
+                    <AddEntityPopUp onClose={() => setShowPopup(false)} />
+                  ))}
+
+                <button
+                  onClick={() => setShowSort((prev) => !prev)}
+                  className="h-8 mb-2 px-3 text-sm bg-secondary-dt text-white rounded hover:bg-primary-fp transition flex gap-1 items-center"
+                >
+                  Sort
+                  <MdSort size={18} />
                 </button>
               </div>
 
-              {showPopup && (
-                isFilterPopup ? (
-                  <FilterSidebar onClose={() => setShowPopup(false)} />
-                ) : (
-                  <AddEntityPopUp onClose={() => setShowPopup(false)} />
-                )
-              )}
+              <SortPopup
+                isOpen={showSort}
+                onSelect={handleSortSelect}
+                onClose={() => setShowSort(false)}
+              />
             </div>
             <div className="overflow-auto">
               <DataTable
@@ -163,6 +191,7 @@ const Users = () => {
                   currentPage: currentPages[activeSection],
                   onPageChange: (page) => handlePageChange(activeSection, page),
                 }}
+                navigate={navigate}
               />
             </div>
           </div>
