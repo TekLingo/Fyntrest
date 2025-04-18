@@ -167,7 +167,7 @@ const Users = () => {
                   ) : (
                     <AddEntityPopUp
                       onClose={() => setShowPopup(false)}
-                      role="admin"
+                      role="school"
                     />
                   ))}
 

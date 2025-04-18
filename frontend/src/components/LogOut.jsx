@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const LogOut = ({ onClose }) => {
   return (
     <div>
-      <div className="fixed top-0 left-0 w-full h-full bg-bg-color bg-opacity-60 flex justify-center items-center flex-col gap-20 z-50">
+      <div className="fixed top-0 left-0 w-full h-full bg-bg-color font-body bg-opacity-60 flex justify-center items-center flex-col gap-20 z-50">
         <div className="w-1/4 popup-container bg-primary_p p-6 rounded-lg shadow-lg relative text-text-g flex flex-col gap-8 h-auto overflow-y-auto">
           {/* Title Section */}
           <div className="flex justify-center items-center">

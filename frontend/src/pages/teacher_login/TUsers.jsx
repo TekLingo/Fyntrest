@@ -164,7 +164,10 @@ const Users = () => {
                   (isFilterPopup ? (
                     <FilterSidebar onClose={() => setShowPopup(false)} />
                   ) : (
-                    <AddEntityPopUp onClose={() => setShowPopup(false)} />
+                    <AddEntityPopUp
+                      onClose={() => setShowPopup(false)}
+                      role="teacher"
+                    />
                   ))}
 
                 <button
