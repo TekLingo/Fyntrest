@@ -4,15 +4,16 @@ import { CiLogout } from "react-icons/ci";
 import { HiOutlineCog6Tooth, HiOutlineUsers, HiUsers } from "react-icons/hi2";
 import { PiPenNibStraightFill, PiPenNibStraightLight } from "react-icons/pi";
 import { RiDashboardFill, RiDashboardLine } from "react-icons/ri";
-import { NavLink, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LogoImg from "../assets/Images/color-logo.png";
+import LogOut from "./LogOut"; // Make sure this path is correct
 
 const TeacherSidebar = ({ setActiveSection }) => {
   const [expanded, setExpanded] = useState(true);
-  const location = useLocation();
-
-  // Set activeMenu from the current route
   const [activeMenu, setActiveMenu] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false); // ✅ toggle
 
   useEffect(() => {
     const path = location.pathname;
@@ -23,9 +24,10 @@ const TeacherSidebar = ({ setActiveSection }) => {
     else if (path.includes("/school/logout")) setActiveMenu("logout");
   }, [location.pathname]);
 
-  const handleMenuClick = (menu) => {
+  const handleMenuClick = (menu, path) => {
     setActiveMenu(menu);
     if (setActiveSection) setActiveSection(menu);
+    if (path) navigate(path);
   };
 
   return (
@@ -34,9 +36,9 @@ const TeacherSidebar = ({ setActiveSection }) => {
         expanded ? "w-80" : "w-16"
       }`}
     >
-      {/* Sidebar Top Section */}
+      {/* Top Section */}
       <div>
-        {/* Logo & Toggle Button */}
+        {/* Logo & Toggle */}
         <div className="flex items-center justify-between p-2">
           <button
             onClick={() => setExpanded(!expanded)}
@@ -60,13 +62,12 @@ const TeacherSidebar = ({ setActiveSection }) => {
           )}
         </div>
 
-        {/* Sidebar Links */}
+        {/* Sidebar Items */}
         <div className="w-full flex flex-col gap-4 font-body mt-4">
           {/* Dashboard */}
-          <NavLink
-            to="/school/dashboard"
-            onClick={() => handleMenuClick("dashboard")}
-            className={`flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
+          <div
+            onClick={() => handleMenuClick("dashboard", "/school/dashboard")}
+            className={`cursor-pointer flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
               activeMenu === "dashboard"
                 ? "border-r-4 border-secondary-lt bg-secondary-dt font-semibold"
                 : ""
@@ -78,13 +79,12 @@ const TeacherSidebar = ({ setActiveSection }) => {
               <RiDashboardLine size={30} />
             )}
             {expanded && <span>Dashboard</span>}
-          </NavLink>
+          </div>
 
           {/* Users */}
-          <NavLink
-            to="/school/users"
-            onClick={() => handleMenuClick("users")}
-            className={`flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
+          <div
+            onClick={() => handleMenuClick("users", "/school/users")}
+            className={`cursor-pointer flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
               activeMenu === "users"
                 ? "border-r-4 border-secondary-lt bg-secondary-dt font-semibold"
                 : ""
@@ -96,13 +96,12 @@ const TeacherSidebar = ({ setActiveSection }) => {
               <HiOutlineUsers size={30} />
             )}
             {expanded && <span>Students</span>}
-          </NavLink>
+          </div>
 
-          {/* Content */}
-          {/* <NavLink
-            to="/school/content"
-            onClick={() => handleMenuClick("content")}
-            className={`flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
+          {/* Content (commented) */}
+          {/* <div
+            onClick={() => handleMenuClick("content", "/school/content")}
+            className={`cursor-pointer flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
               activeMenu === "content"
                 ? "border-r-4 border-secondary-lt bg-secondary-dt font-semibold"
                 : ""
@@ -114,17 +113,16 @@ const TeacherSidebar = ({ setActiveSection }) => {
               <PiPenNibStraightLight size={30} className="rotate-180" />
             )}
             {expanded && <span>Classwork</span>}
-          </NavLink> */}
+          </div> */}
         </div>
       </div>
 
-      {/* Sidebar Bottom Links */}
+      {/* Bottom Section */}
       <div className="w-full flex flex-col mb-4 font-body">
         {/* Settings */}
-        <NavLink
-          to="/school/settings"
-          onClick={() => handleMenuClick("settings")}
-          className={`flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
+        <div
+          onClick={() => handleMenuClick("settings", "/school/settings")}
+          className={`cursor-pointer flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
             activeMenu === "settings"
               ? "border-r-4 border-secondary-lt bg-secondary-dt font-semibold"
               : ""
@@ -132,13 +130,15 @@ const TeacherSidebar = ({ setActiveSection }) => {
         >
           <HiOutlineCog6Tooth size={30} />
           {expanded && <span>Settings</span>}
-        </NavLink>
+        </div>
 
-        {/* Logout */}
-        <NavLink
-          to="/school/logout"
-          onClick={() => handleMenuClick("logout")}
-          className={`flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
+        {/* Logout: Render LogOut component directly */}
+        <div
+          onClick={() => {
+            handleMenuClick(activeMenu);
+            setShowLogoutPopup(true); // ✅ trigger popup
+          }}
+          className={`cursor-pointer flex items-center p-2 hover:bg-secondary-dt w-full gap-4 ${
             activeMenu === "logout"
               ? "border-r-4 border-secondary-lt bg-secondary-dt font-semibold"
               : ""
@@ -146,7 +146,10 @@ const TeacherSidebar = ({ setActiveSection }) => {
         >
           <CiLogout size={30} className="rotate-180" />
           {expanded && <span>Logout</span>}
-        </NavLink>
+        </div>
+        {showLogoutPopup && (
+          <LogOut onClose={() => setShowLogoutPopup(false)} />
+        )}
       </div>
     </div>
   );
