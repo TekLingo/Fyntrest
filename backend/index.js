@@ -41,7 +41,7 @@ app.use(
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		credentials: true,
 		allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-		exposedHeaders: ['Content-Range', 'X-Content-Range']
+		exposedHeaders: ['Content-Range', 'X-Content-Range'],
 	})
 );
 
@@ -332,7 +332,7 @@ app.post(
 				userClass,
 			} = req.body;
 
-			const validRoles = ['admin', 'teacher', 'student'];
+			const validRoles = ['admin', 'teacher', 'student', 'school'];
 			if (!validRoles.includes(role)) {
 				return res.status(400).json({ message: 'Invalid role' });
 			}
